@@ -1,6 +1,7 @@
 // src/api/components/TokenCard.tsx
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; 
 
 interface Token {
   id: number;
@@ -10,6 +11,7 @@ interface Token {
   description: string;
   marketCap: number;
   ownerAddress: string;
+  contractAddress: string;
 }
 
 const TokenCard: React.FC = () => {
@@ -17,6 +19,11 @@ const TokenCard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1); // Keep track of the page number
   const [hasMore, setHasMore] = useState(true); // To disable "Load More" when no more data
+  const router = useRouter();
+
+  const handleCardClick = (token: Token) => {
+    router.push(`/token/${token.contractAddress}`);
+  };
 
   useEffect(() => {
     fetchTokens(page);
@@ -60,6 +67,7 @@ const TokenCard: React.FC = () => {
         {tokens.map((token, index) => (
           <div
             key={token.id}
+            onClick={() => handleCardClick(token)}
             className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
           >
             <img
@@ -77,7 +85,7 @@ const TokenCard: React.FC = () => {
               {token.name}{" "}
               <span className="text-gray-400">(${token.symbol})</span>
             </h3>
-            <p className="text-sm text-gray-400 mb-2">{token.description}</p>
+            <p className="text-sm text-gray-400 mb-2 break-words">{token.description}</p>
             <p className="font-semibold text-gray-300">
               Market Cap: ${token.marketCap.toLocaleString()}
             </p>
