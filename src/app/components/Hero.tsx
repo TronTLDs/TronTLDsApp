@@ -1,8 +1,9 @@
 import React from "react";
+import "../css/Home.css"
 
 const Hero = () => {
   return (
-    <div className="flex justify-between p-6">
+    <div className="home-wrapper flex justify-between p-6">
       <div className="basis-1/2 flex flex-col gap-3">
         <h1 className="text-[30px]">MetaTLDs</h1>
         <p>Permissionless TLDs and Domains: One Click Away</p>

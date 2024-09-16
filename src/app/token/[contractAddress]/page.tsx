@@ -15,6 +15,9 @@ interface Token {
   volume24Hr: number;
   priceChange24Hr: number;
   contractAddress: string;
+  twitterUrl: string;
+  telegramUrl: string;
+  websiteUrl: string;
 }
 
 const TokenPage = () => {

@@ -1,6 +1,6 @@
-'use client'
+"use client";
 import React from "react";
-import { ArrowLeft, X, Globe, Send } from "lucide-react";
+import { ArrowLeft, Twitter, Globe, Send, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Token {
@@ -15,6 +15,9 @@ interface Token {
   volume24Hr: number;
   priceChange24Hr: number;
   contractAddress: string;
+  twitterUrl: string;
+  telegramUrl: string;
+  websiteUrl: string;
 }
 
 interface TokenDetailPageProps {
@@ -67,13 +70,19 @@ const TokenDetailPage: React.FC<TokenDetailPageProps> = ({ token }) => {
               </h1>
               <div className="flex space-x-2">
                 <button className="text-gray-400">
-                  <X size={20} />
+                  <a href={`${token.twitterUrl}`}>
+                    <Twitter size={20} />
+                  </a>
                 </button>
                 <button className="text-gray-400">
-                  <Globe size={20} />
+                  <a href={`${token.websiteUrl}`}>
+                    <Globe size={20} />
+                  </a>
                 </button>
                 <button className="text-gray-400">
-                  <Send size={20} />
+                  <a href={`${token.telegramUrl}`}>
+                    <Send size={20} />
+                  </a>
                 </button>
               </div>
             </div>

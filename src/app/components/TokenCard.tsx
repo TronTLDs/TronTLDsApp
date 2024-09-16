@@ -1,7 +1,11 @@
 // src/api/components/TokenCard.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
+import { SearchCode, MoveUp, ArrowUp, MoveDown } from "lucide-react";
+import CheckboxApp from "./Checkbox";
+import Dropdown from "./DropDown";
+import "../css/Searchbar.css";
 
 interface Token {
   id: number;
@@ -12,6 +16,7 @@ interface Token {
   marketCap: number;
   ownerAddress: string;
   contractAddress: string;
+  priceChange24Hr: number;
 }
 
 const TokenCard: React.FC = () => {
@@ -63,32 +68,75 @@ const TokenCard: React.FC = () => {
   return (
     <div className="p-6">
       <h1 className="mb-3">Tokens data</h1>
+      <div className="flex justify-between">
+        <div className="search-bar mb-4 w-[30%]">
+          <SearchCode className="ml-[20px]" />
+          <input
+            type="text"
+            className="search-input p-2"
+            placeholder="Search for tokens"
+            value=""
+          ></input>
+        </div>
+        <div className="flex gap-5">
+          <Dropdown />
+          <CheckboxApp />
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {tokens.map((token, index) => (
           <div
             key={token.id}
             onClick={() => handleCardClick(token)}
-            className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+            className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative"
           >
             <img
               src={token.logoUrl}
               alt={token.name}
-              className="w-full h-32 object-contain rounded-md mb-4"
+              className="w-full h-[240px] rounded-md mb-4"
             />
 
-            {/* New Field - Created by */}
-            <p className="text-gray-400 mb-2">
-              Created by: <span className="text-orange-500">{token.ownerAddress.slice(0,4) + "...." + token.ownerAddress.slice(-4)}</span>
-            </p>
+            <div className={`_price_tag_common ${token.priceChange24Hr > 0 ? "_price_tag" : `${token.priceChange24Hr === 0 ? "_price_tag2" : "_price_tag3"}`}`}>
+              {token.priceChange24Hr}%{" "}
+              {token.priceChange24Hr > 0 ? (
+                <MoveUp
+                  size={15}
+                  strokeWidth={3}
+                />
+              ) : token.priceChange24Hr < 0 ? (
+                <MoveDown
+                  size={15}
+                  strokeWidth={3}
+                />
+              ) : (
+                <MoveUp
+                  size={15}
+                  strokeWidth={3}
+                />
+              )}
+            </div>
+            
+            <div className="p-4">
+              <p className="text-gray-400 mb-2">
+                Created by:{" "}
+                <span className="text-orange-500">
+                  {token.ownerAddress.slice(0, 4) +
+                    "...." +
+                    token.ownerAddress.slice(-4)}
+                </span>
+              </p>
 
-            <h3 className="text-lg font-bold text-white">
-              {token.name}{" "}
-              <span className="text-gray-400">(${token.symbol})</span>
-            </h3>
-            <p className="text-sm text-gray-400 mb-2 break-words">{token.description}</p>
-            <p className="font-semibold text-gray-300">
-              Market Cap: ${token.marketCap.toLocaleString()}
-            </p>
+              <h3 className="text-lg font-bold text-white">
+                {token.name}{" "}
+                <span className="text-gray-400">(${token.symbol})</span>
+              </h3>
+              <p className="text-sm text-gray-400 mb-2 break-words">
+                {token.description}
+              </p>
+              <p className="font-semibold text-gray-300">
+                Market Cap: ${token.marketCap.toLocaleString()}
+              </p>
+            </div>
           </div>
         ))}
       </div>
