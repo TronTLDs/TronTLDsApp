@@ -17,6 +17,24 @@
     caret-color: #a7f;
 }
 
+.search-bar:hover {
+    background: #1d1f2c;
+    border: 1px solid #a3a3a3
+}
+
+.search-bar .search-icon {
+    margin-left: 20px
+}
+
+.search-bar .search-input {
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    width: 100%;
+    margin-left: 5px;
+    caret-color: #a7f
+}
+
 input {
     outline: 0;
     border: none;
@@ -65,4 +83,32 @@ input {
 
 ._price_tag3 {
     background-color: tomato;
+}
+
+.refresh, .direction_sort {
+    border: 2.3px solid rgba(96, 1, 255, .4);
+    border-radius: 10px;
+    background: #151527;
+    padding: 8px 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.refresh:hover, .direction_sort:hover {
+    border-color: #6001ff;
+    background: #191931
+}
+
+.refreshIcon:hover {
+    animation: refreshIcon .3s linear;
+}
+
+@keyframes refreshIcon {
+    0% {
+        transform: rotate(0)
+    }
+
+    to {
+        transform: rotate(360deg)
+    }
 }

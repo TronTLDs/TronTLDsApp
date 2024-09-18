@@ -12,8 +12,6 @@ export async function GET(req: Request, { params }: { params: { contractAddress:
     }
 
     const data = await response.json();
-    console.log(data); // Log the data to verify the response
-
     return NextResponse.json(data); // Return the token data
   } catch (error) {
     console.error('Error fetching token data:', error);

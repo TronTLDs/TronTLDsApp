@@ -13,7 +13,7 @@
   width: 193px;
   color: #fff;
   font-family: PingFang SC, sans-serif;
-  border: 1px solid rgba(96, 1, 255, 0.4);
+  border: 1.7px solid rgba(96, 1, 255, 0.4);
   border-radius: 10px;
   padding: 8px 10px;
   background: #151527;
@@ -32,7 +32,7 @@
 
 .dropdown-container {
   border-radius: 10px;
-  border: 1px solid rgba(96, 1, 255, 0.4);
+  border: 1.7px solid rgba(96, 1, 255, 0.4);
   color: #fff;
   font-family: PingFang SC, sans-serif;
   padding: 8px 10px;
