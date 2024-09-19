@@ -159,7 +159,7 @@ const TokenCard: React.FC = () => {
 
   const handleCopy = (addr: string) => {
     copy(addr);
-    toast("Copied 🎊🎉");
+    toast("✅ Copied 🎊🎉");
   };
 
   const loadMoreTokens = () => {
@@ -170,11 +170,16 @@ const TokenCard: React.FC = () => {
     });
   };
 
+  // Ensure the URL has the protocol
+  const formatUrl = (url: string): string => {
+    return url.startsWith("http") ? url : `https://${url}`;
+  };
+
   return (
     <div className="p-6">
       <h1 className="mb-3">Tokens data</h1>
       <div className="flex justify-between">
-        <div className="search-bar mb-4 w-[30%] relative">
+        <div className="search-bar w-[30%] relative">
           <SearchCode className="ml-[20px]" />
           <input
             type="text"
@@ -189,7 +194,7 @@ const TokenCard: React.FC = () => {
               className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
               title="Clear search"
             >
-              <X size={17} className="text-gray-400 font-bold hover:text-white" />
+              <X size={17} className="text-gray-400 font-bold hover:text-white hover:scale-125" />
             </button>
           )}
         </div>
@@ -262,7 +267,7 @@ const TokenCard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-[12px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-[18px]">
         {tokens.map((token, index) => (
           <div
             key={token.id}
@@ -310,7 +315,7 @@ const TokenCard: React.FC = () => {
                   <div className="cursor-pointer" title="Copy">
                     <Copy
                       size={12}
-                      className="cursor-pointer"
+                      className="cursor-pointer hover:text-white text-gray-400 hover:scale-125"
                       onClick={(event) => {
                         event.stopPropagation(); // Prevent the outer onClick from firing
                         handleCopy(token.ownerAddress);
@@ -320,13 +325,13 @@ const TokenCard: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {token.twitterUrl && (
+                  {(token.twitterUrl && token.twitterUrl !== "https://error-sunpump.com" && token.twitterUrl !== "https://disconnect-sunpump.com/") && (
                     <button
-                      className="text-gray-400"
+                      className="text-gray-400 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
-                        href={token.twitterUrl}
+                        href={formatUrl(token.twitterUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -334,13 +339,13 @@ const TokenCard: React.FC = () => {
                       </a>
                     </button>
                   )}
-                  {token.websiteUrl && (
+                  {(token.websiteUrl && token.websiteUrl !== "https://error-sunpump.com" && token.websiteUrl !== "https://disconnect-sunpump.com/") && (
                     <button
-                      className="text-gray-400"
+                      className="text-gray-400 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
-                        href={token.websiteUrl}
+                        href={formatUrl(token.websiteUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -348,13 +353,13 @@ const TokenCard: React.FC = () => {
                       </a>
                     </button>
                   )}
-                  {token.telegramUrl && (
+                  {(token.telegramUrl && token.telegramUrl !== "https://error-sunpump.com" && token.telegramUrl !== "https://disconnect-sunpump.com/") && (
                     <button
-                      className="text-gray-400"
+                      className="text-gray-400 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
-                        href={token.telegramUrl}
+                        href={formatUrl(token.telegramUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -377,7 +382,7 @@ const TokenCard: React.FC = () => {
                 <div className="cursor-pointer" title="Copy">
                   <Copy
                     size={12}
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-white text-gray-400 hover:scale-125"
                     onClick={(event) => {
                       event.stopPropagation(); // Prevent the outer onClick from firing
                       handleCopy(token.contractAddress);
