@@ -1,6 +1,6 @@
 // src/api/components/TokenCard.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   SearchCode,
@@ -15,6 +15,7 @@ import {
   RotateCw,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
+  X,
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
@@ -45,6 +46,8 @@ const TokenCard: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState("tokenCreatedInstant:DESC");
   const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("DESC");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
   const router = useRouter();
 
@@ -52,14 +55,20 @@ const TokenCard: React.FC = () => {
     router.push(`/token/${token.contractAddress}`);
   };
 
-  useEffect(() => {
-    fetchTokens(page);
-  }, [page]);
-
-  const fetchTokens = async (page: number, sort = sortOption) => {
+  const fetchTokens = useCallback(async (
+    page: number,
+    sort = sortOption,
+    query = debouncedSearchQuery
+  ) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/proxy?page=${page}&sort=${sort}`);
+
+      const encodedQuery = query.replace(/\s/g, "+");
+      const apiUrl = encodedQuery
+        ? `/api/proxy?query=${encodedQuery}&page=${page}&sort=${sort}`
+        : `/api/proxy?page=${page}&sort=${sort}`;
+
+      const res = await fetch(apiUrl);
       const result = await res.json();
       const newTokens = result.data.tokens;
 
@@ -67,11 +76,7 @@ const TokenCard: React.FC = () => {
         setHasMore(false);
       } else {
         setTokens((prevTokens) => {
-          const tokenIds = new Set(prevTokens.map((token) => token.id));
-          const uniqueNewTokens = newTokens.filter(
-            (token: { id: number }) => !tokenIds.has(token.id)
-          );
-          return [...prevTokens, ...uniqueNewTokens];
+          return page === 1 ? newTokens : [...prevTokens, ...newTokens];
         });
       }
 
@@ -80,7 +85,31 @@ const TokenCard: React.FC = () => {
       console.error("Error fetching tokens:", error);
       setLoading(false);
     }
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
   };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+  };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 1000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setPage(1);
+    setTokens([]);
+    fetchTokens(1, sortOption, debouncedSearchQuery);
+  }, [debouncedSearchQuery, sortOption, fetchTokens]);
 
   const options = [
     "Launched Time",
@@ -99,10 +128,8 @@ const TokenCard: React.FC = () => {
       "24H Price Increase": "priceChange24Hr",
     };
 
-    setSortOption(`${sortMapping[option]}:${sortDirection}`);
-    setPage(1);
-    setTokens([]);
-    fetchTokens(1, `${sortMapping[option]}:${sortDirection}`);
+    const newSortOption = `${sortMapping[option]}:${sortDirection}`;
+    setSortOption(newSortOption);
     setIsOpen(false);
   };
 
@@ -117,9 +144,6 @@ const TokenCard: React.FC = () => {
     setSortDirection(newDirection);
     const [field] = sortOption.split(":");
     setSortOption(`${field}:${newDirection}`);
-    setPage(1);
-    setTokens([]);
-    fetchTokens(1, `${field}:${newDirection}`);
   };
 
   // Utility function to format large numbers with 'k' or 'm' and round to two decimal places
@@ -139,21 +163,35 @@ const TokenCard: React.FC = () => {
   };
 
   const loadMoreTokens = () => {
-    setPage((prevPage) => prevPage + 1); // Increment page count on click
+    setPage((prevPage) => {
+      const nextPage = prevPage + 1;
+      fetchTokens(nextPage, sortOption, debouncedSearchQuery); // Fetch the next set of tokens
+      return nextPage;
+    });
   };
 
   return (
     <div className="p-6">
       <h1 className="mb-3">Tokens data</h1>
       <div className="flex justify-between">
-        <div className="search-bar mb-4 w-[30%]">
+        <div className="search-bar mb-4 w-[30%] relative">
           <SearchCode className="ml-[20px]" />
           <input
             type="text"
             className="search-input p-2"
             placeholder="Search for tokens"
-            value=""
+            value={searchQuery}
+            onChange={handleSearchChange} // Call handleSearchChange on input
           ></input>
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
+              title="Clear search"
+            >
+              <X size={17} className="text-gray-400 font-bold hover:text-white" />
+            </button>
+          )}
         </div>
         <div className="flex gap-5 items-center">
           <div className="relative inline-block text-center">
@@ -202,14 +240,6 @@ const TokenCard: React.FC = () => {
           </div>
           <CheckboxApp />
           <button
-            onClick={handleRefresh}
-            className="refresh p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
-            title="Refresh"
-          >
-            <RotateCw size={20} className="refreshIcon" />
-            {/* <RefreshCw size={20} className="refreshIcon" /> */}
-          </button>
-          <button
             onClick={toggleSortDirection}
             className="direction_sort p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
             title={`Sort ${
@@ -221,6 +251,13 @@ const TokenCard: React.FC = () => {
             ) : (
               <ArrowDownWideNarrow size={20} />
             )}
+          </button>
+          <button
+            onClick={handleRefresh}
+            className="refresh p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+            title="Refresh"
+          >
+            <RotateCw size={20} className="refreshIcon" />
           </button>
         </div>
       </div>
@@ -259,18 +296,20 @@ const TokenCard: React.FC = () => {
               )}
             </div>
 
-            <div className="p-4 flex flex-col gap-[8px]">
-              <div className="text-gray-400 mb-2 flex justify-between items-center">
+            <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
+              <div className="text-gray-400 flex justify-between items-center">
                 <div className="flex gap-1 items-center">
-                  <span className="text-gray-100">Created by: </span>
-                  <span className="text-orange-500 text-sm">
+                  <span className="text-gray-100 text-[12px]">
+                    Created by:{" "}
+                  </span>
+                  <span className="text-orange-500 text-[12px]">
                     {token.ownerAddress.slice(0, 3) +
                       "...." +
                       token.ownerAddress.slice(-3)}
                   </span>
                   <div className="cursor-pointer" title="Copy">
                     <Copy
-                      size={16}
+                      size={12}
                       className="cursor-pointer"
                       onClick={(event) => {
                         event.stopPropagation(); // Prevent the outer onClick from firing
@@ -326,6 +365,27 @@ const TokenCard: React.FC = () => {
                 </div>
               </div>
 
+              <div className="flex gap-1 items-center mt-[-6px]">
+                <span className="text-gray-100 text-[12px]">
+                  Contract Address:{" "}
+                </span>
+                <span className="text-orange-500 text-[12px]">
+                  {token.contractAddress.slice(0, 3) +
+                    "...." +
+                    token.contractAddress.slice(-4)}
+                </span>
+                <div className="cursor-pointer" title="Copy">
+                  <Copy
+                    size={12}
+                    className="cursor-pointer"
+                    onClick={(event) => {
+                      event.stopPropagation(); // Prevent the outer onClick from firing
+                      handleCopy(token.contractAddress);
+                    }}
+                  />
+                </div>
+              </div>
+
               <h3 className="text-md font-bold text-white">
                 {token.name}{" "}
                 <span className="text-gray-300 font-bold">
@@ -334,13 +394,16 @@ const TokenCard: React.FC = () => {
               </h3>
 
               <div className="h-16 overflow-hidden">
-                <p className="text-sm text-gray-400 line-clamp-3">
+                <p className="text-sm text-gray-400 line-clamp-3 mt-2">
                   {token.description}
                 </p>
               </div>
 
-              <p className="text-sm font-semibold text-gray-300">
-                Market Cap: <span className="text-[#a682e5] font-medium">${formatNumber(token.marketCap)}</span>
+              <p className="text-sm font-semibold text-gray-300 mt-[13px]">
+                Market Cap:{" "}
+                <span className="text-[#a682e5] font-medium">
+                  ${formatNumber(token.marketCap)}
+                </span>
               </p>
             </div>
           </div>
