@@ -27,3 +27,8 @@
     line-height: 42px;
     margin-right: 20px;
 }
+
+.name_symbol_trending {
+    font-family: PingFang SC;
+    font-weight: 600;
+}

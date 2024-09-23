@@ -2,16 +2,15 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   SearchCode,
   MoveUp,
-  ArrowUp,
   MoveDown,
   Copy,
   Twitter,
   Globe,
   Send,
-  RefreshCw,
   RotateCw,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
@@ -268,13 +267,13 @@ const TokenCard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-[18px]">
-        {tokens.map((token, index) => (
+        {tokens.map((token) => (
           <div
             key={token.id}
             onClick={() => handleCardClick(token)}
             className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
           >
-            <img
+            <Image
               src={token.logoUrl}
               alt={token.name}
               className="w-full h-[240px] rounded-md mb-4"

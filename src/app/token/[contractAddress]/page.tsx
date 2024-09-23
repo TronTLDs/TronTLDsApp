@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowLeft,
   Copy,
@@ -13,7 +14,6 @@ import {
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import "../../css/IndToken.css";
-import { BackTop } from "antd";
 
 interface Token {
   name: string;
@@ -98,7 +98,7 @@ const TokenPage = () => {
       </div>
 
       <div className="bg-[#151527] rounded-lg p-6 flex">
-        <img
+        <Image
           src={token.logoUrl}
           alt={token.name}
           className="w-64 h-64 rounded-lg mr-6"
@@ -114,12 +114,13 @@ const TokenPage = () => {
                 <span
                   className="text-[#c1a0ff] underline font-bold cursor-pointer"
                   title="View in Tronscan"
-                  onClick={() =>
+                  onClick={(event) => {
                     window.open(
                       `https://tronscan.org/#/address/${token.ownerAddress}`,
                       "_blank"
-                    )
-                  }
+                    );
+                    event.stopPropagation();
+                  }}
                 >
                   {truncateAddress(token.ownerAddress)}
                 </span>
