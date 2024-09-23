@@ -2,13 +2,11 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   SearchCode,
   MoveUp,
   MoveDown,
   Copy,
-  Twitter,
   Globe,
   Send,
   RotateCw,
@@ -16,9 +14,9 @@ import {
   ArrowUpNarrowWide,
   X,
 } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
-import CheckboxApp from "./Checkbox";
 import "../css/TokenCard.css";
 
 interface Token {
@@ -97,6 +95,7 @@ const TokenCard: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(page);
     const delayDebounceFn = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
     }, 1000);
@@ -242,7 +241,6 @@ const TokenCard: React.FC = () => {
               </div>
             )}
           </div>
-          <CheckboxApp />
           <button
             onClick={toggleSortDirection}
             className="direction_sort p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
@@ -273,7 +271,7 @@ const TokenCard: React.FC = () => {
             onClick={() => handleCardClick(token)}
             className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
           >
-            <Image
+            <img
               src={token.logoUrl}
               alt={token.name}
               className="w-full h-[240px] rounded-md mb-4"
@@ -334,7 +332,7 @@ const TokenCard: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Twitter size={16} className="hover:scale-125" />
+                        <FaXTwitter size={14} className="hover:scale-125" />
                       </a>
                     </button>
                   )}
@@ -348,7 +346,7 @@ const TokenCard: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Globe size={16} className="hover:scale-125" />
+                        <Globe size={14} className="hover:scale-125" />
                       </a>
                     </button>
                   )}
@@ -362,7 +360,7 @@ const TokenCard: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Send size={16} className="hover:scale-125" />
+                        <Send size={14} className="hover:scale-125" />
                       </a>
                     </button>
                   )}
@@ -390,7 +388,7 @@ const TokenCard: React.FC = () => {
                 </div>
               </div>
 
-              <h3 className="text-md font-bold text-white">
+              <h3 className="text-md font-bold text-white line-clamp-1">
                 {token.name}{" "}
                 <span className="text-gray-300 font-bold">
                   (${token.symbol})

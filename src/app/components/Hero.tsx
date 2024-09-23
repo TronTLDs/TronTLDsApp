@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Twitter, Globe, Send, MoveUp, MoveDown } from "lucide-react";
+import { Globe, Send, MoveUp, MoveDown } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+// import Image from "next/image";
 import "../css/IndToken.css";
 import "../css/Home.css";
 
@@ -115,7 +116,7 @@ const Hero: React.FC = () => {
                 onClick={() => handleCardClick(trendingToken)}
               >
                 <div className="relative">
-                  <Image
+                  <img
                     src={trendingToken.logoUrl}
                     alt={trendingToken.name}
                     className="rounded-lg w-[180px] h-[180px] "
@@ -173,7 +174,7 @@ const Hero: React.FC = () => {
                             className="text-gray-400 hover:text-white"
                             onClick={(event) => event.stopPropagation()} // Prevent parent click
                           >
-                            <Twitter size={16} className="hover:scale-125" />
+                            <FaXTwitter size={16} className="hover:scale-125" />
                           </a>
                         )}
                       {trendingToken.websiteUrl &&
@@ -212,10 +213,10 @@ const Hero: React.FC = () => {
                     {trendingToken.name} (${trendingToken.symbol})
                   </h1>
                   <div className="flex items-center justify-between text-sm text-gray-400 mb-[5px]"></div>
-                  <p className="description_class">
+                  <p className="description_class text-sm text-gray-400 line-clamp-2">
                     {trendingToken.description}
                   </p>
-                  <p className="text-sm font-semibold text-gray-300 mt-[3rem]">
+                  <p className="text-sm font-semibold text-gray-300 mt-[26px]">
                     Market Cap:{" "}
                     <span className="text-[#a682e5] font-medium">
                       ${formatNumber(trendingToken.marketCap)}

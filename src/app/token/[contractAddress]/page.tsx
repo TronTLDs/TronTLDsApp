@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
+import { FaXTwitter } from "react-icons/fa6";
+// import Image from "next/image";
 import {
   ArrowLeft,
   Copy,
   ExternalLink,
-  Twitter,
   Globe,
   Send,
   ShieldAlert,
@@ -98,7 +98,7 @@ const TokenPage = () => {
       </div>
 
       <div className="bg-[#151527] rounded-lg p-6 flex">
-        <Image
+        <img
           src={token.logoUrl}
           alt={token.name}
           className="w-64 h-64 rounded-lg mr-6"
@@ -167,7 +167,7 @@ const TokenPage = () => {
                       rel="noopener noreferrer"
                       className="text-gray-400 hover:text-white"
                     >
-                      <Twitter size={18} />
+                      <FaXTwitter size={18} />
                     </a>
                   )}
                 {token.websiteUrl &&
@@ -238,7 +238,7 @@ const TokenPage = () => {
               </p>
             </div>
             <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">Token Created</h3>
+              <h3 className="text-xs text-gray-400 mb-1">Total Supply</h3>
               <p className="text-lg font-bold">
                 {formatNumber(token.totalSupply)}
               </p>
