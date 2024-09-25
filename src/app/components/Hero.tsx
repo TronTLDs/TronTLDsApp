@@ -96,7 +96,7 @@ const Hero: React.FC = () => {
   return (
     <div className="home-wrapper flex justify-between p-6">
       <div className="text_left_container flex flex-col justify-center gap-3">
-        <h1 className="text-[30px]">MetaTLDs</h1>
+        <h1 className="text-[30px]">JustTLDs</h1>
         <p>Permissionless TLDs and Domains: One Click Away</p>
         <p>
           Create and manage your own TLDs with ease. Stake ETH, deploy with one
@@ -105,7 +105,7 @@ const Hero: React.FC = () => {
         </p>
       </div>
       <div className="trending_data_container flex items-center justify-center">
-        <div className="_badge_container">MetaTLDs: Illuminate the Peak</div>
+        <div className="_badge_container">JustTLDs: illuminate the Peak</div>
 
         <div className="_card_container">
           <div className="_card_data">

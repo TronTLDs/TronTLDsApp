@@ -16,7 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "MetaTLDs",
+  title: "JustTLDs",
   description: "Create Your Own Domains and TLDs at Ease",
 };
 
