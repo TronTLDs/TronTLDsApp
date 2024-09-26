@@ -4,7 +4,7 @@ import logo from "../../../assets/JustTLDsLogo.png";
 
 const Navbar = () => {
   return (
-    <div className="">
+    <div className="mx-[8px]">
       <div className="relative flex items-center justify-between">
         <a href="/" aria-label="JustTLDs" title="JustTLDs">
           <Image alt="logo_img" src={logo} width={200} height={200} />

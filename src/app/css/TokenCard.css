@@ -112,3 +112,8 @@ input {
         transform: rotate(360deg)
     }
 }
+
+.grid_container, .search_container, .text_container {
+    margin: 18px auto;
+    width: 79vw;
+}

@@ -1,9 +1,7 @@
-/* .home-wrapper {
-  background-image: url("../../../assets/img.svg");
-  background-position: calc((100vw - 1400px) / 2 - 50px) -80px;
-  background-size: 745px 539px;
-  background-repeat: no-repeat;
-} */
+.home-wrapper {
+  margin: auto;
+  width: 80vw;
+}
 
 .text_left_container {
   width: 691px;
@@ -63,7 +61,8 @@
 }
 
 ._card_child_container:hover {
-  background: #151527 linear-gradient(153.51deg,#151527 70.81%,rgba(241, 167, 39, 0.8) 113.08%);
+  background: #151527
+    linear-gradient(153.51deg, #151527 70.81%, rgba(241, 167, 39, 0.8) 113.08%);
 }
 
 .right_container_trending {

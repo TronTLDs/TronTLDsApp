@@ -29,5 +29,36 @@
 
 .name_symbol_trending {
     font-family: PingFang SC;
-    font-weight: 600;
+    font-weight: 800;
 }
+
+@keyframes fireAnimation {
+    0%,100% {
+      box-shadow: 0 0 5px 2px rgba(255, 165, 0, 0.3),
+                  0 0 10px 4px rgba(255, 69, 0, 0.2);
+    }
+    25% {
+      box-shadow: 0 0 8px 4px rgba(255, 165, 0, 0.4),
+                  0 0 15px 6px rgba(255, 69, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 12px 6px rgba(255, 165, 0, 0.5),
+                  0 0 20px 8px rgba(255, 69, 0, 0.4);
+    }
+    75% {
+      box-shadow: 0 0 8px 4px rgba(255, 165, 0, 0.4),
+                  0 0 15px 6px rgba(255, 69, 0, 0.3);
+    }
+    90% {
+      box-shadow: 0 0 5px 2px rgba(255, 165, 0, 0.3),
+                  0 0 10px 4px rgba(255, 69, 0, 0.2);
+    }
+  }
+  
+  .fire-effect {
+    animation: fireAnimation 3s infinite;
+  }
+  
+  .fire-effect:hover {
+    animation: fireAnimation 1.5s infinite;
+  }

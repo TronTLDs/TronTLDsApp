@@ -76,6 +76,19 @@ const TokenPage = () => {
     toast("❌ There is no TronLink");
   };
 
+  const urlErrorChecker = (url: string): boolean => {
+    return (
+      url !== "https://error-sunpump.com" &&
+      url !== "https://error-sunpump.com/" &&
+      url !== "error-sunpump.com" &&
+      url !== "error-sunpump.com/" &&
+      url !== "disconnect-sunpump.com" &&
+      url !== "disconnect-sunpump.com/" &&
+      url !== "https://disconnect-sunpump.com" &&
+      url !== "https://disconnect-sunpump.com/"
+    );
+  };
+
   if (!token) return <div>Loading...</div>;
 
   return (
@@ -138,7 +151,7 @@ const TokenPage = () => {
                   <div className="cursor-pointer" title="Copy">
                     <Copy
                       size={16}
-                      className="cursor-pointer hover:text-white text-gray-400"
+                      className="cursor-pointer hover:text-white text-gray-200"
                       onClick={() => {
                         handleCopy(token.contractAddress);
                       }}
@@ -149,7 +162,7 @@ const TokenPage = () => {
                   <div className="cursor-pointer" title="Tron Link">
                     <ExternalLink
                       size={16}
-                      className="cursor-pointer hover:text-white text-gray-400"
+                      className="cursor-pointer hover:text-white text-gray-200"
                       onClick={() => {
                         handleTronLink();
                       }}
@@ -158,42 +171,36 @@ const TokenPage = () => {
                 </button>
               </div>
               <div className="flex items-center space-x-2">
-                {token.twitterUrl &&
-                  token.twitterUrl !== "https://error-sunpump.com" &&
-                  token.twitterUrl !== "https://disconnect-sunpump.com/" && (
-                    <a
-                      href={formatUrl(token.twitterUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      <FaXTwitter size={18} />
-                    </a>
-                  )}
-                {token.websiteUrl &&
-                  token.websiteUrl !== "https://error-sunpump.com" &&
-                  token.websiteUrl !== "https://disconnect-sunpump.com/" && (
-                    <a
-                      href={formatUrl(token.websiteUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      <Globe size={18} />
-                    </a>
-                  )}
-                {token.telegramUrl &&
-                  token.telegramUrl !== "https://error-sunpump.com" &&
-                  token.telegramUrl !== "https://disconnect-sunpump.com/" && (
-                    <a
-                      href={formatUrl(token.telegramUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-white"
-                    >
-                      <Send size={18} />
-                    </a>
-                  )}
+                {token.twitterUrl && urlErrorChecker(token.twitterUrl) && (
+                  <a
+                    href={formatUrl(token.twitterUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-white"
+                  >
+                    <FaXTwitter size={18} />
+                  </a>
+                )}
+                {token.websiteUrl && urlErrorChecker(token.websiteUrl) && (
+                  <a
+                    href={formatUrl(token.websiteUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-white"
+                  >
+                    <Globe size={18} />
+                  </a>
+                )}
+                {token.telegramUrl && urlErrorChecker(token.telegramUrl) && (
+                  <a
+                    href={formatUrl(token.telegramUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-200 hover:text-white"
+                  >
+                    <Send size={18} />
+                  </a>
+                )}
               </div>
             </div>
             <p className="description_class">{token.description}</p>

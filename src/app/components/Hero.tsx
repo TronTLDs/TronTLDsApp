@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Globe, Send, MoveUp, MoveDown } from "lucide-react";
+import { Globe, MoveUp, MoveDown } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
+import { FaTelegramPlane } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 // import Image from "next/image";
 import "../css/IndToken.css";
@@ -85,8 +86,8 @@ const Hero: React.FC = () => {
     router.push(`/token/${token.contractAddress}`);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if(loading) {
+    console.log("loading");
   }
 
   if (error) {
@@ -94,10 +95,9 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <div className="home-wrapper flex justify-between p-6">
+    <div className="home-wrapper flex justify-between">
       <div className="text_left_container flex flex-col justify-center gap-3">
-        <h1 className="text-[30px]">JustTLDs</h1>
-        <p>Permissionless TLDs and Domains: One Click Away</p>
+        <h2 className="text-xl">Permissionless TLDs and Domains: One Click Away</h2>
         <p>
           Create and manage your own TLDs with ease. Stake ETH, deploy with one
           click, and enjoy transparent, decentralized domain registration and
@@ -112,7 +112,7 @@ const Hero: React.FC = () => {
             {/* Display fetched API data here */}
             {trendingToken && (
               <div
-                className="bg-[#151527] rounded-lg _card_child_container"
+                className="bg-[#151527] rounded-lg _card_child_container fire-effect"
                 onClick={() => handleCardClick(trendingToken)}
               >
                 <div className="relative">
@@ -171,7 +171,7 @@ const Hero: React.FC = () => {
                             href={formatUrl(trendingToken.twitterUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-white"
+                            className="text-gray-200 hover:text-white"
                             onClick={(event) => event.stopPropagation()} // Prevent parent click
                           >
                             <FaXTwitter size={16} className="hover:scale-125" />
@@ -186,7 +186,7 @@ const Hero: React.FC = () => {
                             href={formatUrl(trendingToken.websiteUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-white"
+                            className="text-gray-200 hover:text-white"
                             onClick={(event) => event.stopPropagation()} // Prevent parent click
                           >
                             <Globe size={16} className="hover:scale-125" />
@@ -201,16 +201,16 @@ const Hero: React.FC = () => {
                             href={formatUrl(trendingToken.telegramUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-white"
+                            className="text-gray-200 hover:text-white"
                             onClick={(event) => event.stopPropagation()} // Prevent parent click
                           >
-                            <Send size={16} className="hover:scale-125" />
+                            <FaTelegramPlane  size={16} className="hover:scale-125" />
                           </a>
                         )}
                     </div>
                   </div>
                   <h1 className="name_symbol_trending">
-                    {trendingToken.name} (${trendingToken.symbol})
+                    <span className="font-extrabold">{trendingToken.name} (${trendingToken.symbol})</span>
                   </h1>
                   <div className="flex items-center justify-between text-sm text-gray-400 mb-[5px]"></div>
                   <p className="description_class text-sm text-gray-400 line-clamp-2">

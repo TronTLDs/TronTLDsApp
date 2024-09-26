@@ -8,13 +8,13 @@ import {
   MoveDown,
   Copy,
   Globe,
-  Send,
   RotateCw,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
   X,
 } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
+import { FaTelegramPlane } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import "../css/TokenCard.css";
@@ -173,11 +173,17 @@ const TokenCard: React.FC = () => {
     return url.startsWith("http") ? url : `https://${url}`;
   };
 
+  const urlErrorChecker = (url: string): boolean => {
+    return url !== "https://error-sunpump.com" && url !== "https://error-sunpump.com/" && url !== "error-sunpump.com" && url !== "error-sunpump.com/" && url !== "disconnect-sunpump.com" && url !== "disconnect-sunpump.com/" && url !== "https://disconnect-sunpump.com" && url !== "https://disconnect-sunpump.com/";
+  }
+
   return (
-    <div className="p-6">
-      <h1 className="mb-3">Tokens data</h1>
-      <div className="flex justify-between">
-        <div className="search-bar w-[30%] relative">
+    <div className="p-6 min-h-screen">
+      <h2 className="text_container mb-6 text-3xl font-medium text-white">
+        Tokens Explorer
+      </h2>
+      <div className="search_container flex justify-between">
+        <div className="search-bar w-[30%] relative -ml-[7px]">
           <SearchCode className="ml-[20px]" />
           <input
             type="text"
@@ -264,7 +270,7 @@ const TokenCard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-[18px]">
+      <div className="grid_container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {tokens.map((token) => (
           <div
             key={token.id}
@@ -274,7 +280,7 @@ const TokenCard: React.FC = () => {
             <img
               src={token.logoUrl}
               alt={token.name}
-              className="w-full h-[240px] rounded-md mb-4"
+              className="w-full h-[240px] object-cover rounded-md mb-4"
             />
 
             <div
@@ -301,7 +307,7 @@ const TokenCard: React.FC = () => {
             <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
               <div className="text-gray-400 flex justify-between items-center">
                 <div className="flex gap-1 items-center">
-                  <span className="text-gray-100 text-[12px]">
+                  <span className="text-gray-100 text-[12px] line-clamp-1">
                     Created by:{" "}
                   </span>
                   <span className="text-orange-500 text-[12px]">
@@ -312,7 +318,7 @@ const TokenCard: React.FC = () => {
                   <div className="cursor-pointer" title="Copy">
                     <Copy
                       size={12}
-                      className="cursor-pointer hover:text-white text-gray-400 hover:scale-125"
+                      className="cursor-pointer text-white hover:scale-125"
                       onClick={(event) => {
                         event.stopPropagation(); // Prevent the outer onClick from firing
                         handleCopy(token.ownerAddress);
@@ -322,9 +328,9 @@ const TokenCard: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {(token.twitterUrl && token.twitterUrl !== "https://error-sunpump.com" && token.twitterUrl !== "https://disconnect-sunpump.com/") && (
+                  {(token.twitterUrl && urlErrorChecker(token.twitterUrl)) && (
                     <button
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-200 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
@@ -336,9 +342,9 @@ const TokenCard: React.FC = () => {
                       </a>
                     </button>
                   )}
-                  {(token.websiteUrl && token.websiteUrl !== "https://error-sunpump.com" && token.websiteUrl !== "https://disconnect-sunpump.com/") && (
+                  {(token.websiteUrl && urlErrorChecker(token.websiteUrl)) && (
                     <button
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-200 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
@@ -350,9 +356,9 @@ const TokenCard: React.FC = () => {
                       </a>
                     </button>
                   )}
-                  {(token.telegramUrl && token.telegramUrl !== "https://error-sunpump.com" && token.telegramUrl !== "https://disconnect-sunpump.com/") && (
+                  {(token.telegramUrl && urlErrorChecker(token.telegramUrl)) && (
                     <button
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-200 hover:text-white"
                       onClick={(event) => event.stopPropagation()} // Prevent parent click
                     >
                       <a
@@ -360,7 +366,7 @@ const TokenCard: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Send size={14} className="hover:scale-125" />
+                        <FaTelegramPlane size={14} className="hover:scale-125" />
                       </a>
                     </button>
                   )}
@@ -379,7 +385,7 @@ const TokenCard: React.FC = () => {
                 <div className="cursor-pointer" title="Copy">
                   <Copy
                     size={12}
-                    className="cursor-pointer hover:text-white text-gray-400 hover:scale-125"
+                    className="cursor-pointer text-white hover:scale-125"
                     onClick={(event) => {
                       event.stopPropagation(); // Prevent the outer onClick from firing
                       handleCopy(token.contractAddress);
