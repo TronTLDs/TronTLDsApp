@@ -310,7 +310,7 @@ const TokenCard: React.FC = () => {
                   <span className="text-gray-100 text-[12px] line-clamp-1">
                     Created by:{" "}
                   </span>
-                  <span className="text-orange-500 text-[12px]">
+                  <span className="text-[#75ec2b] text-[12px]">
                     {token.ownerAddress.slice(0, 3) +
                       "...." +
                       token.ownerAddress.slice(-3)}
@@ -318,7 +318,7 @@ const TokenCard: React.FC = () => {
                   <div className="cursor-pointer" title="Copy">
                     <Copy
                       size={12}
-                      className="cursor-pointer text-white hover:scale-125"
+                      className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
                       onClick={(event) => {
                         event.stopPropagation(); // Prevent the outer onClick from firing
                         handleCopy(token.ownerAddress);
@@ -377,7 +377,7 @@ const TokenCard: React.FC = () => {
                 <span className="text-gray-100 text-[12px]">
                   Contract Address:{" "}
                 </span>
-                <span className="text-orange-500 text-[12px]">
+                <span className="text-[#75ec2b] text-[12px]">
                   {token.contractAddress.slice(0, 3) +
                     "...." +
                     token.contractAddress.slice(-4)}
@@ -385,7 +385,7 @@ const TokenCard: React.FC = () => {
                 <div className="cursor-pointer" title="Copy">
                   <Copy
                     size={12}
-                    className="cursor-pointer text-white hover:scale-125"
+                    className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
                     onClick={(event) => {
                       event.stopPropagation(); // Prevent the outer onClick from firing
                       handleCopy(token.contractAddress);
@@ -409,7 +409,7 @@ const TokenCard: React.FC = () => {
 
               <p className="text-sm font-semibold text-gray-300 mt-[13px]">
                 Market Cap:{" "}
-                <span className="text-[#a682e5] font-medium">
+                <span className="text-[#FCFF72] font-medium">
                   ${formatNumber(token.marketCap)}
                 </span>
               </p>

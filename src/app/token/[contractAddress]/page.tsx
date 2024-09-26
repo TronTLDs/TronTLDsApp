@@ -92,7 +92,7 @@ const TokenPage = () => {
   if (!token) return <div>Loading...</div>;
 
   return (
-    <div className="bg-[#090920] text-white min-h-screen p-[2rem] m-[2rem]">
+    <div className="bg-[#090920] text-white h-[535px] p-[2rem] bg_ind_token">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => router.push("/")}

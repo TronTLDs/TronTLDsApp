@@ -97,6 +97,7 @@ const Hero: React.FC = () => {
   return (
     <div className="home-wrapper flex justify-between">
       <div className="text_left_container flex flex-col justify-center gap-3">
+        <h1 className="font-medium text-5xl mb-[10px]">JustTLDS</h1>
         <h2 className="text-xl">Permissionless TLDs and Domains: One Click Away</h2>
         <p>
           Create and manage your own TLDs with ease. Stake ETH, deploy with one
@@ -148,7 +149,7 @@ const Hero: React.FC = () => {
                     <p className="text-sm text-gray-400">
                       <span className="font-medium">Created by:</span>{" "}
                       <span
-                        className="text-[#c1a0ff] underline font-medium cursor-pointer"
+                        className="text-[#75ec2b] underline font-medium cursor-pointer"
                         title="View in Tronscan"
                         onClick={(event) => {
                           window.open(
@@ -218,7 +219,7 @@ const Hero: React.FC = () => {
                   </p>
                   <p className="text-sm font-semibold text-gray-300 mt-[26px]">
                     Market Cap:{" "}
-                    <span className="text-[#a682e5] font-medium">
+                    <span className="text-[#FCFF72] font-medium">
                       ${formatNumber(trendingToken.marketCap)}
                     </span>
                   </p>
