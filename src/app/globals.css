@@ -51,6 +51,20 @@ body::before {
   z-index: 0;
 }
 
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #469913;
+  border-radius: 10px;
+}
+
 .content {
   position: relative;
   z-index: 1;

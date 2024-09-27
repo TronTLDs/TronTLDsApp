@@ -3,7 +3,7 @@
   align-items: center;
   background-color: #111321;
   border-radius: 10px;
-  border: 1px solid #43444d;
+  border: 2px solid #469913;
   width: 510px;
   height: 42px;
 }
@@ -19,7 +19,7 @@
 
 .search-bar:hover {
   background: #1d1f2c;
-  border: 1px solid #a3a3a3;
+  border: 1px solid #74ff1f;
 }
 
 .search-bar .search-icon {

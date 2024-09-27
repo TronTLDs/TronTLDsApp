@@ -92,7 +92,7 @@ const TokenPage = () => {
   if (!token) return <div>Loading...</div>;
 
   return (
-    <div className="bg-[#090920] text-white h-[535px] p-[2rem] bg_ind_token">
+    <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => router.push("/")}
@@ -101,7 +101,7 @@ const TokenPage = () => {
           <ArrowLeft size={22} className="mr-2" />
           Back
         </button>
-        <p className="text-sm text-gray-500 flex gap-1 items-center">
+        <p className="text-sm text-white flex gap-1 items-center">
           <ShieldAlert size={16} />
           <span className="font-medium">
             Disclaimer: Tokens listed are not affiliated with the platform.
@@ -110,7 +110,7 @@ const TokenPage = () => {
         </p>
       </div>
 
-      <div className="bg-[#151527] rounded-lg p-6 flex">
+      <div className="bg-[#010f02] rounded-lg p-6 flex">
         <img
           src={token.logoUrl}
           alt={token.name}
@@ -122,10 +122,10 @@ const TokenPage = () => {
               <h1 className="name_symbol">
                 {token.name} (${token.symbol})
               </h1>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-200">
                 <span className="font-medium">Created by:</span>{" "}
                 <span
-                  className="text-[#c1a0ff] underline font-bold cursor-pointer"
+                  className="text-[#75ec2b] underline font-medium cursor-pointer"
                   title="View in Tronscan"
                   onClick={(event) => {
                     window.open(
@@ -139,7 +139,7 @@ const TokenPage = () => {
                 </span>
               </p>
             </div>
-            <div className="flex items-center justify-between text-sm text-gray-400 mb-[1rem]">
+            <div className="flex items-center justify-between text-sm text-gray-300 mb-[1rem]">
               <div className="flex items-center">
                 <p className="mr-2">
                   Contract:{" "}
@@ -147,22 +147,22 @@ const TokenPage = () => {
                     {token.contractAddress}
                   </span>
                 </p>
-                <button className="text-gray-400 hover:text-white mr-2">
+                <button className="text-gray-300 hover:text-white mr-2">
                   <div className="cursor-pointer" title="Copy">
                     <Copy
                       size={16}
-                      className="cursor-pointer hover:text-white text-gray-200"
+                      className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
                       onClick={() => {
                         handleCopy(token.contractAddress);
                       }}
                     />
                   </div>
                 </button>
-                <button className="text-gray-400 hover:text-white">
+                <button className="text-gray-300 hover:text-white">
                   <div className="cursor-pointer" title="Tron Link">
                     <ExternalLink
                       size={16}
-                      className="cursor-pointer hover:text-white text-gray-200"
+                      className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
                       onClick={() => {
                         handleTronLink();
                       }}
@@ -176,9 +176,9 @@ const TokenPage = () => {
                     href={formatUrl(token.twitterUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-200 hover:text-white"
+                    className="text-gray-300 hover:text-white hover:scale-110"
                   >
-                    <FaXTwitter size={18} />
+                    <FaXTwitter size={16} />
                   </a>
                 )}
                 {token.websiteUrl && urlErrorChecker(token.websiteUrl) && (
@@ -186,9 +186,9 @@ const TokenPage = () => {
                     href={formatUrl(token.websiteUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-200 hover:text-white"
+                    className="text-gray-300 hover:text-white hover:scale-110"
                   >
-                    <Globe size={18} />
+                    <Globe size={16} />
                   </a>
                 )}
                 {token.telegramUrl && urlErrorChecker(token.telegramUrl) && (
@@ -196,18 +196,18 @@ const TokenPage = () => {
                     href={formatUrl(token.telegramUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-200 hover:text-white"
+                    className="text-gray-300 hover:text-white hover:scale-110"
                   >
-                    <Send size={18} />
+                    <Send size={16} />
                   </a>
                 )}
               </div>
             </div>
-            <p className="description_class">{token.description}</p>
+            <p className="description_class text-gray-200">{token.description}</p>
           </div>
           <div className="grid grid-cols-5 gap-4">
-            <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">
+            <div className="bg-[#0e1443] p-4 rounded">
+              <h3 className="text-xs text-gray-300 mb-1">
                 Price{" "}
                 <span
                   className={
@@ -222,31 +222,31 @@ const TokenPage = () => {
                   {token.priceChange24Hr.toFixed(2)}%
                 </span>
               </h3>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-semibold">
                 {token.priceInTrx.toFixed(6)} TRX
               </p>
             </div>
-            <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">Marketcap</h3>
-              <p className="text-lg font-bold">
+            <div className="bg-[#0e1443] p-4 rounded">
+              <h3 className="text-xs text-gray-300 mb-1">Marketcap</h3>
+              <p className="text-lg font-semibold">
                 ${formatNumber(token.marketCap)}
               </p>
             </div>
-            <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">Virtual Liquidity</h3>
-              <p className="text-lg font-bold">
+            <div className="bg-[#0e1443] p-4 rounded">
+              <h3 className="text-xs text-gray-300 mb-1">Virtual Liquidity</h3>
+              <p className="text-lg font-semibold">
                 ${formatNumber(token.virtualLiquidity)}
               </p>
             </div>
-            <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">24H Volume</h3>
-              <p className="text-lg font-bold">
+            <div className="bg-[#0e1443] p-4 rounded">
+              <h3 className="text-xs text-gray-300 mb-1">24H Volume</h3>
+              <p className="text-lg font-semibold">
                 {formatNumber(token.volume24Hr)} TRX
               </p>
             </div>
-            <div className="bg-[#202038] p-4 rounded">
-              <h3 className="text-xs text-gray-400 mb-1">Total Supply</h3>
-              <p className="text-lg font-bold">
+            <div className="bg-[#0e1443] p-4 rounded">
+              <h3 className="text-xs text-gray-300 mb-1">Total Supply</h3>
+              <p className="text-lg font-semibold">
                 {formatNumber(token.totalSupply)}
               </p>
             </div>
@@ -259,10 +259,10 @@ const TokenPage = () => {
           style: {
             border: "1px solid transparent",
             borderImage:
-              "linear-gradient(13.51deg,#151527 70.81%,rgba(96,1,255,.5) 103.08%)",
+              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
             borderImageSlice: 1,
             background:
-              "linear-gradient(153.51deg,#151527 70.81%,rgba(96,1,255,.5) 103.08%)",
+              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
             color: "white",
           },
         }}

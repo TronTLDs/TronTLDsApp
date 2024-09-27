@@ -52,37 +52,45 @@ const TokenCard: React.FC = () => {
     router.push(`/token/${token.contractAddress}`);
   };
 
-  const fetchTokens = useCallback(async (
-    page: number,
-    sort = sortOption,
-    query = debouncedSearchQuery
-  ) => {
-    try {
-      setLoading(true);
+  // useEffect(() => {
+  //   // Set a timer to hide the skeleton loader after 10 seconds
+  //   const timer = setTimeout(() => {
+  //     setLoading(false); // Hide the loader after 10 seconds
+  //   }, 1000000000); // 10 seconds = 10000 milliseconds
 
-      const encodedQuery = query.replace(/\s/g, "+");
-      const apiUrl = encodedQuery
-        ? `/api/proxy?query=${encodedQuery}&page=${page}&sort=${sort}`
-        : `/api/proxy?page=${page}&sort=${sort}`;
+  //   return () => clearTimeout(timer); // Clear the timer when the component unmounts
+  // }, []);
 
-      const res = await fetch(apiUrl);
-      const result = await res.json();
-      const newTokens = result.data.tokens;
+  const fetchTokens = useCallback(
+    async (page: number, sort = sortOption, query = debouncedSearchQuery) => {
+      try {
+        setLoading(true);
 
-      if (newTokens.length === 0) {
-        setHasMore(false);
-      } else {
-        setTokens((prevTokens) => {
-          return page === 1 ? newTokens : [...prevTokens, ...newTokens];
-        });
+        const encodedQuery = query.replace(/\s/g, "+");
+        const apiUrl = encodedQuery
+          ? `/api/proxy?query=${encodedQuery}&page=${page}&sort=${sort}`
+          : `/api/proxy?page=${page}&sort=${sort}`;
+
+        const res = await fetch(apiUrl);
+        const result = await res.json();
+        const newTokens = result.data.tokens;
+
+        if (newTokens.length === 0) {
+          setHasMore(false);
+        } else {
+          setTokens((prevTokens) => {
+            return page === 1 ? newTokens : [...prevTokens, ...newTokens];
+          });
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching tokens:", error);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching tokens:", error);
-      setLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -174,8 +182,48 @@ const TokenCard: React.FC = () => {
   };
 
   const urlErrorChecker = (url: string): boolean => {
-    return url !== "https://error-sunpump.com" && url !== "https://error-sunpump.com/" && url !== "error-sunpump.com" && url !== "error-sunpump.com/" && url !== "disconnect-sunpump.com" && url !== "disconnect-sunpump.com/" && url !== "https://disconnect-sunpump.com" && url !== "https://disconnect-sunpump.com/";
-  }
+    return (
+      url !== "https://error-sunpump.com" &&
+      url !== "https://error-sunpump.com/" &&
+      url !== "error-sunpump.com" &&
+      url !== "error-sunpump.com/" &&
+      url !== "disconnect-sunpump.com" &&
+      url !== "disconnect-sunpump.com/" &&
+      url !== "https://disconnect-sunpump.com" &&
+      url !== "https://disconnect-sunpump.com/"
+    );
+  };
+
+  const SkeletonLoader = () => (
+    <div className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 relative h-[468px]">
+      <div className="w-full h-[240px] bg-gray-300 rounded-t-lg mb-4 animate-pulse"></div>
+      <div className="_price_tag_common _price_tag bg-gray-300 h-6 w-20 absolute top-3 right-3 rounded-full animate-pulse"></div>
+      <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-1 items-center">
+            <div className="h-3 bg-gray-300 w-16 rounded animate-pulse"></div>
+            <div className="h-3 bg-gray-300 w-12 rounded animate-pulse"></div>
+            <div className="h-3 w-3 bg-gray-300 rounded-[3px] animate-pulse"></div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-5 w-5 bg-gray-300 rounded-full animate-pulse"></div>
+            <div className="h-5 w-5 bg-gray-300 rounded-full animate-pulse"></div>
+            <div className="h-5 w-5 bg-gray-300 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        <div className="flex gap-1 items-center mt-[-6px]">
+          <div className="h-3 bg-gray-300 w-24 rounded animate-pulse"></div>
+          <div className="h-3 bg-gray-300 w-16 rounded animate-pulse"></div>
+          <div className="h-3 w-3 bg-gray-300 rounded-[3px] animate-pulse"></div>
+        </div>
+        <div className="h-5 bg-gray-300 w-3/4 rounded mt-2 animate-pulse"></div>
+        <div className="h-12 mt-5">
+          <div className="h-12 bg-gray-300 w-full rounded mb-1 animate-pulse"></div>
+        </div>
+        <div className="h-4 bg-gray-300 w-2/3 rounded mt-[8px] animate-pulse"></div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="p-6 min-h-screen">
@@ -198,7 +246,10 @@ const TokenCard: React.FC = () => {
               className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
               title="Clear search"
             >
-              <X size={17} className="text-gray-400 font-bold hover:text-white hover:scale-125" />
+              <X
+                size={17}
+                className="text-gray-200 font-bold hover:text-[#74ff1f] hover:scale-125"
+              />
             </button>
           )}
         </div>
@@ -271,158 +322,171 @@ const TokenCard: React.FC = () => {
       </div>
 
       <div className="grid_container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {tokens.map((token) => (
-          <div
-            key={token.id}
-            onClick={() => handleCardClick(token)}
-            className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
-          >
-            <img
-              src={token.logoUrl}
-              alt={token.name}
-              className="w-full h-[240px] object-cover rounded-md mb-4"
-            />
+        {loading
+          ? Array(24)
+              .fill(null)
+              .map((_, index) => <SkeletonLoader key={index} />)
+          : tokens.map((token) => (
+              <div
+                key={token.id}
+                onClick={() => handleCardClick(token)}
+                className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
+              >
+                <img
+                  src={token.logoUrl}
+                  alt={token.name}
+                  className="w-full h-[240px] object-cover rounded-md mb-4"
+                />
 
-            <div
-              className={`_price_tag_common ${
-                token.priceChange24Hr > 0
-                  ? "_price_tag"
-                  : `${
-                      token.priceChange24Hr === 0
-                        ? "_price_tag2"
-                        : "_price_tag3"
-                    }`
-              }`}
-            >
-              {token.priceChange24Hr}%{" "}
-              {token.priceChange24Hr > 0 ? (
-                <MoveUp size={15} strokeWidth={3} />
-              ) : token.priceChange24Hr < 0 ? (
-                <MoveDown size={15} strokeWidth={3} />
-              ) : (
-                <MoveUp size={15} strokeWidth={3} />
-              )}
-            </div>
+                <div
+                  className={`_price_tag_common ${
+                    token.priceChange24Hr > 0
+                      ? "_price_tag"
+                      : `${
+                          token.priceChange24Hr === 0
+                            ? "_price_tag2"
+                            : "_price_tag3"
+                        }`
+                  }`}
+                >
+                  {token.priceChange24Hr}%{" "}
+                  {token.priceChange24Hr > 0 ? (
+                    <MoveUp size={15} strokeWidth={3} />
+                  ) : token.priceChange24Hr < 0 ? (
+                    <MoveDown size={15} strokeWidth={3} />
+                  ) : (
+                    <MoveUp size={15} strokeWidth={3} />
+                  )}
+                </div>
 
-            <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
-              <div className="text-gray-400 flex justify-between items-center">
-                <div className="flex gap-1 items-center">
-                  <span className="text-gray-100 text-[12px] line-clamp-1">
-                    Created by:{" "}
-                  </span>
-                  <span className="text-[#75ec2b] text-[12px]">
-                    {token.ownerAddress.slice(0, 3) +
-                      "...." +
-                      token.ownerAddress.slice(-3)}
-                  </span>
-                  <div className="cursor-pointer" title="Copy">
-                    <Copy
-                      size={12}
-                      className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
-                      onClick={(event) => {
-                        event.stopPropagation(); // Prevent the outer onClick from firing
-                        handleCopy(token.ownerAddress);
-                      }}
-                    />
+                <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
+                  <div className="text-gray-400 flex justify-between items-center">
+                    <div className="flex gap-1 items-center">
+                      <span className="text-gray-100 text-[12px] line-clamp-1">
+                        Created by:{" "}
+                      </span>
+                      <span className="text-[#75ec2b] text-[12px]">
+                        {token.ownerAddress.slice(0, 3) +
+                          "...." +
+                          token.ownerAddress.slice(-3)}
+                      </span>
+                      <div className="cursor-pointer" title="Copy">
+                        <Copy
+                          size={12}
+                          className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
+                          onClick={(event) => {
+                            event.stopPropagation(); // Prevent the outer onClick from firing
+                            handleCopy(token.ownerAddress);
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {token.twitterUrl &&
+                        urlErrorChecker(token.twitterUrl) && (
+                          <button
+                            className="text-gray-200 hover:text-white"
+                            onClick={(event) => event.stopPropagation()} // Prevent parent click
+                          >
+                            <a
+                              href={formatUrl(token.twitterUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FaXTwitter
+                                size={14}
+                                className="hover:scale-125"
+                              />
+                            </a>
+                          </button>
+                        )}
+                      {token.websiteUrl &&
+                        urlErrorChecker(token.websiteUrl) && (
+                          <button
+                            className="text-gray-200 hover:text-white"
+                            onClick={(event) => event.stopPropagation()} // Prevent parent click
+                          >
+                            <a
+                              href={formatUrl(token.websiteUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Globe size={14} className="hover:scale-125" />
+                            </a>
+                          </button>
+                        )}
+                      {token.telegramUrl &&
+                        urlErrorChecker(token.telegramUrl) && (
+                          <button
+                            className="text-gray-200 hover:text-white"
+                            onClick={(event) => event.stopPropagation()} // Prevent parent click
+                          >
+                            <a
+                              href={formatUrl(token.telegramUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FaTelegramPlane
+                                size={14}
+                                className="hover:scale-125"
+                              />
+                            </a>
+                          </button>
+                        )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  {(token.twitterUrl && urlErrorChecker(token.twitterUrl)) && (
-                    <button
-                      className="text-gray-200 hover:text-white"
-                      onClick={(event) => event.stopPropagation()} // Prevent parent click
-                    >
-                      <a
-                        href={formatUrl(token.twitterUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaXTwitter size={14} className="hover:scale-125" />
-                      </a>
-                    </button>
-                  )}
-                  {(token.websiteUrl && urlErrorChecker(token.websiteUrl)) && (
-                    <button
-                      className="text-gray-200 hover:text-white"
-                      onClick={(event) => event.stopPropagation()} // Prevent parent click
-                    >
-                      <a
-                        href={formatUrl(token.websiteUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Globe size={14} className="hover:scale-125" />
-                      </a>
-                    </button>
-                  )}
-                  {(token.telegramUrl && urlErrorChecker(token.telegramUrl)) && (
-                    <button
-                      className="text-gray-200 hover:text-white"
-                      onClick={(event) => event.stopPropagation()} // Prevent parent click
-                    >
-                      <a
-                        href={formatUrl(token.telegramUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FaTelegramPlane size={14} className="hover:scale-125" />
-                      </a>
-                    </button>
-                  )}
+                  <div className="flex gap-1 items-center mt-[-6px]">
+                    <span className="text-gray-100 text-[12px]">
+                      Contract Address:{" "}
+                    </span>
+                    <span className="text-[#75ec2b] text-[12px]">
+                      {token.contractAddress.slice(0, 3) +
+                        "...." +
+                        token.contractAddress.slice(-4)}
+                    </span>
+                    <div className="cursor-pointer" title="Copy">
+                      <Copy
+                        size={12}
+                        className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
+                        onClick={(event) => {
+                          event.stopPropagation(); // Prevent the outer onClick from firing
+                          handleCopy(token.contractAddress);
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <h3 className="text-md font-semibold text-white line-clamp-1">
+                    {token.name}{" "}
+                    <span className="text-gray-100 font-semibold">
+                      (${token.symbol})
+                    </span>
+                  </h3>
+
+                  <div className="h-16 overflow-hidden">
+                    <p className="text-sm text-gray-400 line-clamp-3 mt-2">
+                      {token.description}
+                    </p>
+                  </div>
+
+                  <p className="text-sm font-semibold text-gray-300 mt-[13px]">
+                    Market Cap:{" "}
+                    <span className="text-[#FCFF72] font-medium">
+                      ${formatNumber(token.marketCap)}
+                    </span>
+                  </p>
                 </div>
               </div>
-
-              <div className="flex gap-1 items-center mt-[-6px]">
-                <span className="text-gray-100 text-[12px]">
-                  Contract Address:{" "}
-                </span>
-                <span className="text-[#75ec2b] text-[12px]">
-                  {token.contractAddress.slice(0, 3) +
-                    "...." +
-                    token.contractAddress.slice(-4)}
-                </span>
-                <div className="cursor-pointer" title="Copy">
-                  <Copy
-                    size={12}
-                    className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
-                    onClick={(event) => {
-                      event.stopPropagation(); // Prevent the outer onClick from firing
-                      handleCopy(token.contractAddress);
-                    }}
-                  />
-                </div>
-              </div>
-
-              <h3 className="text-md font-bold text-white line-clamp-1">
-                {token.name}{" "}
-                <span className="text-gray-300 font-bold">
-                  (${token.symbol})
-                </span>
-              </h3>
-
-              <div className="h-16 overflow-hidden">
-                <p className="text-sm text-gray-400 line-clamp-3 mt-2">
-                  {token.description}
-                </p>
-              </div>
-
-              <p className="text-sm font-semibold text-gray-300 mt-[13px]">
-                Market Cap:{" "}
-                <span className="text-[#FCFF72] font-medium">
-                  ${formatNumber(token.marketCap)}
-                </span>
-              </p>
-            </div>
-          </div>
-        ))}
+            ))}
       </div>
 
       <div className="flex justify-center mt-8">
         {hasMore && (
           <button
             onClick={loadMoreTokens}
-            className="flex items-center justify-center p-3 px-10 bg-blue-400 rounded-lg cursor-pointer"
+            className="flex items-center p-3 px-10 text-gray-900 font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
           >
             {loading ? "Loading..." : "Load More"}
           </button>
@@ -434,10 +498,10 @@ const TokenCard: React.FC = () => {
           style: {
             border: "1px solid transparent",
             borderImage:
-              "linear-gradient(13.51deg,#151527 70.81%,rgba(96,1,255,.5) 103.08%)",
+              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
             borderImageSlice: 1,
             background:
-              "linear-gradient(153.51deg,#151527 70.81%,rgba(96,1,255,.5) 103.08%)",
+              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
             color: "white",
           },
         }}
