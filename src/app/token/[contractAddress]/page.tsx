@@ -89,6 +89,10 @@ const TokenPage = () => {
     );
   };
 
+  const handlePurchaseDomain = () => {
+    router.push("/purchaseDomain");
+  }
+
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
       <div className="flex justify-between items-center mb-4">
@@ -149,7 +153,7 @@ const TokenPage = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-[#010f02] rounded-lg p-6 flex">
+        <div className="bg-[#151b15] rounded-lg p-6 flex">
           <img
             src={token.logoUrl}
             alt={token.name}
@@ -247,7 +251,7 @@ const TokenPage = () => {
               </p>
             </div>
             <div className="grid grid-cols-5 gap-4">
-              <div className="bg-[#0e1443] p-4 rounded">
+              <div className="bg-[#262b24] p-4 rounded">
                 <h3 className="text-xs text-gray-300 mb-1">
                   Price{" "}
                   <span
@@ -267,13 +271,13 @@ const TokenPage = () => {
                   {token.priceInTrx.toFixed(6)} TRX
                 </p>
               </div>
-              <div className="bg-[#0e1443] p-4 rounded">
+              <div className="bg-[#262b24] p-4 rounded">
                 <h3 className="text-xs text-gray-300 mb-1">Marketcap</h3>
                 <p className="text-lg font-semibold">
                   ${formatNumber(token.marketCap)}
                 </p>
               </div>
-              <div className="bg-[#0e1443] p-4 rounded">
+              <div className="bg-[#262b24] p-4 rounded">
                 <h3 className="text-xs text-gray-300 mb-1">
                   Virtual Liquidity
                 </h3>
@@ -281,13 +285,13 @@ const TokenPage = () => {
                   ${formatNumber(token.virtualLiquidity)}
                 </p>
               </div>
-              <div className="bg-[#0e1443] p-4 rounded">
+              <div className="bg-[#262b24] p-4 rounded">
                 <h3 className="text-xs text-gray-300 mb-1">24H Volume</h3>
                 <p className="text-lg font-semibold">
                   {formatNumber(token.volume24Hr)} TRX
                 </p>
               </div>
-              <div className="bg-[#0e1443] p-4 rounded">
+              <div className="bg-[#262b24] p-4 rounded">
                 <h3 className="text-xs text-gray-300 mb-1">Total Supply</h3>
                 <p className="text-lg font-semibold">
                   {formatNumber(token.totalSupply)}
@@ -297,6 +301,13 @@ const TokenPage = () => {
           </div>
         </div>
       )}
+
+      <div className="flex items-center justify-center mt-[2rem]">
+        <button className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
+        onClick={handlePurchaseDomain}>
+          Purchase Domain
+        </button>
+      </div>
 
       <Toaster
         reverseOrder={true}

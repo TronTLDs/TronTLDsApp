@@ -1,6 +1,7 @@
 .bg_ind_token {
   width: 80vw;
   margin: auto;
+  z-index: 100;
 }
 
 .description_class {

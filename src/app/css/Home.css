@@ -37,6 +37,8 @@
 }
 
 ._card_container {
+  display: flex;
+  align-items: center;
   padding: 2px;
   background: linear-gradient(
     89.79deg,

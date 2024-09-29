@@ -23,7 +23,7 @@ html {
 html, body {
   color: var(--foreground);
   font-family: "Fredoka", sans-serif;
-  min-height: 100%;
+  height: fit-content;
 }
 
 body {
@@ -34,19 +34,21 @@ body {
 
 body::before {
   content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: absolute;
+  top: -100vh; /* Adjust this value to move the circle up or down */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw; /* Use viewport width for a perfect circle */
+  height: 100vw; /* Match height to width for a circle */
   background: radial-gradient(
-    circle at top center, /* Positioned the gradient at the top center */
+    circle,
     rgba(120, 228, 120, 0.5) 0%,
-    rgba(120, 255, 120, 0.1) 40%,
-    rgba(120, 255, 120, 0.02) 70%,
-    rgba(120, 255, 120, 0) 100%
+    rgba(120, 255, 120, 0.3) 25%,
+    rgba(120, 255, 120, 0.02) 50%,
+    rgba(120, 255, 120, 0.01) 70%
   );
-  filter: blur(10px);
+  filter: blur(50px); /* Increased blur for a softer edge */
+  border-radius: 50%; /* This creates the circular shape */
   pointer-events: none;
   z-index: 0;
 }
