@@ -89,8 +89,6 @@ const TokenPage = () => {
     );
   };
 
-  if (!token) return <div>Loading...</div>;
-
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
       <div className="flex justify-between items-center mb-4">
@@ -110,149 +108,196 @@ const TokenPage = () => {
         </p>
       </div>
 
-      <div className="bg-[#010f02] rounded-lg p-6 flex">
-        <img
-          src={token.logoUrl}
-          alt={token.name}
-          className="w-64 h-64 rounded-lg mr-6"
-        />
-        <div className="flex-1 flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between mb-[12px] items-center">
-              <h1 className="name_symbol">
-                {token.name} (${token.symbol})
-              </h1>
-              <p className="text-sm text-gray-200">
-                <span className="font-medium">Created by:</span>{" "}
-                <span
-                  className="text-[#75ec2b] underline font-medium cursor-pointer"
-                  title="View in Tronscan"
-                  onClick={(event) => {
-                    window.open(
-                      `https://tronscan.org/#/address/${token.ownerAddress}`,
-                      "_blank"
-                    );
-                    event.stopPropagation();
-                  }}
-                >
-                  {truncateAddress(token.ownerAddress)}
-                </span>
-              </p>
-            </div>
-            <div className="flex items-center justify-between text-sm text-gray-300 mb-[1rem]">
-              <div className="flex items-center">
-                <p className="mr-2">
-                  Contract:{" "}
-                  <span className="contract text-white">
-                    {token.contractAddress}
-                  </span>
-                </p>
-                <button className="text-gray-300 hover:text-white mr-2">
-                  <div className="cursor-pointer" title="Copy">
-                    <Copy
-                      size={16}
-                      className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
-                      onClick={() => {
-                        handleCopy(token.contractAddress);
-                      }}
-                    />
-                  </div>
-                </button>
-                <button className="text-gray-300 hover:text-white">
-                  <div className="cursor-pointer" title="Tron Link">
-                    <ExternalLink
-                      size={16}
-                      className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
-                      onClick={() => {
-                        handleTronLink();
-                      }}
-                    />
-                  </div>
-                </button>
+      {!token ? (
+        <div className="bg-[#010f02] rounded-lg p-6 flex">
+          <div className="w-64 h-64 rounded-lg mr-6 bg-gray-400 animate-pulse"></div>
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between mb-[20px] items-center">
+                <div className="w-64 h-7 bg-gray-400 rounded animate-pulse mt-2"></div>
+                <div className="w-36 h-4 bg-gray-400 rounded animate-pulse mt-2"></div>
               </div>
-              <div className="flex items-center space-x-2">
-                {token.twitterUrl && urlErrorChecker(token.twitterUrl) && (
-                  <a
-                    href={formatUrl(token.twitterUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-white hover:scale-110"
-                  >
-                    <FaXTwitter size={16} />
-                  </a>
-                )}
-                {token.websiteUrl && urlErrorChecker(token.websiteUrl) && (
-                  <a
-                    href={formatUrl(token.websiteUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-white hover:scale-110"
-                  >
-                    <Globe size={16} />
-                  </a>
-                )}
-                {token.telegramUrl && urlErrorChecker(token.telegramUrl) && (
-                  <a
-                    href={formatUrl(token.telegramUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-300 hover:text-white hover:scale-110"
-                  >
-                    <Send size={16} />
-                  </a>
-                )}
+              <div className="flex items-center gap-2 text-sm text-gray-300 mb-[20px]">
+                <div className="w-96 h-4 bg-gray-400 rounded animate-pulse"></div>
+                <div className="w-4 h-4 bg-gray-400 rounded-[4px] animate-pulse"></div>
+                <div className="w-4 h-4 bg-gray-400 rounded-[4px] animate-pulse"></div>
               </div>
+              <div className="h-12 bg-gray-400 rounded animate-pulse"></div>
             </div>
-            <p className="description_class text-gray-200">{token.description}</p>
-          </div>
-          <div className="grid grid-cols-5 gap-4">
-            <div className="bg-[#0e1443] p-4 rounded">
-              <h3 className="text-xs text-gray-300 mb-1">
-                Price{" "}
-                <span
-                  className={
-                    token.priceChange24Hr > 0
-                      ? "text-green-400"
-                      : token.priceChange24Hr === 0
-                      ? "text-cyan-300"
-                      : "text-red-400"
-                  }
-                >
-                  {token.priceChange24Hr >= 0 ? "+" : ""}
-                  {token.priceChange24Hr.toFixed(2)}%
-                </span>
-              </h3>
-              <p className="text-lg font-semibold">
-                {token.priceInTrx.toFixed(6)} TRX
-              </p>
-            </div>
-            <div className="bg-[#0e1443] p-4 rounded">
-              <h3 className="text-xs text-gray-300 mb-1">Marketcap</h3>
-              <p className="text-lg font-semibold">
-                ${formatNumber(token.marketCap)}
-              </p>
-            </div>
-            <div className="bg-[#0e1443] p-4 rounded">
-              <h3 className="text-xs text-gray-300 mb-1">Virtual Liquidity</h3>
-              <p className="text-lg font-semibold">
-                ${formatNumber(token.virtualLiquidity)}
-              </p>
-            </div>
-            <div className="bg-[#0e1443] p-4 rounded">
-              <h3 className="text-xs text-gray-300 mb-1">24H Volume</h3>
-              <p className="text-lg font-semibold">
-                {formatNumber(token.volume24Hr)} TRX
-              </p>
-            </div>
-            <div className="bg-[#0e1443] p-4 rounded">
-              <h3 className="text-xs text-gray-300 mb-1">Total Supply</h3>
-              <p className="text-lg font-semibold">
-                {formatNumber(token.totalSupply)}
-              </p>
+            <div className="grid grid-cols-5 gap-4">
+              <div className="bg-gray-400 p-4 rounded animate-pulse">
+                <div className="w-20 h-4 bg-gray-400 rounded mb-2"></div>
+                <div className="w-16 h-6 bg-gray-400 rounded"></div>
+              </div>
+              <div className="bg-gray-400 p-4 rounded animate-pulse">
+                <div className="w-20 h-4 bg-gray-400 rounded mb-2"></div>
+                <div className="w-16 h-6 bg-gray-400 rounded"></div>
+              </div>
+              <div className="bg-gray-400 p-4 rounded animate-pulse">
+                <div className="w-20 h-4 bg-gray-400 rounded mb-2"></div>
+                <div className="w-16 h-6 bg-gray-400 rounded"></div>
+              </div>
+              <div className="bg-gray-400 p-4 rounded animate-pulse">
+                <div className="w-20 h-4 bg-gray-400 rounded mb-2"></div>
+                <div className="w-16 h-6 bg-gray-400 rounded"></div>
+              </div>
+              <div className="bg-gray-400 p-4 rounded animate-pulse">
+                <div className="w-20 h-4 bg-gray-400 rounded mb-2"></div>
+                <div className="w-16 h-6 bg-gray-400 rounded"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-[#010f02] rounded-lg p-6 flex">
+          <img
+            src={token.logoUrl}
+            alt={token.name}
+            className="w-64 h-64 rounded-lg mr-6"
+          />
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between mb-[12px] items-center">
+                <h1 className="name_symbol">
+                  {token.name} (${token.symbol})
+                </h1>
+                <p className="text-sm text-gray-200">
+                  <span className="font-medium">Created by:</span>{" "}
+                  <span
+                    className="text-[#75ec2b] underline font-medium cursor-pointer"
+                    title="View in Tronscan"
+                    onClick={(event) => {
+                      window.open(
+                        `https://tronscan.org/#/address/${token.ownerAddress}`,
+                        "_blank"
+                      );
+                      event.stopPropagation();
+                    }}
+                  >
+                    {truncateAddress(token.ownerAddress)}
+                  </span>
+                </p>
+              </div>
+              <div className="flex items-center justify-between text-sm text-gray-300 mb-[1rem]">
+                <div className="flex items-center">
+                  <p className="mr-2">
+                    Contract:{" "}
+                    <span className="contract text-white">
+                      {token.contractAddress}
+                    </span>
+                  </p>
+                  <button className="text-gray-300 hover:text-white mr-2">
+                    <div className="cursor-pointer" title="Copy">
+                      <Copy
+                        size={16}
+                        className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
+                        onClick={() => {
+                          handleCopy(token.contractAddress);
+                        }}
+                      />
+                    </div>
+                  </button>
+                  <button className="text-gray-300 hover:text-white">
+                    <div className="cursor-pointer" title="Tron Link">
+                      <ExternalLink
+                        size={16}
+                        className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
+                        onClick={() => {
+                          handleTronLink();
+                        }}
+                      />
+                    </div>
+                  </button>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {token.twitterUrl && urlErrorChecker(token.twitterUrl) && (
+                    <a
+                      href={formatUrl(token.twitterUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white hover:scale-110"
+                    >
+                      <FaXTwitter size={16} />
+                    </a>
+                  )}
+                  {token.websiteUrl && urlErrorChecker(token.websiteUrl) && (
+                    <a
+                      href={formatUrl(token.websiteUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white hover:scale-110"
+                    >
+                      <Globe size={16} />
+                    </a>
+                  )}
+                  {token.telegramUrl && urlErrorChecker(token.telegramUrl) && (
+                    <a
+                      href={formatUrl(token.telegramUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white hover:scale-110"
+                    >
+                      <Send size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+              <p className="description_class line-clamp-3 text-gray-200">
+                {token.description}
+              </p>
+            </div>
+            <div className="grid grid-cols-5 gap-4">
+              <div className="bg-[#0e1443] p-4 rounded">
+                <h3 className="text-xs text-gray-300 mb-1">
+                  Price{" "}
+                  <span
+                    className={
+                      token.priceChange24Hr > 0
+                        ? "text-green-400"
+                        : token.priceChange24Hr === 0
+                        ? "text-cyan-300"
+                        : "text-red-400"
+                    }
+                  >
+                    {token.priceChange24Hr >= 0 ? "+" : ""}
+                    {token.priceChange24Hr.toFixed(2)}%
+                  </span>
+                </h3>
+                <p className="text-lg font-semibold">
+                  {token.priceInTrx.toFixed(6)} TRX
+                </p>
+              </div>
+              <div className="bg-[#0e1443] p-4 rounded">
+                <h3 className="text-xs text-gray-300 mb-1">Marketcap</h3>
+                <p className="text-lg font-semibold">
+                  ${formatNumber(token.marketCap)}
+                </p>
+              </div>
+              <div className="bg-[#0e1443] p-4 rounded">
+                <h3 className="text-xs text-gray-300 mb-1">
+                  Virtual Liquidity
+                </h3>
+                <p className="text-lg font-semibold">
+                  ${formatNumber(token.virtualLiquidity)}
+                </p>
+              </div>
+              <div className="bg-[#0e1443] p-4 rounded">
+                <h3 className="text-xs text-gray-300 mb-1">24H Volume</h3>
+                <p className="text-lg font-semibold">
+                  {formatNumber(token.volume24Hr)} TRX
+                </p>
+              </div>
+              <div className="bg-[#0e1443] p-4 rounded">
+                <h3 className="text-xs text-gray-300 mb-1">Total Supply</h3>
+                <p className="text-lg font-semibold">
+                  {formatNumber(token.totalSupply)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Toaster
         reverseOrder={true}
         toastOptions={{

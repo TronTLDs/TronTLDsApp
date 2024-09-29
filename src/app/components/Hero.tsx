@@ -50,15 +50,15 @@ const Hero: React.FC = () => {
         setLoading(false);
       } catch (err: unknown) {
         console.error("Error fetching data:", err); // Log the actual error
-        
+
         if (err instanceof Error) {
-            setError(err.message); // Access message if it's an Error object
+          setError(err.message); // Access message if it's an Error object
         } else {
-            setError(String(err)); // Fallback in case it's not an Error object
+          setError(String(err)); // Fallback in case it's not an Error object
         }
-    
+
         setLoading(false);
-    }    
+      }
     };
 
     fetchTrendingData();
@@ -86,7 +86,7 @@ const Hero: React.FC = () => {
     router.push(`/token/${token.contractAddress}`);
   };
 
-  if(loading) {
+  if (loading) {
     console.log("loading");
   }
 
@@ -97,16 +97,17 @@ const Hero: React.FC = () => {
   return (
     <div className="home-wrapper flex justify-between">
       <div className="text_left_container flex flex-col justify-center gap-3">
-        <h1 className="font-medium text-5xl mb-[10px]">JustTLDS</h1>
-        <h2 className="text-xl">Permissionless TLDs and Domains: One Click Away</h2>
+        <h1 className="font-medium text-5xl mb-[10px]">PumpDomains</h1>
+        <h2 className="text-xl">Effortless, Permissionless Domain Creation</h2>
         <p>
-          Create and manage your own TLDs with ease. Stake ETH, deploy with one
-          click, and enjoy transparent, decentralized domain registration and
-          management, without the need for central approval or developers.
+          Claim your unique domain and bring your token’s vision to life in the
+          digital space. Increase token utility and market value with integrated
+          domain creation and ownership features. No approvals, no limits—just a
+          seamless way to manage your token and its digital presence.
         </p>
       </div>
       <div className="trending_data_container flex items-center justify-center">
-        <div className="_badge_container">JustTLDs: illuminate the Peak</div>
+        <div className="_badge_container">PumpDomains: illuminate the Peak</div>
 
         <div className="_card_container">
           <div className="_card_data">
@@ -205,13 +206,18 @@ const Hero: React.FC = () => {
                             className="text-gray-200 hover:text-white"
                             onClick={(event) => event.stopPropagation()} // Prevent parent click
                           >
-                            <FaTelegramPlane  size={16} className="hover:scale-125" />
+                            <FaTelegramPlane
+                              size={16}
+                              className="hover:scale-125"
+                            />
                           </a>
                         )}
                     </div>
                   </div>
                   <h1 className="name_symbol_trending">
-                    <span className="font-extrabold">{trendingToken.name} (${trendingToken.symbol})</span>
+                    <span className="font-extrabold">
+                      {trendingToken.name} (${trendingToken.symbol})
+                    </span>
                   </h1>
                   <div className="flex items-center justify-between text-sm text-gray-400 mb-[5px]"></div>
                   <p className="description_class text-sm text-gray-400 line-clamp-2">

@@ -201,9 +201,7 @@ const TokenCard: React.FC = () => {
       <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
         <div className="flex justify-between items-center">
           <div className="flex gap-1 items-center">
-            <div className="h-3 bg-gray-300 w-16 rounded animate-pulse"></div>
-            <div className="h-3 bg-gray-300 w-12 rounded animate-pulse"></div>
-            <div className="h-3 w-3 bg-gray-300 rounded-[3px] animate-pulse"></div>
+            <div className="h-3 bg-gray-300 w-24 rounded animate-pulse"></div>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-5 w-5 bg-gray-300 rounded-full animate-pulse"></div>
@@ -212,13 +210,11 @@ const TokenCard: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-1 items-center mt-[-6px]">
-          <div className="h-3 bg-gray-300 w-24 rounded animate-pulse"></div>
-          <div className="h-3 bg-gray-300 w-16 rounded animate-pulse"></div>
-          <div className="h-3 w-3 bg-gray-300 rounded-[3px] animate-pulse"></div>
+          <div className="h-3 bg-gray-300 w-32 rounded animate-pulse"></div>
         </div>
         <div className="h-5 bg-gray-300 w-3/4 rounded mt-2 animate-pulse"></div>
         <div className="h-12 mt-5">
-          <div className="h-12 bg-gray-300 w-full rounded mb-1 animate-pulse"></div>
+          <div className="h-8 bg-gray-300 w-full rounded mb-1 animate-pulse"></div>
         </div>
         <div className="h-4 bg-gray-300 w-2/3 rounded mt-[8px] animate-pulse"></div>
       </div>
@@ -286,7 +282,7 @@ const TokenCard: React.FC = () => {
                         title={`${option}`}
                         className={`block w-full px-4 py-2 text-center dropdown-container2 ${
                           option === selectedOption
-                            ? "text-[#b482ff]"
+                            ? "text-[#74ff1f]"
                             : "text-white"
                         }`}
                       >
@@ -486,7 +482,7 @@ const TokenCard: React.FC = () => {
         {hasMore && (
           <button
             onClick={loadMoreTokens}
-            className="flex items-center p-3 px-10 text-gray-900 font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
+            className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
           >
             {loading ? "Loading..." : "Load More"}
           </button>
