@@ -1,167 +1,177 @@
 /* src/App.css */
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* padding: 20px; */
-    width: 80%;
-    max-width: 1000px;
-    margin: 80px auto;
-    margin-top: 20px;
-    min-height: 100vh;
-    /* border: 1px solid red; */
-    background: #26381e;
-    border-radius: 50px;
-    overflow: hidden;
-    z-index: 10;
-  }
-  .regtld-h1 {
-    width: 100%;
-    padding: 20px 0;
-    margin: 0;
-    color: #FCFF72;
-    font-family: "Fredoka", sans-serif;
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 31.25px;
-    letter-spacing: -0.02em;
-    text-align: center;
-    background: #001708;
-  }
-  
-  .regtld-config-heading {
-    font-family: "Fredoka", sans-serif;
-    font-size: 23px;
-    font-weight: 400;
-    line-height: 25.52px;
-    text-align: left;
-    color: #fffdca;
-    margin-top: 40px;
-    margin-bottom: 20px;
-  }
-  .regtld-form {
-    padding: 20px;
-    border-radius: 10px;
-  
-    /* max-width: 400px; */
-    width: 80%;
-    margin: 20px 0px;
-  }
-  
-  .input-group {
-    margin-bottom: 20px;
-    min-width: 48%;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-family: "Fredoka", sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 15.31px;
-    text-align: left;
-    color: #74ff1f;
-    opacity: 0.7;
-  }
-  .regtld-input-parent {
-    background: linear-gradient(
-      -90deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(33, 189, 223, 0.1) 92.72%
-    );
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .regtld-input {
-    /* width: 100%; */
-    width: 100%;
-    padding: 20px;
-    background-color: rgba(10, 15, 8, 0.68);
-    border: none;
-    outline: none;
-    font-family: "Fredoka", sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 25.52px;
-    text-align: left;
-    color: #ffffff;
-    /* opacity: 0.8; */
-  }
-  
-  .mb-40 .regtld-input {
-    font-size: 1.8rem;
-  }
-  .input-group-flex {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
-  /* .letter-price-config-parent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding: 20px; */
+  width: 80%;
+  max-width: 1000px;
+  margin: 80px auto;
+  margin-top: 20px;
+  min-height: 100vh;
+  border: 2px solid #74ff1f;
+  background: linear-gradient(90deg, #151527, #337709);
+  box-shadow: 0 7px 15px rgba(116, 255, 31, 0.6), 0 3px 5px rgba(95, 199, 30, 0.2);
+
+  /* background: linear-gradient(160deg, #151527, #337709); */
+  /* background: linear-gradient(70deg, #337709, #151527); */
+
+  border-radius: 50px;
+  overflow: hidden;
+  z-index: 10;
+}
+.regtld-h1 {
+  width: 100%;
+  padding: 20px 0;
+  margin: 0;
+  color: #fcff72;
+  font-family: "Fredoka", sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 31.25px;
+  letter-spacing: -0.02em;
+  text-align: center;
+  background: #001708;
+}
+
+.regtld-config-heading {
+  font-family: "Fredoka", sans-serif;
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 25.52px;
+  text-align: left;
+  color: #fffdca;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+.regtld-form {
+  padding: 20px;
+  border-radius: 10px;
+
+  /* max-width: 400px; */
+  width: 80%;
+  margin-top: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  min-width: 48%;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 15.31px;
+  text-align: left;
+  color: #74ff1f;
+  opacity: 0.7;
+}
+
+.tld_lable {
+  margin-bottom: 0px;
+}
+
+.regtld-input-parent {
+  background: linear-gradient(
+    -90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(33, 189, 223, 0.1) 92.72%
+  );
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.regtld-input {
+  /* width: 100%; */
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(10, 15, 8, 0.68);
+  border: none;
+  outline: none;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 25.52px;
+  text-align: left;
+  color: rgb(206, 203, 203);
+  /* opacity: 0.8; */
+}
+
+.domain_name {
+  font-size: 1.8rem;
+}
+
+.input-group-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+/* .letter-price-config-parent {
     border-radius: 10px;
     border: 1px dashed #143443;
     padding: 20px 10px;
   } */
-  .letter-config-group {
-    position: relative;
-    padding-bottom: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    /* width: 100%; */
-  }
-  .letter-config-group .input-group {
-    min-width: 48%;
-  }
-  .add-button-parent {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .delete-button {
-    /* position: absolute;
+.letter-config-group {
+  position: relative;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 100%; */
+}
+.letter-config-group .input-group {
+  min-width: 48%;
+}
+.add-button-parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-button {
+  /* position: absolute;
     top: -10px;
     right: 0; */
-    background: transparent;
-    border: none;
-    font-size: 24px;
-  
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    border: 1px solid #b4e8ff;
-    border-radius: 999999px;
-    color: #dc3545;
-  }
-  .delete-button:hover {
-    background: linear-gradient(90deg, #b4e8ff 0%, #74ff1f 100%);
-  }
-  .stake-register {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-  }
-  .submit-button {
-    padding: 15px 40px;
-    border: none;
-    cursor: pointer;
-    margin: 20px 0;
-    margin-top: 50px;
-    background: linear-gradient(90deg, #74ff1f 0%, #ffffff 100%);
-    border-radius: 99999px;
-    font-family: "Fredoka", sans-serif;
-    font-size: 1.2rem;
-    font-weight: 500;
-    line-height: 20.42px;
-    text-align: center;
-    color: #0a1621;
-  }
+  background: transparent;
+  border: none;
+  font-size: 24px;
+
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #b4e8ff;
+  border-radius: 999999px;
+  color: #dc3545;
+}
+.delete-button:hover {
+  background: linear-gradient(90deg, #b4e8ff 0%, #74ff1f 100%);
+}
+.stake-register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0px;
+}
+.submit-button {
+  padding: 15px 40px;
+  border: none;
+  cursor: pointer;
+  margin: 30px 0px;
+  background: linear-gradient(90deg, #74ff1f 0%, #ffffff 100%);
+  border-radius: 99999px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 20.42px;
+  text-align: center;
+  color: #0a1621;
+}

@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+// import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
 // import Image from "next/image";
 import {
@@ -13,40 +13,14 @@ import {
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
+import { useToken } from "@/app/context/TokenContext";
 import "../../css/IndToken.css";
 
-interface Token {
-  name: string;
-  symbol: string;
-  logoUrl: string;
-  description: string;
-  ownerAddress: string;
-  marketCap: number;
-  priceInTrx: number;
-  virtualLiquidity: number;
-  volume24Hr: number;
-  priceChange24Hr: number;
-  contractAddress: string;
-  twitterUrl: string;
-  telegramUrl: string;
-  websiteUrl: string;
-  totalSupply: number;
-}
-
 const TokenPage = () => {
-  const { contractAddress } = useParams();
-  const [token, setToken] = useState<Token | null>(null);
   const router = useRouter();
+  const { token } = useToken();
 
-  useEffect(() => {
-    const fetchTokenData = async () => {
-      const res = await fetch(`/api/proxy/token/${contractAddress}`);
-      const result = await res.json();
-      setToken(result.data);
-    };
-
-    fetchTokenData();
-  }, [contractAddress]);
+  console.log("tokens data came", token);
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
@@ -90,7 +64,7 @@ const TokenPage = () => {
   };
 
   const handlePurchaseDomain = () => {
-    router.push("/purchaseDomain");
+    router.push(`/purchaseDomain/${token?.name.replace(/\s+/g, '').toLowerCase()}`);
   }
 
   return (

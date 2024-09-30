@@ -17,24 +17,29 @@ import { FaXTwitter } from "react-icons/fa6";
 import { FaTelegramPlane } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
+import { useToken } from "../context/TokenContext";
 import "../css/TokenCard.css";
 
 interface Token {
-  id: number;
+  id: string;
   name: string;
   symbol: string;
   logoUrl: string;
   description: string;
-  marketCap: number;
   ownerAddress: string;
-  contractAddress: string;
+  marketCap: number;
+  priceInTrx: number;
+  virtualLiquidity: number;
+  volume24Hr: number;
   priceChange24Hr: number;
+  contractAddress: string;
   twitterUrl: string;
   telegramUrl: string;
   websiteUrl: string;
+  totalSupply: number;
 }
 
-const TokenCard: React.FC = () => {
+const TokenCard = ({ }) => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -47,8 +52,10 @@ const TokenCard: React.FC = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
   const router = useRouter();
+  const { setToken } = useToken();
 
   const handleCardClick = (token: Token) => {
+    setToken(token); // Set the selected token globally and in localStorage
     router.push(`/token/${token.contractAddress}`);
   };
 

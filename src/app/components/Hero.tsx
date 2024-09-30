@@ -6,6 +6,7 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 // import Image from "next/image";
 import "../css/IndToken.css";
+import { useToken } from "../context/TokenContext";
 import "../css/Home.css";
 
 // Define the type for the trendingToken data
@@ -35,6 +36,12 @@ const Hero: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { setToken } = useToken();
+
+  const handleCardClick = (token: trendingToken) => {
+    setToken(token); // Set the selected token globally and in localStorage
+    router.push(`/token/${token.contractAddress}`);
+  };
 
   useEffect(() => {
     const fetchTrendingData = async () => {
@@ -81,10 +88,6 @@ const Hero: React.FC = () => {
     } else {
       return num.toFixed(2); // Otherwise, just round to two decimal places
     }
-  };
-
-  const handleCardClick = (token: trendingToken) => {
-    router.push(`/token/${token.contractAddress}`);
   };
 
   const urlErrorChecker = (url: string): boolean => {

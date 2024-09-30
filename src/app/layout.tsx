@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "../app/components/Navbar";
 import Footer from "./components/Footer";
 import { TronLinkProvider } from "../../providers";
+import { TokenProvider } from "./context/TokenContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,11 +32,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col justify-between`}
       >
-        <TronLinkProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </TronLinkProvider>
+        <TokenProvider>
+          <TronLinkProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </TronLinkProvider>
+        </TokenProvider>
       </body>
     </html>
   );
