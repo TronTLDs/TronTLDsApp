@@ -9,6 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tronweb3/tronwallet-abstract-adapter": "^1.1.7",
+    "@tronweb3/tronwallet-adapter-ledger": "^1.1.9",
+    "@tronweb3/tronwallet-adapter-react-hooks": "^1.1.8",
+    "@tronweb3/tronwallet-adapter-react-ui": "^1.1.9",
+    "@tronweb3/tronwallet-adapter-walletconnect": "^2.0.1",
+    "@tronweb3/tronwallet-adapters": "^1.2.3",
+    "@tronweb3/walletconnect-tron": "^3.0.0",
     "antd": "^5.20.6",
     "copy-to-clipboard": "^3.3.3",
     "lucide-react": "^0.441.0",

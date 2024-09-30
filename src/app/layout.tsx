@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from '../app/components/Navbar';
+import Navbar from "../app/components/Navbar";
 import Footer from "./components/Footer";
+import { TronLinkProvider } from "../../providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col justify-between`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <TronLinkProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </TronLinkProvider>
       </body>
     </html>
   );

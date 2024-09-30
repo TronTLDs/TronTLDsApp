@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import "../css/RegisterTLD.css";
 
 function RegisterTLD() {
@@ -14,6 +15,12 @@ function RegisterTLD() {
   const [minRegistrationDuration, setMinRegistrationDuration] = useState("");
   const [minRenewDuration, setMinRenewDuration] = useState("");
   const [mintCap, setMintCap] = useState("");
+
+  const router = useRouter();
+
+  const handleDomainPage = () => {
+    router.push("/domain");
+  }
 
   return (
     <div className="container">
@@ -137,17 +144,18 @@ function RegisterTLD() {
           ))}
         </div>
 
+      </form>
         <div className="stake-register">
           <button
             // onClick={handleStakeAndRegister}
+            onClick={handleDomainPage}
             type="submit"
             className="submit-button"
           >
-            Stake and Deploy
+            Go to Domain Form
           </button>
 
         </div>
-      </form>
     </div>
   );
 }
