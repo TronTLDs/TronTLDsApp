@@ -1,6 +1,6 @@
 "use client";
-// import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
 // import Image from "next/image";
 import {
@@ -15,12 +15,53 @@ import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import { useToken } from "@/app/context/TokenContext";
 import "../../css/IndToken.css";
+import "../../css/RegisterTLD.css";
+
+interface Token {
+  name: string;
+  symbol: string;
+  logoUrl: string;
+  description: string;
+  ownerAddress: string;
+  marketCap: number;
+  priceInTrx: number;
+  virtualLiquidity: number;
+  volume24Hr: number;
+  priceChange24Hr: number;
+  contractAddress: string;
+  twitterUrl: string;
+  telegramUrl: string;
+  websiteUrl: string;
+  totalSupply: number;
+}
 
 const TokenPage = () => {
+  const { contractAddress } = useParams();
   const router = useRouter();
-  const { token } = useToken();
+  const [token, setToken] = useState<Token | null>(null);
+  const { token: contextToken } = useToken();
 
   console.log("tokens data came", token);
+
+  useEffect(() => {
+    const fetchTokenData = async () => {
+      if (contextToken) {
+        setToken(contextToken);
+      } else if (contractAddress) {
+        try {
+          const res = await fetch(`/api/proxy/token/${contractAddress}`);
+          const result = await res.json();
+          console.log("api data", result.data);
+          setToken(result.data);
+        } catch (error) {
+          console.error("Error fetching token data:", error);
+          toast.error("Failed to load token data");
+        }
+      }
+    };
+
+    fetchTokenData();
+  }, [contextToken, contractAddress]);
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
@@ -66,6 +107,10 @@ const TokenPage = () => {
   const handlePurchaseDomain = () => {
     router.push(`/purchaseDomain/${token?.name.replace(/\s+/g, '').toLowerCase()}`);
   }
+
+  const handleDomainPage = () => {
+    router.push("/domain");
+  };
 
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
@@ -281,6 +326,16 @@ const TokenPage = () => {
         onClick={handlePurchaseDomain}>
           Purchase Domain
         </button>
+        
+      <div className="stake-register">
+        <button
+          onClick={handleDomainPage}
+          type="submit"
+          className="submit-button"
+        >
+          Go to Domain Form
+        </button>
+      </div>
       </div>
 
       <Toaster

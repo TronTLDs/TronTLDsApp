@@ -26,7 +26,7 @@
   background-size: 327px;
   width: 340px;
   height: 44px;
-  font-family: "Fredoka", sans-serif;
+  
   font-size: 18px;
   font-weight: 600;
   line-height: 46.2px;
@@ -57,7 +57,7 @@
 }
 
 ._card_child_container {
-  font-family: "Fredoka", sans-serif;
+  
   display: flex;
   flex-direction: row;
 }
@@ -75,7 +75,7 @@
 .checkbox-wrapper {
   width: 193px;
   color: #fff;
-  font-family: "Fredoka", sans-serif;
+  
   border: 1.7px solid #75ec2b;
   border-radius: 10px;
   padding: 8px 10px;
@@ -97,7 +97,7 @@
   border-radius: 10px;
   border: 1.7px solid #469913;
   color: #fff;
-  font-family: "Fredoka", sans-serif;
+  
   padding: 8px 10px;
   background: #151527;
   font-weight: 500;

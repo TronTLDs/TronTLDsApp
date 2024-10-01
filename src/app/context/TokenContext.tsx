@@ -1,6 +1,6 @@
 // context/TokenContext.tsx
 'use client'
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface Token {
   name: string;
@@ -28,21 +28,7 @@ interface TokenContextType {
 const TokenContext = createContext<TokenContextType | undefined>(undefined);
 
 export const TokenProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setTokenState] = useState<Token | null>(null);
-
-  // Save token to localStorage whenever it's updated
-  const setToken = (token: Token) => {
-    setTokenState(token);
-    localStorage.setItem("selectedToken", JSON.stringify(token));
-  };
-
-  // Load token from localStorage on initial mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem("selectedToken");
-    if (storedToken) {
-      setTokenState(JSON.parse(storedToken));
-    }
-  }, []);
+  const [token, setToken] = useState<Token | null>(null);
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>

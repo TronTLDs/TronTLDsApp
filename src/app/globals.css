@@ -22,7 +22,7 @@ html {
 
 html, body {
   color: var(--foreground);
-  font-family: "Fredoka", sans-serif;
+  font-style: normal;
   height: fit-content;
 }
 
@@ -70,4 +70,8 @@ body::-webkit-scrollbar-thumb {
 .content {
   position: relative;
   z-index: 1;
+}
+
+.fredoka-font {
+  font-family: 'Fredoka', cursive;
 }

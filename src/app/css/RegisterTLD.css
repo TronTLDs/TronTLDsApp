@@ -3,75 +3,80 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* padding: 20px; */
-  width: 80%;
-  max-width: 1000px;
-  margin: 80px auto;
-  margin-top: 20px;
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
   min-height: 100vh;
   border: 2px solid #74ff1f;
   background: linear-gradient(90deg, #151527, #337709);
   box-shadow: 0 7px 15px rgba(116, 255, 31, 0.6), 0 3px 5px rgba(95, 199, 30, 0.2);
-
-  /* background: linear-gradient(160deg, #151527, #337709); */
-  /* background: linear-gradient(70deg, #337709, #151527); */
-
-  border-radius: 50px;
+  border-radius: 30px;
   overflow: hidden;
   z-index: 10;
 }
+
 .regtld-h1 {
   width: 100%;
-  padding: 20px 0;
+  padding: 30px 0;
   margin: 0;
   color: #fcff72;
-  font-family: "Fredoka", sans-serif;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 500;
-  line-height: 31.25px;
+  line-height: 1.2;
   letter-spacing: -0.02em;
   text-align: center;
   background: #001708;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.regtld-form-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 40px 40px 0px 40px;
+}
+
+.regtld-form-left,
+.regtld-form-right {
+  width: 48%;
 }
 
 .regtld-config-heading {
-  font-family: "Fredoka", sans-serif;
-  font-size: 23px;
-  font-weight: 400;
-  line-height: 25.52px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
   text-align: left;
   color: #fffdca;
-  margin-top: 40px;
+  margin-top: 30px;
   margin-bottom: 20px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
 .regtld-form {
   padding: 20px;
   border-radius: 10px;
-
-  /* max-width: 400px; */
-  width: 80%;
-  margin-top: 20px;
+  width: 100%;
 }
 
 .input-group {
-  margin-bottom: 20px;
-  min-width: 48%;
+  margin-bottom: 25px;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
-  font-family: "Fredoka", sans-serif;
+  margin-bottom: 8px;
   font-size: 16px;
   font-weight: 400;
-  line-height: 15.31px;
+  line-height: 1.2;
   text-align: left;
   color: #74ff1f;
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .tld_lable {
   margin-bottom: 0px;
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .regtld-input-parent {
@@ -85,27 +90,38 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
+
+.regtld-input-parent:hover {
+  box-shadow: 0 6px 8px rgba(116, 255, 31, 0.2);
+}
+
 .regtld-input {
-  /* width: 100%; */
   width: 100%;
-  padding: 20px;
+  padding: 15px;
   background-color: rgba(10, 15, 8, 0.68);
   border: none;
   outline: none;
-  font-family: "Fredoka", sans-serif;
+  
   font-size: 1rem;
   font-weight: 400;
-  line-height: 25.52px;
+  line-height: 1.5;
   text-align: left;
   color: rgb(206, 203, 203);
-  /* opacity: 0.8; */
+  transition: all 0.3s ease;
+}
+
+.regtld-input:focus {
+  background-color: rgba(10, 15, 8, 0.8);
 }
 
 .domain_name {
   font-size: 1.8rem;
+  font-weight: 600;
+  color: #fcff72;
 }
 
 .input-group-flex {
@@ -114,64 +130,130 @@ label {
   justify-content: space-between;
   width: 100%;
 }
-/* .letter-price-config-parent {
-    border-radius: 10px;
-    border: 1px dashed #143443;
-    padding: 20px 10px;
-  } */
+
+.letter-price-config-parent {
+  background: rgba(20, 52, 67, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
 .letter-config-group {
   position: relative;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  /* width: 100%; */
 }
+
 .letter-config-group .input-group {
-  min-width: 48%;
-}
-.add-button-parent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 48%;
 }
 
-.delete-button {
-  /* position: absolute;
-    top: -10px;
-    right: 0; */
-  background: transparent;
-  border: none;
-  font-size: 24px;
-
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #b4e8ff;
-  border-radius: 999999px;
-  color: #dc3545;
-}
-.delete-button:hover {
-  background: linear-gradient(90deg, #b4e8ff 0%, #74ff1f 100%);
-}
 .stake-register {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 0px;
+  margin-bottom: 40px;
 }
+
 .submit-button {
   padding: 15px 40px;
   border: none;
   cursor: pointer;
-  margin: 30px 0px;
-  background: linear-gradient(90deg, #74ff1f 0%, #ffffff 100%);
-  border-radius: 99999px;
-  font-family: "Fredoka", sans-serif;
+  background: linear-gradient(90deg, #74ff1f 0%, #fcff72 100%);
+  border-radius: 30px;
+  
   font-size: 1.2rem;
-  font-weight: 500;
-  line-height: 20.42px;
+  font-weight: 600;
+  line-height: 1.2;
   text-align: center;
   color: #0a1621;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(116, 255, 31, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(116, 255, 31, 0.2);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .container {
+    width: 95%;
+  }
+
+  .regtld-form-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .regtld-form-left,
+  .regtld-form-right {
+    width: 100%;
+  }
+
+  .regtld-form-right {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .regtld-h1 {
+    font-size: 28px;
+  }
+
+  .input-group-flex {
+    flex-direction: column;
+  }
+
+  .input-group-flex .input-group {
+    width: 100%;
+  }
+
+  .letter-config-group {
+    flex-direction: column;
+  }
+
+  .letter-config-group .input-group {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .regtld-h1 {
+    font-size: 24px;
+  }
+
+  .regtld-form {
+    padding: 10px;
+  }
+
+  .submit-button {
+    width: 100%;
+  }
+}
+
+.custom-modal-container {
+  background: transparent;
+}
+
+.custom-modal-container .ant-modal-content {
+  background: transparent;
+}
+
+.modal-content-container {
+  box-shadow: 0px 0px 20px rgba(116, 255, 31, 0.6), 0px 0px 15px rgba(95, 199, 30, 0.2);
 }

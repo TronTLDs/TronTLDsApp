@@ -39,7 +39,7 @@ const Hero: React.FC = () => {
   const { setToken } = useToken();
 
   const handleCardClick = (token: trendingToken) => {
-    setToken(token); // Set the selected token globally and in localStorage
+    setToken(token); // Set the selected token globally
     router.push(`/token/${token.contractAddress}`);
   };
 
@@ -114,8 +114,7 @@ const Hero: React.FC = () => {
   return (
     <div className="home-wrapper flex justify-between">
       <div className="text_left_container flex flex-col justify-center gap-3">
-        <h1 className="font-medium text-5xl mb-[10px] bg-clip-text text-transparent bg-gradient-to-r from-[#74ff1f] via-white to-[#469913]
-">PumpDomains</h1>
+        <h1 className="font-medium text-5xl mb-[10px] bg-clip-text text-transparent bg-gradient-to-r from-[#74ff1f] via-white to-[#469913]">PumpDomains</h1>
         <h2 className="text-xl">Effortless, Permissionless Domain Creation</h2>
         <p>
           Claim your unique domain and bring your token’s vision to life in the

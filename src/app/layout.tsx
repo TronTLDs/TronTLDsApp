@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Fredoka } from "next/font/google";
 import "./globals.css";
 import Navbar from "../app/components/Navbar";
 import Footer from "./components/Footer";
 import { TronLinkProvider } from "../../providers";
 import { TokenProvider } from "./context/TokenContext";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const fredoka = Fredoka({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'], // Specify the weights you need
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -30,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col justify-between`}
+        className={`${fredoka.className} antialiased w-full flex flex-col justify-between`}
       >
         <TokenProvider>
           <TronLinkProvider>
