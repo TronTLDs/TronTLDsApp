@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import logo from "../../../assets/PumpDomains.png";
+import { CircleUser } from "lucide-react";
 import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import "../css/Navbar.css";
@@ -25,9 +26,12 @@ const Navbar = () => {
           </a>
           <div className="flex items-center gap-8">
             {connected && (
-              <div className="py-2 px-8 border-2 rounded-[20px] border-gray-500">
-                <a href={href_link} className="font-medium">Profile</a>
-              </div>
+              <a href={href_link}>
+                <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium] hover:border-gray-300 hover:bg-slate-600 border-2 border-gray-500 rounded-lg cursor-pointer">
+                  <CircleUser strokeWidth={2} />
+                  <span className="font-medium">Profile</span>
+                </div>
+              </a>
             )}
             {connected ? (
               <div className="flex items-center space-x-2">

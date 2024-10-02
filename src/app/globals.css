@@ -23,7 +23,7 @@ html {
 html, body {
   color: var(--foreground);
   font-style: normal;
-  height: fit-content;
+  /* height: fit-content; */
 }
 
 body {

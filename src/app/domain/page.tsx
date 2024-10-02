@@ -25,7 +25,7 @@ function RegisterDomain() {
       <h1 className="regtld-h1">Domain Registration</h1>
       <form className="regtld-form">
         <div className="input-group mb-40">
-          <label>Domain Name</label>
+          <label className="ml-[10px]">Domain Name</label>
           <div className="regtld-input-parent">
             <input
               type="text"
@@ -42,7 +42,7 @@ function RegisterDomain() {
         </div>
 
         <div className="input-group mb-40">
-          <label>TLD Name</label>
+          <label className="ml-[10px]">TLD Name</label>
           <div className="regtld-input-parent">
             <input
               type="text"
@@ -59,7 +59,7 @@ function RegisterDomain() {
         </div>
 
         <div className="regtld-config-heading">
-          <span>Configuration</span>
+          <span className="ml-[10px]">Configuration</span>
         </div>
 
         <div className="registartion_fields">

@@ -105,12 +105,14 @@ const TokenPage = () => {
   };
 
   const handlePurchaseDomain = () => {
-    router.push(`/purchaseDomain/${token?.name.replace(/\s+/g, '').toLowerCase()}`);
-  }
-
-  const handleDomainPage = () => {
-    router.push("/domain");
+    router.push(
+      `/purchaseDomain/${token?.name.replace(/\s+/g, "").toLowerCase()}`
+    );
   };
+
+  // const handleDomainPage = () => {
+  //   router.push("/domain");
+  // };
 
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
@@ -322,20 +324,21 @@ const TokenPage = () => {
       )}
 
       <div className="flex items-center justify-center mt-[2rem]">
-        <button className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
-        onClick={handlePurchaseDomain}>
+        <button
+          className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
+          onClick={handlePurchaseDomain}
+        >
           Purchase Domain
         </button>
-        
-      <div className="stake-register">
-        <button
-          onClick={handleDomainPage}
-          type="submit"
-          className="submit-button"
-        >
-          Go to Domain Form
-        </button>
-      </div>
+        {/* <div className="stake-register">
+          <button
+            onClick={handleDomainPage}
+            type="submit"
+            className="submit-button"
+          >
+            Go to Domain Form
+          </button>
+        </div> */}
       </div>
 
       <Toaster

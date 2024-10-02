@@ -280,7 +280,7 @@ const TokenCard = ({ }) => {
             </button>
 
             {isOpen && (
-              <div className="absolute z-10 mt-2 w-48 rounded-full shadow-lg">
+              <div className="absolute z-10 mt-2 w-48 border-2 rounded-md border-[#74ff1f]">
                 <ul className="rounded-full">
                   {options.map((option, index) => (
                     <li key={index}>
