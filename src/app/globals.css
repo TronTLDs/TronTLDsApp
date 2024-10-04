@@ -16,6 +16,11 @@
   }
 }
 
+::selection {
+  background-color: #469913; /* Custom background color for selected text */
+  color: white; /* Custom text color for selected text */
+}
+
 html {
   background: #1a1a1a; /* Fallback background color */
 }

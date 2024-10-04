@@ -1,12 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Globe, MoveUp, MoveDown } from "lucide-react";
+import { Globe, MoveUp, MoveDown, BadgeHelp } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaTelegramPlane } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-// import Image from "next/image";
+import Image from "next/image";
+import logoo from "../../../assets/gold3.png";
 import "../css/IndToken.css";
 import { useToken } from "../context/TokenContext";
+import { Tooltip } from "antd";
 import "../css/Home.css";
 
 // Define the type for the trendingToken data
@@ -112,9 +114,11 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <div className="home-wrapper flex justify-between">
+    <div className="home-wrapper flex justify-between pt-[1.2rem]">
       <div className="text_left_container flex flex-col justify-center gap-3">
-        <h1 className="font-medium text-5xl mb-[10px] bg-clip-text text-transparent bg-gradient-to-r from-[#74ff1f] via-white to-[#469913]">PumpDomains</h1>
+        <h1 className="font-medium text-5xl mb-[10px] bg-clip-text text-transparent bg-gradient-to-r from-[#74ff1f] via-white to-[#469913]">
+          PumpDomains
+        </h1>
         <h2 className="text-xl">Effortless, Permissionless Domain Creation</h2>
         <p>
           Claim your unique domain and bring your token’s vision to life in the
@@ -124,7 +128,31 @@ const Hero: React.FC = () => {
         </p>
       </div>
       <div className="trending_data_container flex items-center justify-center">
-        {/* <div className="_badge_container">PumpDomains: illuminate the Peak</div> */}
+        <div className="flex items-center mx-auto">
+          <div className="absolute">
+            <Image
+              src={logoo}
+              alt="logoo"
+              width={60}
+              height={60}
+              className="block z-20"
+            ></Image>
+          </div>
+          
+          <div className="bg-black rounded p-[6px] pl-[1.7rem] ml-[2.2rem] text-white font-[18px] flex gap-1 items-center">
+            <span>PumpDomains: TLD Titans Leading the Charge</span>
+            <Tooltip
+              title="These TLD Titans lead the memetoken revolution, being the most purchased and highly coveted on our platform. PumpDomains is decentralized and impartial, with no endorsement of meme coins. (Make sure to do your own research)!"
+              placement="bottom"
+            >
+              <BadgeHelp
+                strokeWidth={1.75}
+                size={20}
+                className="cursor-pointer hover:text-[#74ff1f]"
+              />
+            </Tooltip>
+          </div>
+        </div>
 
         <div className="_card_container">
           <div className="_card_data">
@@ -214,7 +242,8 @@ const Hero: React.FC = () => {
                         </span>
                       </p>
                       <div className="flex items-center space-x-2">
-                        {trendingToken.twitterUrl && urlErrorChecker(trendingToken.twitterUrl) && (
+                        {trendingToken.twitterUrl &&
+                          urlErrorChecker(trendingToken.twitterUrl) && (
                             <a
                               href={formatUrl(trendingToken.twitterUrl)}
                               target="_blank"
@@ -228,7 +257,8 @@ const Hero: React.FC = () => {
                               />
                             </a>
                           )}
-                        {trendingToken.websiteUrl && urlErrorChecker(trendingToken.websiteUrl) && (
+                        {trendingToken.websiteUrl &&
+                          urlErrorChecker(trendingToken.websiteUrl) && (
                             <a
                               href={formatUrl(trendingToken.websiteUrl)}
                               target="_blank"
@@ -239,7 +269,8 @@ const Hero: React.FC = () => {
                               <Globe size={16} className="hover:scale-125" />
                             </a>
                           )}
-                        {trendingToken.telegramUrl && urlErrorChecker(trendingToken.telegramUrl) &&(
+                        {trendingToken.telegramUrl &&
+                          urlErrorChecker(trendingToken.telegramUrl) && (
                             <a
                               href={formatUrl(trendingToken.telegramUrl)}
                               target="_blank"

@@ -118,3 +118,45 @@
 .dropdown-container2:hover {
   color: #74FF1F;
 }
+
+/* .logo-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.logo-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border-radius: 50%;
+  background-color: rgba(255, 215, 0, 0.5);
+  filter: blur(10px);
+  animation: pulse 2s infinite;
+}
+
+.logo-image {
+  position: relative;
+  z-index: 20;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo-image:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+    box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700, 0 0 20px #ffd700;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffd700;
+  }
+  100% {
+    opacity: 0.5;
+    box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700, 0 0 20px #ffd700;
+  }
+} */

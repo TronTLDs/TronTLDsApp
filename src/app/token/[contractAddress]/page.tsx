@@ -178,7 +178,7 @@ const TokenPage = () => {
           <img
             src={token.logoUrl}
             alt={token.name}
-            className="w-64 h-64 rounded-lg mr-6"
+            className="w-64 h-64 rounded-lg mr-6 object-cover"
           />
           <div className="flex-1 flex flex-col justify-between">
             <div>
