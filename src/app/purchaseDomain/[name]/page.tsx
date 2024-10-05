@@ -6,8 +6,8 @@ import { Tooltip } from "antd";
 import "../../css/RegisterTLD.css";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { Modal } from "antd";
-import AutoProgressBar from "@/app/components/AutoProgressBar"; 
-import abi from "../../abi.json";
+import AutoProgressBar from "@/app/components/AutoProgressBar";
+import abi from "../../TLDFactory.json";
 
 const TLD_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_TLD_FACTORY_ADDRESS;
 console.log(TLD_FACTORY_ADDRESS);
@@ -126,11 +126,17 @@ function RegisterTLD() {
 
       // Address of your deployed TLD Factory contract
       const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
+
+      // Check if tldFactoryContractAddress is defined
+      // if (!tldFactoryContractAddress) {
+      //   throw new Error("TLD Factory contract address is not defined.");
+      // }
+
       console.log(tldFactoryContractAddress);
 
       // Get the contract instance using the TronWeb object
-      const tldFactoryContract = await (tronWeb as any).contract().at(tldFactoryContractAddress);
-      
+      const tldFactoryContract = await tronWeb.contract(abi, tldFactoryContractAddress);
+
       console.log(tldFactoryContract);
 
       // Prepare parameters for the deployTLD function
@@ -147,7 +153,7 @@ function RegisterTLD() {
           tldSymbol // assuming you're passing the TLD name again as a parameter
         )
         .send({
-          feeLimit:700_000_000,
+          feeLimit: 700_000_000,
           callValue: TLD_CREATION_FEE, // sending the required TRX as fee
         });
 

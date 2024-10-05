@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 // import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import abi from "../PumpDomains.json";
 import "../css/RegisterDomain.css";
 import { Tooltip } from "antd";
 
@@ -22,7 +23,7 @@ function RegisterDomain() {
   const [error, setError] = useState<string | null>(null);
   // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
 
-  // console.log(error, tronWeb);
+  console.log(error);
 
   // useEffect(() => {
   //   const initTronWeb = async () => {
@@ -92,19 +93,18 @@ function RegisterDomain() {
 
       // Address of deployed Register Domain contract
       const domainContractAddress = DOMAIN_SUNPUMP_ADDRESS;
-      console.log(domainContractAddress);
+      console.log("before instance, address:", domainContractAddress);
 
       // Get the contract instance using the TronWeb object
-      const domainSunpumpContract = await (tronWeb as any).contract().at(domainContractAddress);
+      const domainSunpumpContract = await (tronWeb).contract(abi, domainContractAddress);
       
-      console.log(domainSunpumpContract);
+      console.log("instance created", domainSunpumpContract);
 
       console.log("Registering Domain...");
 
-      const deployResult = await domainSunpumpContract
-        .registerDomain(domainName).send({
+      const deployResult = await domainSunpumpContract.registerDomain(domainName).send({
           feeLimit:700_000_000,
-          callValue: callVal, // sending the required TRX as fee
+          callValue: callVal * 1000000, // sending the required TRX as fee
         });
 
       console.log("Domain registered successfully:", deployResult);
@@ -118,7 +118,6 @@ function RegisterDomain() {
       // Check if error is an instance of Error and has a message
       if (error instanceof Error) {
         setError(`An error occurred while registering the Domain: ${error.message}`);
-        console.log(error);
       } else {
         setError("An unknown error occurred while registering the Domain.");
       }
@@ -335,8 +334,8 @@ function RegisterDomain() {
           ) : (
             <button
               type="button"
-              className="submit-button"
-              // disabled={!isValidDomain}
+              className={`submit-button ${isValidDomain ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
+              disabled={!isValidDomain}
               onClick={registerDomain}
             >
               Register Domain

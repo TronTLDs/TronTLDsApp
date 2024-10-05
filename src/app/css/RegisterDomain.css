@@ -244,7 +244,6 @@ label {
 .submit-button {
   padding: 15px 40px;
   border: none;
-  cursor: pointer;
   background: linear-gradient(90deg, #74ff1f 0%, #fcff72 100%);
   border-radius: 30px;
   font-size: 1.2rem;
