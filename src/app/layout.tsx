@@ -3,13 +3,13 @@ import { Fredoka } from "next/font/google";
 import "./globals.css";
 import Navbar from "../app/components/Navbar";
 import Footer from "./components/Footer";
-import { TronLinkProvider } from "../../providers";
 import { TokenProvider } from "./context/TokenContext";
+import { TronLinkProvider } from "../../providers";
 
 const fredoka = Fredoka({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'], // Specify the weights you need
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"], // Specify the weights you need
+  display: "swap",
 });
 
 export const metadata: Metadata = {

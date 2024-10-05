@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
-// import "../css/RegisterTLD.css";
+import React, { useState, useCallback, useEffect } from "react";
+// import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import "../css/RegisterDomain.css";
 import { Tooltip } from "antd";
+
+// type TronWeb = any;
 
 function RegisterDomain() {
   const [transactionState] = useState({
@@ -11,14 +13,119 @@ function RegisterDomain() {
   });
   const [nameRegistered] = useState(false);
 
-  const [registrationPeriod, setRegistrationPeriod] = useState(1);
-  const handlePeriodDecrease = () => {
-    if (registrationPeriod !== 1) setRegistrationPeriod((prev) => prev - 1);
+  // const [registrationPeriod, setRegistrationPeriod] = useState<number>(1);
+  const [domainName, setDomainName] = useState<string>("");
+  const [tldName] = useState<string>("base"); // TLD name is fixed
+  
+  const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
+  // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
+
+  // console.log(error, tronWeb);
+
+  // useEffect(() => {
+  //   const initTronWeb = async () => {
+  //     // (window.tronWeb && window.tronWeb.ready)
+  //     const tronWeb = window.tronWeb;
+  //     setTronWeb(tronWeb);
+
+  //     const tronLinkListener = setInterval(() => {
+  //       if (window.tronWeb && window.tronWeb.ready) {
+  //         setTronWeb(tronWeb);
+  //         clearInterval(tronLinkListener);
+  //       }
+  //     }, 500);
+  //   };
+
+  //   initTronWeb();
+  // }, []);
+
+  // const handlePeriodDecrease = () => {
+  //   if (registrationPeriod > 2) setRegistrationPeriod((prev) => prev - 1);
+  // };
+
+  // const handlePeriodIncrease = () => {
+  //   if (registrationPeriod < 10) setRegistrationPeriod((prev) => prev + 1);
+  // };
+
+  const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    if (value.length <= 10) {
+      setDomainName(value);
+    }
   };
 
-  const handlePeriodIncrease = () => {
-    setRegistrationPeriod((prev) => prev + 1);
+  const getDomainPrice = (): number => {
+    if (domainName.length === 3) return 10;
+    if (domainName.length === 4) return 5;
+    if (domainName.length >= 5) return 3;
+    return 0;
   };
+
+  const isValidDomain = domainName.length >= 3 && domainName.length <= 10;
+
+  const handleComplete = () => {
+    if (isDeploymentSuccessful) {
+      console.log("Registration process completed!");
+    }
+  };
+
+  const callVal = getDomainPrice();
+  const DOMAIN_SUNPUMP_ADDRESS = process.env.NEXT_PUBLIC_SUNPUMP_ADDRESS;
+
+  const handleClose = () => {
+    setError(null);
+    setIsDeploymentSuccessful(false);
+  };
+
+  const registerDomain = useCallback(async () => {
+    try {
+      const tronWeb = window.tronWeb;
+      console.log(tronWeb);
+      console.log("inside try block");
+      if (!tronWeb) {
+        throw new Error(
+          "TronWeb not found. Please make sure TronLink is installed and connected."
+        );
+      }
+
+      // Address of deployed Register Domain contract
+      const domainContractAddress = DOMAIN_SUNPUMP_ADDRESS;
+      console.log(domainContractAddress);
+
+      // Get the contract instance using the TronWeb object
+      const domainSunpumpContract = await (tronWeb as any).contract().at(domainContractAddress);
+      
+      console.log(domainSunpumpContract);
+
+      console.log("Registering Domain...");
+
+      const deployResult = await domainSunpumpContract
+        .registerDomain(domainName).send({
+          feeLimit:700_000_000,
+          callValue: callVal, // sending the required TRX as fee
+        });
+
+      console.log("Domain registered successfully:", deployResult);
+
+      // If successful, you can add further logic, e.g., updating UI or storing the deployment info
+      setIsDeploymentSuccessful(true);
+      handleComplete();
+    } catch (error: unknown) {
+      console.error("Error Registering Domain:", error);
+
+      // Check if error is an instance of Error and has a message
+      if (error instanceof Error) {
+        setError(`An error occurred while registering the Domain: ${error.message}`);
+        console.log(error);
+      } else {
+        setError("An unknown error occurred while registering the Domain.");
+      }
+
+      handleClose();
+    }
+  }, [domainName, handleComplete]);
 
   return (
     <div className="containerDomain">
@@ -29,33 +136,42 @@ function RegisterDomain() {
           <div className="regtld-input-parent">
             <input
               type="text"
-              placeholder="spiderman.base"
-              className="regtld-input"
-              //   value={
-              //     showDomainName && showTLDName
-              //       ? showDomainName + "." + showTLDName
-              //       : null
-              //   }
-              readOnly
+              placeholder="Enter domain name (3-10 characters)"
+              className="regtld-input border border-gray-300 rounded-md p-2 text-black"
+              value={domainName}
+              onChange={handleDomainChange}
             />
           </div>
+          {!isValidDomain && domainName.length > 0 && (
+            <p className="text-red-500 ml-[10px] mt-2">
+              Domain name must be 3-10 characters long.
+            </p>
+          )}
         </div>
 
         <div className="input-group mb-40">
           <label className="ml-[10px]">TLD Name</label>
-          <div className="regtld-input-parent">
-            <input
-              type="text"
-              placeholder="spiderman.base"
-              className="regtld-input"
-              //   value={
-              //     showDomainName && showTLDName
-              //       ? showDomainName + "." + showTLDName
-              //       : null
-              //   }
-              readOnly
-            />
-          </div>
+          <Tooltip
+            title="You cannot edit or change this field"
+            autoAdjustOverflow
+            overlayClassName="fredoka-font"
+            color="#469913"
+            placement="top"
+            overlayInnerStyle={{
+              backgroundColor: "#469913",
+              fontWeight: "medium",
+              padding: "8px",
+            }}
+          >
+            <div className="regtld-input-parent">
+              <input
+                type="text"
+                value={`${domainName}.${tldName}`}
+                className="regtld-input cursor-not-allowed"
+                readOnly
+              />
+            </div>
+          </Tooltip>
         </div>
 
         <div className="regtld-config-heading">
@@ -66,8 +182,10 @@ function RegisterDomain() {
           <div className="registration_field_item">
             <div className="registration_field_title">
               <span className="field_title">Registration Period</span>
-              <Tooltip title="The number of years you will have right over this domain"
-              placement="leftTop">
+              <Tooltip
+                title="The number of years you will have right over this domain"
+                placement="leftTop"
+              >
                 <span className="field_info">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -97,58 +215,66 @@ function RegisterDomain() {
                 </span>
               </Tooltip>
             </div>
-            <div className="registartion_field_input registration_period">
-              <span className="registration_period_time">
-                <span>{registrationPeriod}</span> Year
-              </span>
-              <div className="registration_period_modification">
-                <span
-                  className={
-                    registrationPeriod === 1
-                      ? "period_decrease opacity_low"
-                      : "period_decrease"
-                  }
-                  // className="period_decrease opacity_low"
-                  onClick={handlePeriodDecrease}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 0 24 24"
-                    width="24px"
-                    fill="#000000"
-                  >
-                    <path d="M0 0h24v24H0V0z" fill="none" />
-                    <path d="M18 13H6c-.55 0-1-.45-1-1s.45-1 1-1h12c.55 0 1 .45 1 1s-.45 1-1 1z" />
-                  </svg>
+            <Tooltip
+              title="You cannot edit or change this field"
+              autoAdjustOverflow
+              overlayClassName="fredoka-font"
+              color="#469913"
+              placement="top"
+              overlayInnerStyle={{
+                backgroundColor: "#469913",
+                fontWeight: "medium",
+                padding: "8px",
+              }}
+            >
+              <div className="registartion_field_input registration_period cursor-not-allowed">
+                <span className="registration_period_time">
+                  <span>1</span> Year
                 </span>
-                <span
-                  className="period_increase"
-                  onClick={handlePeriodIncrease}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 0 24 24"
-                    width="24px"
-                    fill="#000000"
+                <div className="registration_period_modification">
+                  <span
+                    className="cursor-not-allowed"
+                    // className="period_decrease opacity_low"
+                    // onClick={handlePeriodDecrease}
                   >
-                    <path d="M0 0h24v24H0V0z" fill="none" />
-                    <path d="M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z" />
-                  </svg>
-                </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 0 24 24"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M18 13H6c-.55 0-1-.45-1-1s.45-1 1-1h12c.55 0 1 .45 1 1s-.45 1-1 1z" />
+                    </svg>
+                  </span>
+                  <span
+                    className="period_increase cursor-not-allowed"
+                    // onClick={handlePeriodIncrease}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 0 24 24"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path d="M18 13h-5v5c0 .55-.45 1-1 1s-1-.45-1-1v-5H6c-.55 0-1-.45-1-1s.45-1 1-1h5V6c0-.55.45-1 1-1s1 .45 1 1v5h5c.55 0 1 .45 1 1s-.45 1-1 1z" />
+                    </svg>
+                  </span>
+                </div>
               </div>
-            </div>
+            </Tooltip>
           </div>
 
           <div className="registration_field_item">
             <div className="registration_field_title">
-              <span className="field_title">
-                {"Domain Cost "}
-                <span className="field-sub-title">(Excluding Gas Fees)</span>
-              </span>
-              <Tooltip title="The cost is for the period selected."
-              placement="leftTop">
+              <span className="field_title">{"Domain Cost "}</span>
+              <Tooltip
+                title="The cost is for the period selected."
+                placement="leftTop"
+              >
                 <span className="field_info">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -178,24 +304,28 @@ function RegisterDomain() {
                 </span>
               </Tooltip>
             </div>
-            <div className="registartion_field_input">
-              <span className="registration_domain_cost">
-                {/* {fetchingValue ? fetchingValue : <>{domainPriceInETH + " "}</>} */}
-                0 TRX
+            <Tooltip
+            title="You cannot edit or change this field"
+            autoAdjustOverflow
+            overlayClassName="fredoka-font"
+            color="#469913"
+            placement="top"
+            overlayInnerStyle={{
+              backgroundColor: "#469913",
+              fontWeight: "medium",
+              padding: "8px",
+            }}
+          >
+            <div className="registartion_field_input cursor-not-allowed">
+              <span className="registration_domain_cost text-lg font-medium text-[#5dcd18]">
+                {isValidDomain ? `${getDomainPrice()} TRX` : "N/A"}
               </span>
             </div>
-            <p
-              style={{
-                color: "#ffffff80",
-                fontSize: "1rem",
-                margin: "10px",
-                fontFamily: "Space Grotesk, sans-serif",
-              }}
-            >
-              {/* {"Approx. : $ " + domainPriceInUSD + " USD"} */}
-            </p>
+          </Tooltip>
+            
           </div>
         </div>
+
         <div className="domain-register">
           {transactionState.waiting ? (
             <div className="submit-button">
@@ -206,7 +336,8 @@ function RegisterDomain() {
             <button
               type="button"
               className="submit-button"
-              //   onClick={registerName}
+              // disabled={!isValidDomain}
+              onClick={registerDomain}
             >
               Register Domain
             </button>

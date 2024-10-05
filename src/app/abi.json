@@ -1,0 +1,76 @@
+{
+  "entrys": [
+    {
+      "inputs": [
+        { "name": "_publicResolver", "type": "address" },
+        { "name": "_feeReceiver", "type": "address" },
+        { "name": "_domainRecordsAddress", "type": "address" }
+      ],
+      "stateMutability": "Nonpayable",
+      "type": "Constructor"
+    },
+    {
+      "inputs": [
+        { "indexed": true, "name": "creator", "type": "address" },
+        { "indexed": true, "name": "tldAddress", "type": "address" },
+        { "name": "tldName", "type": "string" }
+      ],
+      "name": "TLDDeployed",
+      "type": "Event"
+    },
+    {
+      "outputs": [{ "type": "uint256" }],
+      "name": "TLD_CREATION_FEE",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "inputs": [
+        { "name": "name", "type": "string" },
+        { "name": "symbol", "type": "string" },
+        { "name": "tld", "type": "string" }
+      ],
+      "name": "deployTLD",
+      "stateMutability": "Payable",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "name": "domainRecordsAddress",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "name": "feeReceiver",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "inputs": [{ "name": "tld", "type": "string" }],
+      "name": "getTLDAddress",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "name": "publicResolver",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "outputs": [{ "type": "address" }],
+      "inputs": [{ "type": "string" }],
+      "name": "tldContracts",
+      "stateMutability": "View",
+      "type": "Function"
+    },
+    {
+      "name": "withdrawFunds",
+      "stateMutability": "Nonpayable",
+      "type": "Function"
+    }
+  ]
+}

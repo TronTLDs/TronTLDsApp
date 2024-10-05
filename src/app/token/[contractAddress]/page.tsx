@@ -14,6 +14,7 @@ import {
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import { useToken } from "@/app/context/TokenContext";
+import fallback_img from "../../../../assets/default_image2.png";
 import "../../css/IndToken.css";
 import "../../css/RegisterTLD.css";
 
@@ -105,14 +106,16 @@ const TokenPage = () => {
   };
 
   const handlePurchaseDomain = () => {
-    router.push(
-      `/purchaseDomain/${token?.name.replace(/\s+/g, "").toLowerCase()}`
-    );
+    if (token) {
+      const formattedName = token.name.replace(/\s+/g, "").toLowerCase();
+      const formattedSymbol = token.symbol.replace("$", "").toUpperCase();
+      router.push(`/purchaseDomain/${formattedName}?symbol=${formattedSymbol}`);
+    }
   };
 
-  // const handleDomainPage = () => {
-  //   router.push("/domain");
-  // };
+  const handleDomainPage = () => {
+    router.push("/domain");
+  };
 
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
@@ -176,8 +179,8 @@ const TokenPage = () => {
       ) : (
         <div className="bg-[#151b15] rounded-lg p-6 flex">
           <img
-            src={token.logoUrl}
-            alt={token.name}
+            src={token.logoUrl === null ? fallback_img.src : token.logoUrl}
+            alt={token.name}  
             className="w-64 h-64 rounded-lg mr-6 object-cover"
           />
           <div className="flex-1 flex flex-col justify-between">
@@ -223,7 +226,7 @@ const TokenPage = () => {
                     </div>
                   </button>
                   <button className="text-gray-300 hover:text-white">
-                    <div className="cursor-pointer" title="Tron Link">
+                    <div className="cursor-pointer" title="TronLink">
                       <ExternalLink
                         size={16}
                         className="cursor-pointer hover:scale-110 hover:text-white text-gray-200"
@@ -330,7 +333,7 @@ const TokenPage = () => {
         >
           Purchase Domain
         </button>
-        {/* <div className="stake-register">
+        <div className="stake-register">
           <button
             onClick={handleDomainPage}
             type="submit"
@@ -338,7 +341,7 @@ const TokenPage = () => {
           >
             Go to Domain Form
           </button>
-        </div> */}
+        </div>
       </div>
 
       <Toaster

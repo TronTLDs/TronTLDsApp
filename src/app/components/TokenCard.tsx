@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  SearchCode,
+  // SearchCode,
   MoveUp,
   MoveDown,
   Copy,
@@ -12,12 +12,16 @@ import {
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
   X,
+  Search,
 } from "lucide-react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaTelegramPlane } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import { useToken } from "../context/TokenContext";
+import defaultImage from "../../../assets/default_image2.png";
+import Image from "next/image";
+import no_more_items from "../../../assets/no_more_items2.png";
 import "../css/TokenCard.css";
 
 interface Token {
@@ -39,7 +43,7 @@ interface Token {
   totalSupply: number;
 }
 
-const TokenCard = ({ }) => {
+const TokenCard = ({}) => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -234,27 +238,32 @@ const TokenCard = ({ }) => {
         Tokens Explorer
       </h2>
       <div className="search_container flex justify-between">
-        <div className="search-bar w-[30%] relative -ml-[7px]">
-          <SearchCode className="ml-[20px]" />
-          <input
-            type="text"
-            className="search-input p-2"
-            placeholder="Search for tokens"
-            value={searchQuery}
-            onChange={handleSearchChange} // Call handleSearchChange on input
-          ></input>
-          {searchQuery && (
-            <button
-              onClick={clearSearch}
-              className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
-              title="Clear search"
-            >
-              <X
-                size={17}
-                className="text-gray-200 font-bold hover:text-[#74ff1f] hover:scale-125"
-              />
-            </button>
-          )}
+        <div className="flex gap-3 items-center">
+          <div className="search-bar w-[30%] relative -ml-[7px]">
+            {/* <SearchCode className="ml-[20px]" /> */}
+            <input
+              type="text"
+              className="search-input p-2"
+              placeholder="Search for tokens"
+              value={searchQuery}
+              onChange={handleSearchChange} // Call handleSearchChange on input
+            ></input>
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
+                title="Clear search"
+              >
+                <X
+                  size={17}
+                  className="text-gray-200 font-bold hover:text-[#74ff1f] hover:scale-125"
+                />
+              </button>
+            )}
+          </div>
+          <div className="p-[8px] cursor-pointer bg-[#A8F981] rounded-full">
+            <Search strokeWidth={1.5} color="black" />
+          </div>
         </div>
         <div className="flex gap-5 items-center">
           <div className="relative inline-block text-center">
@@ -336,7 +345,7 @@ const TokenCard = ({ }) => {
                 className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
               >
                 <img
-                  src={token.logoUrl}
+                  src={token.logoUrl === null ? defaultImage.src : token.logoUrl}
                   alt={token.name}
                   className="w-full h-[240px] object-cover rounded-md mb-4"
                 />
@@ -494,7 +503,18 @@ const TokenCard = ({ }) => {
             {loading ? "Loading..." : "Load More"}
           </button>
         )}
-        {!hasMore && <p>No more tokens to load</p>}
+        {!hasMore && (
+          // <button
+          //   disabled
+          //   className="cursor-not-allowed flex items-center p-3 px-10 text-white font-medium bg-[#469913] opacity-50 border-2 rounded-lg"
+          // >
+          //   Load More
+          // </button>
+          <div className="flex justify-center items-center flex-col gap-3 mt-10">
+            <Image src={no_more_items} alt="no more image to load" />
+            <span className="text-lg">No more items to load</span>
+          </div>
+        )}
       </div>
       <Toaster
         toastOptions={{
