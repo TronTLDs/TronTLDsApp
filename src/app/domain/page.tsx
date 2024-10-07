@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import abi from "../PumpDomains.json";
 import { IoWarning } from "react-icons/io5";
-import { BiSolidMessageError  } from "react-icons/bi";
+import { BiSolidMessageError } from "react-icons/bi";
 import "../css/RegisterDomain.css";
 import { Tooltip } from "antd";
 
@@ -20,7 +20,7 @@ function RegisterDomain() {
 
   // const [registrationPeriod, setRegistrationPeriod] = useState<number>(1);
   const [domainName, setDomainName] = useState<string>("");
-  const [tldName] = useState<string>("base"); // TLD name is fixed
+  const [tldName] = useState<string>("tron"); // TLD name is fixed
 
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
 
@@ -68,8 +68,8 @@ function RegisterDomain() {
     return 0;
   };
 
-  const isValidDomain =
-    domainName.length >= 3 && domainName.length <= 10 && connected;
+  const isValidDomainLength = domainName.length >= 3 && domainName.length <= 10;
+  const isValidDomain = isValidDomainLength && connected;
 
   const handleComplete = () => {
     if (isDeploymentSuccessful) {
@@ -153,9 +153,9 @@ function RegisterDomain() {
               onChange={handleDomainChange}
             />
           </div>
-          {!isValidDomain && domainName.length > 0 && (
+          {!isValidDomainLength && domainName.length > 0 && (
             <div className="flex items-center gap-1 ml-[10px] mt-2">
-              <BiSolidMessageError  color="red" />
+              <BiSolidMessageError color="red" />
               <span className="text-red-500 -mt-[2px]">
                 Domain name must be 3-10 characters long.
               </span>
@@ -361,11 +361,13 @@ function RegisterDomain() {
           )}
         </div>
         {error && (
-          <div className="flex items-center justify-center error-message mt-4 text-red-500">{error}</div>
+          <div className="flex items-center justify-center error-message mt-4 text-red-500">
+            {error}
+          </div>
         )}
         {!connected && (
           <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
-            <IoWarning /> 
+            <IoWarning />
             <span>Please connect your wallet to register a domain.</span>
           </div>
         )}

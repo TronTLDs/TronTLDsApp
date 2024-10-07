@@ -38,7 +38,7 @@ export default function DomainDetails() {
               className="rounded-full"
             />
             <div>
-              <h3 className="text-white font-semibold">spiderman.base</h3>
+              <h3 className="text-white font-semibold">spiderman.tron</h3>
               <p className="text-gray-300 text-sm">Domain details</p>
             </div>
           </div>
