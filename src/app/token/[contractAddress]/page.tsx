@@ -326,9 +326,9 @@ const TokenPage = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-center mt-[2rem]">
+      <div className="flex items-center justify-center gap-2 mt-[2rem]">
         <button
-          className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
+          className="submit-button"
           onClick={handlePurchaseDomain}
         >
           Purchase Domain

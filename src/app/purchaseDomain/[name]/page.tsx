@@ -3,11 +3,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
-import "../../css/RegisterTLD.css";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { Modal } from "antd";
 import AutoProgressBar from "@/app/components/AutoProgressBar";
+import { IoWarning } from "react-icons/io5";
 import abi from "../../TLDFactory.json";
+import "../../css/RegisterTLD.css";
 
 const TLD_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_TLD_FACTORY_ADDRESS;
 console.log(TLD_FACTORY_ADDRESS);
@@ -92,9 +93,9 @@ function RegisterTLD() {
   ];
 
   const showModal = () => {
-    // setIsModalOpen(true);
+    setIsModalOpen(true);
     // setCurrentStep(0);
-    // setIsDeploymentSuccessful(false);
+    setIsDeploymentSuccessful(false);
     deployTLD();
   };
 
@@ -224,7 +225,7 @@ function RegisterTLD() {
               </Tooltip>
             </div>
 
-            <div className="regtld-config-heading flex gap-2 items-center">
+            <div className="regtld-config-heading flex gap-1 items-center">
               <span>Configuration</span>
               <Tooltip
                 title="Keep in mind that you cannot change the configuration as it is MVP"
@@ -452,7 +453,11 @@ function RegisterTLD() {
       <div className="stake-register">
         <button
           type="submit"
-          className="submit-button"
+          className={`submit-button ${
+            connected
+              ? "cursor-pointer mb-[40px]"
+              : "cursor-not-allowed opacity-60"
+          }`}
           onClick={showModal}
           disabled={!connected}
         >
@@ -479,8 +484,9 @@ function RegisterTLD() {
       </Modal>
       {error && <div className="error-message mt-4 text-red-500">{error}</div>}
       {!connected && (
-        <div className="mt-4 text-yellow-500">
-          Please connect your wallet to register a domain.
+        <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+          <IoWarning /> 
+          Please connect your wallet to Deploy TLD.
         </div>
       )}
     </div>

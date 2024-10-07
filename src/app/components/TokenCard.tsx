@@ -512,7 +512,7 @@ const TokenCard = ({}) => {
           // </button>
           <div className="flex justify-center items-center flex-col gap-3 mt-10">
             <Image src={no_more_items} alt="no more image to load" />
-            <span className="text-lg">No more items to load</span>
+            <span className="text-lg">No items in the list</span>
           </div>
         )}
       </div>

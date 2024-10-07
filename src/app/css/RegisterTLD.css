@@ -155,21 +155,19 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
 }
 
 .submit-button {
   padding: 15px 40px;
   border: none;
-  cursor: pointer;
   background: linear-gradient(90deg, #74ff1f 0%, #fcff72 100%);
-  border-radius: 30px;
-  
+  border-radius: 10px;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.2;
   text-align: center;
-  color: #0a1621;
+  color: #1a4268;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

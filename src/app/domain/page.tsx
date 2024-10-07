@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useCallback } from "react";
-// import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import abi from "../PumpDomains.json";
+import { IoWarning } from "react-icons/io5";
+import { BiSolidMessageError  } from "react-icons/bi";
 import "../css/RegisterDomain.css";
 import { Tooltip } from "antd";
 
@@ -14,10 +16,12 @@ function RegisterDomain() {
   });
   const [nameRegistered] = useState(false);
 
+  const { connected } = useWallet();
+
   // const [registrationPeriod, setRegistrationPeriod] = useState<number>(1);
   const [domainName, setDomainName] = useState<string>("");
   const [tldName] = useState<string>("base"); // TLD name is fixed
-  
+
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +68,8 @@ function RegisterDomain() {
     return 0;
   };
 
-  const isValidDomain = domainName.length >= 3 && domainName.length <= 10;
+  const isValidDomain =
+    domainName.length >= 3 && domainName.length <= 10 && connected;
 
   const handleComplete = () => {
     if (isDeploymentSuccessful) {
@@ -96,14 +101,19 @@ function RegisterDomain() {
       console.log("before instance, address:", domainContractAddress);
 
       // Get the contract instance using the TronWeb object
-      const domainSunpumpContract = await (tronWeb).contract(abi, domainContractAddress);
-      
+      const domainSunpumpContract = await tronWeb.contract(
+        abi,
+        domainContractAddress
+      );
+
       console.log("instance created", domainSunpumpContract);
 
       console.log("Registering Domain...");
 
-      const deployResult = await domainSunpumpContract.registerDomain(domainName).send({
-          feeLimit:700_000_000,
+      const deployResult = await domainSunpumpContract
+        .registerDomain(domainName)
+        .send({
+          feeLimit: 700_000_000,
           callValue: callVal * 1000000, // sending the required TRX as fee
         });
 
@@ -117,7 +127,9 @@ function RegisterDomain() {
 
       // Check if error is an instance of Error and has a message
       if (error instanceof Error) {
-        setError(`An error occurred while registering the Domain: ${error.message}`);
+        setError(
+          `An error occurred while registering the Domain: ${error.message}`
+        );
       } else {
         setError("An unknown error occurred while registering the Domain.");
       }
@@ -142,9 +154,12 @@ function RegisterDomain() {
             />
           </div>
           {!isValidDomain && domainName.length > 0 && (
-            <p className="text-red-500 ml-[10px] mt-2">
-              Domain name must be 3-10 characters long.
-            </p>
+            <div className="flex items-center gap-1 ml-[10px] mt-2">
+              <BiSolidMessageError  color="red" />
+              <span className="text-red-500 -mt-[2px]">
+                Domain name must be 3-10 characters long.
+              </span>
+            </div>
           )}
         </div>
 
@@ -304,24 +319,23 @@ function RegisterDomain() {
               </Tooltip>
             </div>
             <Tooltip
-            title="You cannot edit or change this field"
-            autoAdjustOverflow
-            overlayClassName="fredoka-font"
-            color="#469913"
-            placement="top"
-            overlayInnerStyle={{
-              backgroundColor: "#469913",
-              fontWeight: "medium",
-              padding: "8px",
-            }}
-          >
-            <div className="registartion_field_input cursor-not-allowed">
-              <span className="registration_domain_cost text-lg font-medium text-[#5dcd18]">
-                {isValidDomain ? `${getDomainPrice()} TRX` : "N/A"}
-              </span>
-            </div>
-          </Tooltip>
-            
+              title="You cannot edit or change this field"
+              autoAdjustOverflow
+              overlayClassName="fredoka-font"
+              color="#469913"
+              placement="top"
+              overlayInnerStyle={{
+                backgroundColor: "#469913",
+                fontWeight: "medium",
+                padding: "8px",
+              }}
+            >
+              <div className="registartion_field_input cursor-not-allowed">
+                <span className="registration_domain_cost text-lg font-medium text-[#5dcd18]">
+                  {isValidDomain ? `${getDomainPrice()} TRX` : "N/A"}
+                </span>
+              </div>
+            </Tooltip>
           </div>
         </div>
 
@@ -334,7 +348,11 @@ function RegisterDomain() {
           ) : (
             <button
               type="button"
-              className={`submit-button ${isValidDomain ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
+              className={`submit-button ${
+                isValidDomain
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed opacity-60"
+              }`}
               disabled={!isValidDomain}
               onClick={registerDomain}
             >
@@ -342,6 +360,15 @@ function RegisterDomain() {
             </button>
           )}
         </div>
+        {error && (
+          <div className="flex items-center justify-center error-message mt-4 text-red-500">{error}</div>
+        )}
+        {!connected && (
+          <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
+            <IoWarning /> 
+            <span>Please connect your wallet to register a domain.</span>
+          </div>
+        )}
       </form>
     </div>
   );
