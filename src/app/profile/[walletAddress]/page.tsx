@@ -1,9 +1,11 @@
 "use client";
 import Image from "next/image";
 import { useState, useCallback } from "react";
+import { useParams } from "next/navigation";
 import { IoWarning } from "react-icons/io5";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import abi from "../../DomainRecords.json";
+import abi2 from "../../PublicResolver.json";
 
 interface DomainCardProps {
   domain: string;
@@ -26,11 +28,14 @@ const DomainCard: React.FC<DomainCardProps> = ({ domain }) => (
 );
 
 export default function DomainManager() {
+  const { walletAddress } = useParams();
   const [error, setError] = useState<string | null>(null);
   // const [result, setResult] = useState([]);
   const { address, connected } = useWallet();
+  console.log(address);
 
   const DOMAIN_RECORDS_ADDRESS = process.env.NEXT_PUBLIC_DOMAIN_RECORDS_ADDRESS;
+  const PUBLIC_RESOLVER_ADDRESS = process.env.NEXT_PUBLIC_RESOLVER_ADDRESS;
 
   const getDomainHashes = useCallback(async () => {
     try {
@@ -59,12 +64,57 @@ export default function DomainManager() {
       console.log(address);
 
       const deployResult = await domainRecordsContract
-        .getDomainsByOwner(address)
+        .getDomainsByOwner(walletAddress)
         .call();
 
       // setResult(deployResult);
 
       console.log("Domains fetched successfully:", deployResult);
+    } catch (error: unknown) {
+      console.error("Error Fetching Registered Domains:", error);
+
+      // Check if error is an instance of Error and has a message
+      if (error instanceof Error) {
+        setError(
+          `An error occurred while fetching the Domains: ${error.message}`
+        );
+      } else {
+        setError("An unknown error occurred while fetching the Domain.");
+      }
+    }
+  }, []);
+
+  const getPrimaryDomain = useCallback(async () => {
+    try {
+      const tronWeb = window.tronWeb;
+      console.log(tronWeb);
+      console.log("inside try block");
+      if (!tronWeb) {
+        throw new Error(
+          "TronWeb not found. Please make sure TronLink is installed and connected."
+        );
+      }
+
+      // Address of deployed Register Domain contract
+      const resolverAddress = PUBLIC_RESOLVER_ADDRESS;
+      console.log("before instance, address:", resolverAddress);
+
+      // Get the contract instance using the TronWeb object
+      const resolverContract = await tronWeb.contract(
+        abi2.abi,
+        resolverAddress
+      );
+
+      console.log("instance created", resolverContract);
+
+      console.log("Fetching Domain Data...");
+      console.log(address);
+
+      const resolverResult = await resolverContract
+        .resolveAddressToFullDomain(walletAddress)
+        .call();
+
+      console.log("Domains fetched successfully:", resolverResult);
     } catch (error: unknown) {
       console.error("Error Fetching Registered Domains:", error);
 
@@ -97,21 +147,32 @@ export default function DomainManager() {
         </section>
       </div>
 
-      <div className="flex items-center justify-center mt-8">
+      <div className="flex items-center justify-center mt-8 gap-3">
         <button
           disabled={!connected}
           onClick={getDomainHashes}
-          className={`flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg ${connected ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
+          className={`flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg ${
+            connected ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+          }`}
         >
           Get Domain hashes
         </button>
+        <button
+          disabled={!connected}
+          onClick={getPrimaryDomain}
+          className={`flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg ${
+            connected ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+          }`}
+        >
+          Get Primary Domain
+        </button>
       </div>
 
-      {error && (
+      {/* {error && (
         <div className="flex items-center justify-center error-message mt-4 text-red-500">
           {error}
         </div>
-      )}
+      )} */}
       {!connected && (
         <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
           <IoWarning />

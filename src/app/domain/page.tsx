@@ -4,8 +4,8 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import abi from "../PumpDomains.json";
 import { IoWarning } from "react-icons/io5";
 import { BiSolidMessageError } from "react-icons/bi";
-import "../css/RegisterDomain.css";
 import { Tooltip } from "antd";
+import "../css/RegisterDomain.css";
 
 // type TronWeb = any;
 
@@ -26,33 +26,11 @@ function RegisterDomain() {
 
   const [error, setError] = useState<string | null>(null);
   // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmationProgress, setConfirmationProgress] = useState(0);
+
 
   console.log(error);
-
-  // useEffect(() => {
-  //   const initTronWeb = async () => {
-  //     // (window.tronWeb && window.tronWeb.ready)
-  //     const tronWeb = window.tronWeb;
-  //     setTronWeb(tronWeb);
-
-  //     const tronLinkListener = setInterval(() => {
-  //       if (window.tronWeb && window.tronWeb.ready) {
-  //         setTronWeb(tronWeb);
-  //         clearInterval(tronLinkListener);
-  //       }
-  //     }, 500);
-  //   };
-
-  //   initTronWeb();
-  // }, []);
-
-  // const handlePeriodDecrease = () => {
-  //   if (registrationPeriod > 2) setRegistrationPeriod((prev) => prev - 1);
-  // };
-
-  // const handlePeriodIncrease = () => {
-  //   if (registrationPeriod < 10) setRegistrationPeriod((prev) => prev + 1);
-  // };
 
   const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -87,7 +65,7 @@ function RegisterDomain() {
 
   const registerDomain = useCallback(async () => {
     try {
-      const tronWeb = window.tronWeb;
+      const tronWeb = (window as any).tronWeb;
       console.log(tronWeb);
       console.log("inside try block");
       if (!tronWeb) {
@@ -137,6 +115,22 @@ function RegisterDomain() {
       handleClose();
     }
   }, [domainName, handleComplete]);
+
+  const handleSetPrimaryDomain = async () => {
+    try {
+      const tronWeb = window.tronWeb;
+      const domainSunpumpContract = await tronWeb.contract(abi, DOMAIN_SUNPUMP_ADDRESS);
+
+      const setPrimaryResult = await domainSunpumpContract
+        .setPrimaryDomain(domainName)
+        .send();
+
+      console.log("Primary domain set successfully:", setPrimaryResult);
+    } catch (error) {
+      console.error("Error setting primary domain:", error);
+      setError("An error occurred while setting the primary domain.");
+    }
+  };
 
   return (
     <div className="containerDomain">
@@ -339,13 +333,30 @@ function RegisterDomain() {
           </div>
         </div>
 
-        <div className="domain-register">
-          {transactionState.waiting ? (
-            <div className="submit-button">
-              {transactionState.msg}
-              {!nameRegistered && <div className="sp sp-wave"></div>}
-            </div>
-          ) : (
+        <div className="flex items-center justify-center gap-3">
+          <div className="domain-register">
+            {transactionState.waiting ? (
+              <div className="submit-button">
+                {transactionState.msg}
+                {!nameRegistered && <div className="sp sp-wave"></div>}
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={`submit-button ${
+                  isValidDomain
+                    ? "cursor-pointer"
+                    : "cursor-not-allowed opacity-60"
+                }`}
+                disabled={!isValidDomain}
+                onClick={registerDomain}
+              >
+                Register Domain
+              </button>
+            )}
+          </div>
+
+          <div className="domain-register">
             <button
               type="button"
               className={`submit-button ${
@@ -353,18 +364,19 @@ function RegisterDomain() {
                   ? "cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              disabled={!isValidDomain}
-              onClick={registerDomain}
+              disabled={!isDeploymentSuccessful}
+              onClick={handleSetPrimaryDomain}
             >
-              Register Domain
+              Set as a primary domain
             </button>
-          )}
+          </div>
         </div>
-        {error && (
+
+        {/* {error && (
           <div className="flex items-center justify-center error-message mt-4 text-red-500">
             {error}
           </div>
-        )}
+        )} */}
         {!connected && (
           <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
             <IoWarning />

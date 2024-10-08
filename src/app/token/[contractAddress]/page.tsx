@@ -331,16 +331,16 @@ const TokenPage = () => {
           className="submit-button"
           onClick={handlePurchaseDomain}
         >
-          Purchase Domain
+          Deploy TLD
         </button>
         <div className="stake-register">
-          <button
+          {/* <button
             onClick={handleDomainPage}
             type="submit"
             className="submit-button"
           >
             Go to Domain Form
-          </button>
+          </button> */}
         </div>
       </div>
 

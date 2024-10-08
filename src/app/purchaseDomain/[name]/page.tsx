@@ -12,7 +12,6 @@ import "../../css/RegisterTLD.css";
 
 const TLD_FACTORY_ADDRESS = process.env.NEXT_PUBLIC_TLD_FACTORY_ADDRESS;
 console.log(TLD_FACTORY_ADDRESS);
-console.log(abi);
 const TLD_CREATION_FEE = 50000000; // 50 TRX in SUN (1 TRX = 1,000,000 SUN)
 
 // type TronWeb = any;
@@ -47,6 +46,9 @@ function RegisterTLD() {
   const [mintCap, setMintCap] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
+
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmationProgress, setConfirmationProgress] = useState(0);
 
   // console.log(tronWeb);
 
@@ -114,55 +116,130 @@ function RegisterTLD() {
     }, 2000);
   };
 
-  const deployTLD = useCallback(async () => {
-    try {
-      const tronWeb = window.tronWeb;
-      console.log(tronWeb);
-      console.log("inside try block");
-      if (!tronWeb) {
-        throw new Error(
-          "TronWeb not found. Please make sure TronLink is installed and connected."
+  // Add this function to your component
+  const waitForConfirmation = async (
+    txId: string,
+    requiredConfirmations = 19
+  ) => {
+    setIsConfirming(true);
+    setConfirmationProgress(0);
+
+    const checkConfirmation = async () => {
+      try {
+        const txInfo = await (window.tronWeb as any).trx.getTransactionInfo(
+          txId
         );
+
+        if (txInfo && txInfo.blockNumber) {
+          const currentBlock = await (
+            window.tronWeb as any
+          ).trx.getCurrentBlock();
+          const confirmations =
+            currentBlock.block_header.raw_data.number - txInfo.blockNumber;
+
+          setConfirmationProgress(
+            Math.min(confirmations / requiredConfirmations, 1)
+          );
+
+          if (confirmations >= requiredConfirmations) {
+            setIsConfirming(false);
+            return txInfo;
+          }
+        }
+      } catch (error) {
+        console.error("Error checking confirmation:", error);
       }
 
-      // Address of your deployed TLD Factory contract
-      const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
+      return null;
+    };
 
-      // Check if tldFactoryContractAddress is defined
-      // if (!tldFactoryContractAddress) {
-      //   throw new Error("TLD Factory contract address is not defined.");
-      // }
+    while (isConfirming) {
+      const result = await checkConfirmation();
+      if (result) {
+        return result;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Check every 3 seconds
+    }
+  };
 
-      console.log(tldFactoryContractAddress);
+  const deployTLD = useCallback(async () => {
+    try {
+      if (window.tronWeb && window.tronWeb.ready) {
+        const tronWeb = (window as any).tronWeb;
+        console.log(tronWeb);
+        console.log("inside try block");
+        if (!tronWeb) {
+          throw new Error(
+            "TronWeb not found. Please make sure TronLink is installed and connected."
+          );
+        }
 
-      // Get the contract instance using the TronWeb object
-      const tldFactoryContract = await tronWeb.contract(abi, tldFactoryContractAddress);
+        // Address of your deployed TLD Factory contract
+        const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
 
-      console.log(tldFactoryContract);
+        // Check if tldFactoryContractAddress is defined
+        // if (!tldFactoryContractAddress) {
+        //   throw new Error("TLD Factory contract address is not defined.");
+        // }
 
-      // Prepare parameters for the deployTLD function
-      const tldName = decodedName;
-      const tldSymbol = symbol;
+        console.log(tldFactoryContractAddress);
 
-      console.log("Creating TLD...");
+        // Get the contract instance using the TronWeb object
+        const tldFactoryContract = await tronWeb.contract(
+          abi,
+          tldFactoryContractAddress
+        );
 
-      // Deploy the TLD by calling the contract's deployTLD method
-      const deployResult = await tldFactoryContract
-        .deployTLD(
-          tldName,
-          tldSymbol,
-          tldSymbol // assuming you're passing the TLD name again as a parameter
-        )
-        .send({
-          feeLimit: 700_000_000,
-          callValue: TLD_CREATION_FEE, // sending the required TRX as fee
-        });
+        console.log(tldFactoryContract);
 
-      console.log("TLD deployed successfully:", deployResult);
+        // Prepare parameters for the deployTLD function
+        const tldName = decodedName;
+        const tldSymbol = symbol;
 
-      // If successful, you can add further logic, e.g., updating UI or storing the deployment info
-      setIsDeploymentSuccessful(true);
-      handleComplete();
+        console.log("Creating TLD...");
+
+        // Deploy the TLD by calling the contract's deployTLD method
+        const deployResult = await tldFactoryContract
+          .deployTLD(
+            tldName,
+            tldSymbol,
+            tldSymbol // assuming you're passing the TLD name again as a parameter
+          )
+          .send({
+            feeLimit: 700_000_000,
+            callValue: TLD_CREATION_FEE, // sending the required TRX as fee
+          });
+
+        console.log("TLD deployed successfully:", deployResult);
+
+        const txInfo1 = await waitForConfirmation(deployResult);
+        console.log("Transaction Info:", txInfo1);
+
+        const txInfo2 = await tronWeb.trx.getTransaction(deployResult);
+        console.log("Transaction Info:", txInfo2);
+
+        // const txInfo3 = await tronWeb.trx.getTransactionInfo(deployResult);
+        // console.log("Transaction Info:", txInfo3);
+
+        const txInfo4 = await tronWeb.trx.getContract(
+          tldFactoryContractAddress
+        );
+        console.log("Transaction Info:", txInfo4);
+
+        const events = await tronWeb.event.getEventsByTransactionID(
+          deployResult
+        );
+        console.log(events);
+
+        const events2 = await tronWeb.event.getEventsByContractAddress(
+          tldFactoryContractAddress
+        );
+        console.log(events2);
+
+        // If successful, you can add further logic, e.g., updating UI or storing the deployment info
+        setIsDeploymentSuccessful(true);
+        handleComplete();
+      }
     } catch (error: unknown) {
       console.error("Error deploying TLD:", error);
 
@@ -482,10 +559,10 @@ function RegisterTLD() {
           onComplete={handleComplete}
         />
       </Modal>
-      {error && <div className="error-message mt-4 text-red-500">{error}</div>}
+      {/* {error && <div className="error-message mt-4 text-red-500">{error}</div>} */}
       {!connected && (
         <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
-          <IoWarning /> 
+          <IoWarning />
           Please connect your wallet to Deploy TLD.
         </div>
       )}
