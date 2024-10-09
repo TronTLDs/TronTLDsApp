@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { useToken } from "@/app/context/TokenContext";
 import { Modal } from "antd";
 import AutoProgressBar from "@/app/components/AutoProgressBar";
 import { IoWarning } from "react-icons/io5";
@@ -19,6 +20,7 @@ const TLD_CREATION_FEE = 50000000; // 50 TRX in SUN (1 TRX = 1,000,000 SUN)
 function RegisterTLD() {
   const { name } = useParams();
   const searchParams = useSearchParams();
+  const { token } = useToken();
   const symbol = searchParams.get("symbol");
   console.log("Symbol", symbol);
   // Decode the URL parameter explicitly to handle special characters
@@ -28,7 +30,8 @@ function RegisterTLD() {
 
   console.log(decodedName); // This will log the decoded value of `name`
 
-  const { connected } = useWallet();
+  const { address, connected } = useWallet();
+  console.log(address, token);
 
   const [error, setError] = useState<string | null>(null);
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
@@ -48,6 +51,7 @@ function RegisterTLD() {
   // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
 
   const [isConfirming, setIsConfirming] = useState(false);
+  const [link, setLink] = useState("");
   const [confirmationProgress, setConfirmationProgress] = useState(0);
 
   // console.log(tronWeb);
@@ -95,9 +99,9 @@ function RegisterTLD() {
   ];
 
   const showModal = () => {
-    setIsModalOpen(true);
+    // setIsModalOpen(true);
     // setCurrentStep(0);
-    setIsDeploymentSuccessful(false);
+    // setIsDeploymentSuccessful(false);
     deployTLD();
   };
 
@@ -116,15 +120,15 @@ function RegisterTLD() {
     }, 2000);
   };
 
-  // Add this function to your component
   const waitForConfirmation = async (
     txId: string,
-    requiredConfirmations = 19
+    requiredConfirmations = 19,
+    maxAttempts = 40
   ) => {
     setIsConfirming(true);
     setConfirmationProgress(0);
 
-    const checkConfirmation = async () => {
+    const checkConfirmation = async (attempt: number): Promise<any> => {
       try {
         const txInfo = await (window.tronWeb as any).trx.getTransactionInfo(
           txId
@@ -146,20 +150,26 @@ function RegisterTLD() {
             return txInfo;
           }
         }
+
+        if (attempt >= maxAttempts) {
+          throw new Error(
+            "Max attempts reached. Transaction may still be pending."
+          );
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait 3 seconds before next attempt
+        return checkConfirmation(attempt + 1);
       } catch (error) {
         console.error("Error checking confirmation:", error);
+        if (attempt >= maxAttempts) {
+          throw error;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait 3 seconds before retry
+        return checkConfirmation(attempt + 1);
       }
-
-      return null;
     };
 
-    while (isConfirming) {
-      const result = await checkConfirmation();
-      if (result) {
-        return result;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Check every 3 seconds
-    }
+    return checkConfirmation(0);
   };
 
   const deployTLD = useCallback(async () => {
@@ -212,29 +222,21 @@ function RegisterTLD() {
 
         console.log("TLD deployed successfully:", deployResult);
 
-        const txInfo1 = await waitForConfirmation(deployResult);
-        console.log("Transaction Info:", txInfo1);
+        const confirmedTxInfo = await waitForConfirmation(deployResult);
+        console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
-        const txInfo2 = await tronWeb.trx.getTransaction(deployResult);
-        console.log("Transaction Info:", txInfo2);
+        setLink(deployResult);
 
-        // const txInfo3 = await tronWeb.trx.getTransactionInfo(deployResult);
-        // console.log("Transaction Info:", txInfo3);
+        // Fetch the second log's address field in hex format
+        const hexAddress = confirmedTxInfo.log[1].address;
 
-        const txInfo4 = await tronWeb.trx.getContract(
-          tldFactoryContractAddress
-        );
-        console.log("Transaction Info:", txInfo4);
+        // Convert hex to bytes
+        const byteArray = tronWeb.utils.hexToBytes(hexAddress);
 
-        const events = await tronWeb.event.getEventsByTransactionID(
-          deployResult
-        );
-        console.log(events);
+        // Encode to Base58
+        const base58Address = tronWeb.utils.bytesToBase58(byteArray);
 
-        const events2 = await tronWeb.event.getEventsByContractAddress(
-          tldFactoryContractAddress
-        );
-        console.log(events2);
+        console.log(base58Address);
 
         // If successful, you can add further logic, e.g., updating UI or storing the deployment info
         setIsDeploymentSuccessful(true);
@@ -538,9 +540,32 @@ function RegisterTLD() {
           onClick={showModal}
           disabled={!connected}
         >
-          Register Domain
+          Deploy TLD
         </button>
       </div>
+
+      {/* {isDeploymentSuccessful && <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+        Please connect your wallet to Deploy TLD.
+      </div>} */}
+      <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+          <span>
+          To view the transaction details, simply click or paste the following hash into the Tron Nile Scan
+          </span>
+          <span
+            className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
+            title="View in Tronscan"
+            onClick={(event) => {
+              window.open(
+                `https://nile.tronscan.org/#/transaction/${link}`,
+                "_blank"
+              );
+              event.stopPropagation();
+            }}
+          >
+            {"0716e87f2ccdcaf85fbfb41e0625d6edce1226612bf0b6ea4a8c0d62037c7f41"}
+          </span>
+        </div>
+
       <Modal
         title={null}
         open={isModalOpen}

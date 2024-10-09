@@ -47,6 +47,7 @@ const TokenPage = () => {
   useEffect(() => {
     const fetchTokenData = async () => {
       if (contextToken) {
+        console.log("hello");
         setToken(contextToken);
       } else if (contractAddress) {
         try {
@@ -329,9 +330,9 @@ const TokenPage = () => {
       <div className="flex items-center justify-center gap-2 mt-[2rem]">
         <button
           className="submit-button"
-          onClick={handlePurchaseDomain}
+          onClick={handleDomainPage}
         >
-          Deploy TLD
+          Register Domain
         </button>
         <div className="stake-register">
           {/* <button

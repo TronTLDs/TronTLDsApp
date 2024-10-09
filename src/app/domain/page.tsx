@@ -20,7 +20,7 @@ function RegisterDomain() {
 
   // const [registrationPeriod, setRegistrationPeriod] = useState<number>(1);
   const [domainName, setDomainName] = useState<string>("");
-  const [tldName] = useState<string>("tron"); // TLD name is fixed
+  const [tldName] = useState<string>("RBC"); // TLD name is fixed
 
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
 
@@ -28,7 +28,7 @@ function RegisterDomain() {
   // const [tronWeb, setTronWeb] = useState<TronWeb | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
   const [confirmationProgress, setConfirmationProgress] = useState(0);
-
+  const [link, setLink] = useState("");
 
   console.log(error);
 
@@ -61,6 +61,60 @@ function RegisterDomain() {
   const handleClose = () => {
     setError(null);
     setIsDeploymentSuccessful(false);
+  };
+
+  const waitForConfirmation = async (
+    txId: string,
+    requiredConfirmations = 19,
+    maxWaitTime = 10 * 60 * 1000 // 10 minutes in milliseconds
+  ) => {
+    setIsConfirming(true);
+    setConfirmationProgress(0);
+
+    const startTime = Date.now();
+
+    const checkConfirmation = async (): Promise<any> => {
+      try {
+        const txInfo = await (window.tronWeb as any).trx.getTransactionInfo(
+          txId
+        );
+
+        if (txInfo && txInfo.blockNumber) {
+          const currentBlock = await (
+            window.tronWeb as any
+          ).trx.getCurrentBlock();
+          const confirmations =
+            currentBlock.block_header.raw_data.number - txInfo.blockNumber;
+
+          setConfirmationProgress(
+            Math.min(confirmations / requiredConfirmations, 1)
+          );
+
+          if (confirmations >= requiredConfirmations) {
+            setIsConfirming(false);
+            return txInfo;
+          }
+        }
+
+        if (Date.now() - startTime > maxWaitTime) {
+          throw new Error(
+            "Max wait time reached. Transaction may still be pending."
+          );
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds before next attempt
+        return checkConfirmation();
+      } catch (error) {
+        console.error("Error checking confirmation:", error);
+        if (Date.now() - startTime > maxWaitTime) {
+          throw error;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds before retry
+        return checkConfirmation();
+      }
+    };
+
+    return checkConfirmation();
   };
 
   const registerDomain = useCallback(async () => {
@@ -97,6 +151,20 @@ function RegisterDomain() {
 
       console.log("Domain registered successfully:", deployResult);
 
+      setLink(deployResult);
+
+      const confirmedTxInfo = await waitForConfirmation(deployResult);
+      console.log("Confirmed Transaction Info:", confirmedTxInfo);
+
+      // Fetch the second log's address field in hex format
+      const hexAddress = confirmedTxInfo.log[1].address;
+
+      // Convert the hex address to TRON base58 format using tronWeb
+      const tronAddress = tronWeb.address.fromHex(hexAddress);
+
+      // Output the converted TRON address
+      console.log(tronAddress);
+
       // If successful, you can add further logic, e.g., updating UI or storing the deployment info
       setIsDeploymentSuccessful(true);
       handleComplete();
@@ -119,7 +187,10 @@ function RegisterDomain() {
   const handleSetPrimaryDomain = async () => {
     try {
       const tronWeb = window.tronWeb;
-      const domainSunpumpContract = await tronWeb.contract(abi, DOMAIN_SUNPUMP_ADDRESS);
+      const domainSunpumpContract = await tronWeb.contract(
+        abi,
+        DOMAIN_SUNPUMP_ADDRESS
+      );
 
       const setPrimaryResult = await domainSunpumpContract
         .setPrimaryDomain(domainName)
@@ -377,6 +448,26 @@ function RegisterDomain() {
             {error}
           </div>
         )} */}
+
+        {isDeploymentSuccessful && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+          <span>
+          To view the transaction details, simply click or paste the following hash into the Tron Nile Scan
+          </span>
+          <span
+            className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
+            title="View in Tronscan"
+            onClick={(event) => {
+              window.open(
+                `https://nile.tronscan.org/#/transaction/${link}`,
+                "_blank"
+              );
+              event.stopPropagation();
+            }}
+          >
+            {link}
+          </span>
+        </div>}
+
         {!connected && (
           <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
             <IoWarning />
