@@ -39,6 +39,8 @@ const DomainManager = () => {
   const [domains, setDomains] = useState<Domain[]>([]);
   const { address, connected } = useWallet();
 
+  console.log(walletAddress);
+
   const DOMAIN_RECORDS_ADDRESS = process.env.NEXT_PUBLIC_DOMAIN_RECORDS_ADDRESS;
   const PUBLIC_RESOLVER_ADDRESS = process.env.NEXT_PUBLIC_RESOLVER_ADDRESS;
 
@@ -118,7 +120,7 @@ const DomainManager = () => {
         )}
       </div>
 
-      {/* <div className="flex items-center justify-center mt-8 gap-3">
+      <div className="flex items-center justify-center mt-8 gap-3">
         <button
           disabled={!connected}
           onClick={getDomainHashes}
@@ -126,9 +128,9 @@ const DomainManager = () => {
             connected ? "cursor-pointer" : "cursor-not-allowed opacity-50"
           }`}
         >
-          Get Domain hashes
+          Get All Domains
         </button>
-        <button
+        {/* <button
           disabled={!connected}
           onClick={getPrimaryDomain}
           className={`flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg ${
@@ -136,15 +138,15 @@ const DomainManager = () => {
           }`}
         >
           Get Primary Domain
-        </button>
+        </button> */}
       </div>
 
       {!connected && (
         <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
           <IoWarning />
-          <span>Please connect your wallet to register a domain.</span>
+          <span>Please connect your wallet to view your all registered domains.</span>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

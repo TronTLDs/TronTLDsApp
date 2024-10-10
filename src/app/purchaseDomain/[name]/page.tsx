@@ -534,7 +534,7 @@ function RegisterTLD() {
           type="submit"
           className={`submit-button ${
             connected
-              ? "cursor-pointer mb-[40px]"
+              ? isDeploymentSuccessful ? "cursor-pointer" : "cursor-pointer mb-[40px]"
               : "cursor-not-allowed opacity-60"
           }`}
           onClick={showModal}
@@ -547,7 +547,7 @@ function RegisterTLD() {
       {/* {isDeploymentSuccessful && <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
         Please connect your wallet to Deploy TLD.
       </div>} */}
-      <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+      {isDeploymentSuccessful && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
           <span>
           To view the transaction details, simply click or paste the following hash into the Tron Nile Scan
           </span>
@@ -562,9 +562,9 @@ function RegisterTLD() {
               event.stopPropagation();
             }}
           >
-            {"0716e87f2ccdcaf85fbfb41e0625d6edce1226612bf0b6ea4a8c0d62037c7f41"}
+            {link}
           </span>
-        </div>
+        </div>}
 
       <Modal
         title={null}

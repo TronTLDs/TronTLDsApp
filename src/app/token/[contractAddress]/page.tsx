@@ -330,9 +330,9 @@ const TokenPage = () => {
       <div className="flex items-center justify-center gap-2 mt-[2rem]">
         <button
           className="submit-button"
-          onClick={handleDomainPage}
+          onClick={handlePurchaseDomain}
         >
-          Register Domain
+          Deploy TLD
         </button>
         <div className="stake-register">
           {/* <button
