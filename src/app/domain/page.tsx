@@ -157,7 +157,7 @@ function RegisterDomain() {
       console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
       // Fetch the second log's address field in hex format
-      const hexAddress = confirmedTxInfo.log[1].address;
+      const hexAddress = "0x" + confirmedTxInfo.log[1].address;
 
       // Convert the hex address to TRON base58 format using tronWeb
       const tronAddress = tronWeb.address.fromHex(hexAddress);

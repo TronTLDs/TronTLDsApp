@@ -47,7 +47,6 @@ const TokenPage = () => {
   useEffect(() => {
     const fetchTokenData = async () => {
       if (contextToken) {
-        console.log("hello");
         setToken(contextToken);
       } else if (contractAddress) {
         try {

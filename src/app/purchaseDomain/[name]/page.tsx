@@ -20,17 +20,18 @@ const TLD_CREATION_FEE = 50000000; // 50 TRX in SUN (1 TRX = 1,000,000 SUN)
 function RegisterTLD() {
   const { name } = useParams();
   const searchParams = useSearchParams();
-  const { token } = useToken();
   const symbol = searchParams.get("symbol");
   console.log("Symbol", symbol);
   // Decode the URL parameter explicitly to handle special characters
   const decodedName = Array.isArray(name)
-    ? name.map(decodeURIComponent).join("/")
-    : decodeURIComponent(name || "");
-
+  ? name.map(decodeURIComponent).join("/")
+  : decodeURIComponent(name || "");
+  
   console.log(decodedName); // This will log the decoded value of `name`
-
+  
   const { address, connected } = useWallet();
+  const { token } = useToken();
+  const [tronbase58Address, setTronbase58Address] = useState("");
   console.log(address, token);
 
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +54,7 @@ function RegisterTLD() {
   const [isConfirming, setIsConfirming] = useState(false);
   const [link, setLink] = useState("");
   const [confirmationProgress, setConfirmationProgress] = useState(0);
+
 
   // console.log(tronWeb);
 
@@ -222,24 +224,29 @@ function RegisterTLD() {
 
         console.log("TLD deployed successfully:", deployResult);
 
+        setLink(deployResult);
+
         const confirmedTxInfo = await waitForConfirmation(deployResult);
         console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
-        setLink(deployResult);
-
         // Fetch the second log's address field in hex format
-        const hexAddress = confirmedTxInfo.log[1].address;
+        const tronhexAddress = "0x" + confirmedTxInfo.log[1].address;
 
-        // Convert hex to bytes
-        const byteArray = tronWeb.utils.hexToBytes(hexAddress);
+        // Convert the hex address to TRON base58 format using tronWeb
+        const tronbase58Address = tronWeb.address.fromHex(tronhexAddress);
 
-        // Encode to Base58
-        const base58Address = tronWeb.utils.bytesToBase58(byteArray);
+        // Output the converted TRON address
+        console.log(tronbase58Address);
 
-        console.log(base58Address);
+        // Set the tronbase58Address state
+        setTronbase58Address(tronbase58Address);
 
         // If successful, you can add further logic, e.g., updating UI or storing the deployment info
         setIsDeploymentSuccessful(true);
+
+        // Store data in MongoDB
+        await storeDataInMongoDB();
+
         handleComplete();
       }
     } catch (error: unknown) {
@@ -255,6 +262,37 @@ function RegisterTLD() {
       handleClose();
     }
   }, [decodedName, symbol, handleComplete]);
+
+  const storeDataInMongoDB = async () => {
+    try {
+      const response = await fetch('/api/store-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userAddress: address,
+          token: {
+            name: token?.name,
+            symbol: token?.symbol,
+            description: token?.description,
+            logoUrl: token?.logoUrl,
+            contractAddress: token?.contractAddress,
+            ownerAddress: token?.ownerAddress,
+          },
+          tronbase58Address: tronbase58Address,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to store data in MongoDB');
+      }
+
+      console.log('Data stored successfully in MongoDB');
+    } catch (error) {
+      console.error('Error storing data in MongoDB:', error);
+    }
+  };
 
   return (
     <div className="container">
@@ -534,7 +572,9 @@ function RegisterTLD() {
           type="submit"
           className={`submit-button ${
             connected
-              ? isDeploymentSuccessful ? "cursor-pointer" : "cursor-pointer mb-[40px]"
+              ? isDeploymentSuccessful
+                ? "cursor-pointer"
+                : "cursor-pointer mb-[40px]"
               : "cursor-not-allowed opacity-60"
           }`}
           onClick={showModal}
@@ -547,9 +587,11 @@ function RegisterTLD() {
       {/* {isDeploymentSuccessful && <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
         Please connect your wallet to Deploy TLD.
       </div>} */}
-      {isDeploymentSuccessful && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+      {isDeploymentSuccessful && (
+        <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
           <span>
-          To view the transaction details, simply click or paste the following hash into the Tron Nile Scan
+            To view the transaction details, simply click or paste the following
+            hash into the Tron Nile Scan
           </span>
           <span
             className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
@@ -564,7 +606,8 @@ function RegisterTLD() {
           >
             {link}
           </span>
-        </div>}
+        </div>
+      )}
 
       <Modal
         title={null}
