@@ -6,8 +6,9 @@ import { TokenModel } from '@/lib/mongodb';
 export async function POST(req: Request) {
   try {
     await dbConnect();
-    const body = await req.body;
-    console.log(req, req.body, req.json);
+    console.log("DB CONNECTEDDDD....")
+    const body = await req.json();
+    console.log(body);
 
     const newToken = new TokenModel(body);
     console.log(newToken);

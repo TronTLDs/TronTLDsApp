@@ -31,7 +31,7 @@ function RegisterTLD() {
   
   const { address, connected } = useWallet();
   const { token } = useToken();
-  const [tronbase58Address, setTronbase58Address] = useState("");
+  // const [tronbase58Address, setTronbase58Address] = useState("");
   console.log(address, token);
 
   const [error, setError] = useState<string | null>(null);
@@ -233,19 +233,19 @@ function RegisterTLD() {
         const tronhexAddress = "0x" + confirmedTxInfo.log[1].address;
 
         // Convert the hex address to TRON base58 format using tronWeb
-        const tronbase58Address = tronWeb.address.fromHex(tronhexAddress);
+        const tronbase58Address = await tronWeb.address.fromHex(tronhexAddress);
 
         // Output the converted TRON address
         console.log(tronbase58Address);
 
         // Set the tronbase58Address state
-        setTronbase58Address(tronbase58Address);
+        // setTronbase58Address(tronbase58Address);
 
         // If successful, you can add further logic, e.g., updating UI or storing the deployment info
         setIsDeploymentSuccessful(true);
 
         // Store data in MongoDB
-        await storeDataInMongoDB();
+        await storeDataInMongoDB(tronbase58Address);
 
         handleComplete();
       }
@@ -263,7 +263,7 @@ function RegisterTLD() {
     }
   }, [decodedName, symbol, handleComplete]);
 
-  const storeDataInMongoDB = async () => {
+  const storeDataInMongoDB = async (tronbase58Address: string) => {
     try {
       const response = await fetch('/api/store-token', {
         method: 'POST',

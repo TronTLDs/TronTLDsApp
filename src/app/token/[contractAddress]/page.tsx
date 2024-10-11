@@ -10,6 +10,7 @@ import {
   Globe,
   Send,
   ShieldAlert,
+  Info
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
@@ -36,11 +37,25 @@ interface Token {
   totalSupply: number;
 }
 
+interface StoredToken {
+  userAddress: string;
+  token: {
+    name: string;
+    symbol: string;
+    description: string;
+    logoUrl: string;
+    contractAddress: string;
+    ownerAddress: string;
+  };
+  tronbase58Address: string;
+}
+
 const TokenPage = () => {
   const { contractAddress } = useParams();
   const router = useRouter();
   const [token, setToken] = useState<Token | null>(null);
   const { token: contextToken } = useToken();
+  const [storedToken, setStoredToken] = useState<StoredToken | null>(null);
 
   console.log("tokens data came", token);
 
@@ -52,8 +67,15 @@ const TokenPage = () => {
         try {
           const res = await fetch(`/api/proxy/token/${contractAddress}`);
           const result = await res.json();
-          console.log("api data", result.data);
           setToken(result.data);
+
+          // Fetch stored token data
+          const storedRes = await fetch(`/api/get-token/${contractAddress}`);
+          const storedResult = await storedRes.json();
+          if (storedResult.token) {
+            console.log(storedResult.token);
+            setStoredToken(storedResult.token);
+          }
         } catch (error) {
           console.error("Error fetching token data:", error);
           toast.error("Failed to load token data");
@@ -105,6 +127,16 @@ const TokenPage = () => {
     );
   };
 
+  const handleDomainAction = () => {
+    if (storedToken) {
+      // Logic for registering domain
+      router.push("/domain");
+    } else {
+      // Logic for deploying TLD
+      handlePurchaseDomain();
+    }
+  };
+
   const handlePurchaseDomain = () => {
     if (token) {
       const formattedName = token.name.replace(/\s+/g, "").toLowerCase();
@@ -113,9 +145,9 @@ const TokenPage = () => {
     }
   };
 
-  const handleDomainPage = () => {
-    router.push("/domain");
-  };
+  // const handleDomainPage = () => {
+  //   router.push("/domain");
+  // };
 
   return (
     <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
@@ -180,7 +212,7 @@ const TokenPage = () => {
         <div className="bg-[#151b15] rounded-lg p-6 flex">
           <img
             src={token.logoUrl === null ? fallback_img.src : token.logoUrl}
-            alt={token.name}  
+            alt={token.name}
             className="w-64 h-64 rounded-lg mr-6 object-cover"
           />
           <div className="flex-1 flex flex-col justify-between">
@@ -327,21 +359,9 @@ const TokenPage = () => {
       )}
 
       <div className="flex items-center justify-center gap-2 mt-[2rem]">
-        <button
-          className="submit-button"
-          onClick={handlePurchaseDomain}
-        >
-          Deploy TLD
+        <button className="submit-button relative" onClick={handleDomainAction}>
+          {storedToken ? "Register Domain" : "Deploy TLD"}
         </button>
-        <div className="stake-register">
-          {/* <button
-            onClick={handleDomainPage}
-            type="submit"
-            className="submit-button"
-          >
-            Go to Domain Form
-          </button> */}
-        </div>
       </div>
 
       <Toaster
