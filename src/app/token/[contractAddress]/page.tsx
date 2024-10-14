@@ -57,12 +57,20 @@ const TokenPage = () => {
   const { token: contextToken } = useToken();
   const [storedToken, setStoredToken] = useState<StoredToken | null>(null);
 
-  console.log("tokens data came", token);
+  // console.log("tokens data came", token);
 
   useEffect(() => {
     const fetchTokenData = async () => {
       if (contextToken) {
         setToken(contextToken);
+        // Fetch stored token data
+        console.log(contractAddress)
+        const storedRes = await fetch(`/api/get-token/${contractAddress}`);
+        const storedResult = await storedRes.json();
+        if (storedResult.token) {
+          // console.log(storedResult.token);
+          setStoredToken(storedResult.token);
+        }
       } else if (contractAddress) {
         try {
           const res = await fetch(`/api/proxy/token/${contractAddress}`);
@@ -130,7 +138,7 @@ const TokenPage = () => {
   const handleDomainAction = () => {
     if (storedToken) {
       // Logic for registering domain
-      router.push("/domain");
+      router.push(`/domain/${storedToken.tronbase58Address}?symbol=${storedToken.token.symbol}`);
     } else {
       // Logic for deploying TLD
       handlePurchaseDomain();

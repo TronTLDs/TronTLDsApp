@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useCallback } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
-import abi from "../PumpDomains.json";
+import abi from "../../PumpDomains.json";
 import { IoWarning } from "react-icons/io5";
 import { BiSolidMessageError } from "react-icons/bi";
 import { Tooltip } from "antd";
-import "../css/RegisterDomain.css";
+import "../../css/RegisterDomain.css";
 
 // type TronWeb = any;
 
@@ -16,11 +17,16 @@ function RegisterDomain() {
   });
   const [nameRegistered] = useState(false);
 
+  const { tronbase58Address } = useParams();
+  console.log(tronbase58Address);
+  const searchParams = useSearchParams();
+  const symbol = searchParams.get("symbol");
+
   const { connected } = useWallet();
 
   // const [registrationPeriod, setRegistrationPeriod] = useState<number>(1);
   const [domainName, setDomainName] = useState<string>("");
-  const [tldName] = useState<string>("RBC"); // TLD name is fixed
+  const [tldName] = useState<string>(`${symbol}`); // TLD name is fixed
 
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
 
@@ -30,7 +36,7 @@ function RegisterDomain() {
   const [confirmationProgress, setConfirmationProgress] = useState(0);
   const [link, setLink] = useState("");
 
-  console.log(error);
+  // console.log(error);
 
   const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -135,7 +141,7 @@ function RegisterDomain() {
       // Get the contract instance using the TronWeb object
       const domainSunpumpContract = await tronWeb.contract(
         abi,
-        domainContractAddress
+        tronbase58Address
       );
 
       console.log("instance created", domainSunpumpContract);

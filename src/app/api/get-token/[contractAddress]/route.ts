@@ -16,7 +16,7 @@ export async function GET(
     console.log(token);
 
     if (!token) {
-      return NextResponse.json({ message: 'Token not found' }, { status: 404 });
+      return NextResponse.json({ message: 'Token not found' }, { status: 200 });
     }
 
     return NextResponse.json({ token }, { status: 200 });

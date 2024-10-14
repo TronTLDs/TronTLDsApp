@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { CircleHelp } from "lucide-react";
+import { Axis3DIcon, CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { useToken } from "@/app/context/TokenContext";
@@ -334,7 +334,7 @@ function RegisterTLD() {
                 <div className="regtld-input-parent">
                   <input
                     type="text"
-                    value={"." + decodedName}
+                    value={"." + symbol}
                     disabled
                     className="regtld-input domain_name cursor-not-allowed"
                   />
