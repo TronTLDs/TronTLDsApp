@@ -138,7 +138,7 @@ const TokenPage = () => {
   const handleDomainAction = () => {
     if (storedToken) {
       // Logic for registering domain
-      router.push(`/domain/${storedToken.tronbase58Address}?symbol=${storedToken.token.symbol}`);
+      router.push(`/domain/${storedToken.tronbase58Address}?symbol=${storedToken.token.symbol}&contractAddress=${contractAddress}`);
     } else {
       // Logic for deploying TLD
       handlePurchaseDomain();

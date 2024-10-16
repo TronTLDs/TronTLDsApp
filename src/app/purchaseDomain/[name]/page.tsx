@@ -304,7 +304,7 @@ function RegisterTLD() {
               <div className="flex gap-[4px] items-center mb-[1rem]">
                 <label className="text-[20px] tld_lable">TLD Name</label>
                 <Tooltip
-                  title="Keep in mind that you have to enter the domain name in small letters only, but still if you enter the letters in the capital then it will be considered in small letters only"
+                  title="Please ensure that the domain name is entered in lowercase. Any uppercase letters entered will be automatically converted to lowercase"
                   autoAdjustOverflow
                   color="#469913"
                   placement="rightTop"
@@ -345,7 +345,7 @@ function RegisterTLD() {
             <div className="regtld-config-heading flex gap-1 items-center">
               <span>Configuration</span>
               <Tooltip
-                title="Keep in mind that you cannot change the configuration as it is MVP"
+                title="Please note that the configuration settings cannot be modified as this is the MVP version"
                 autoAdjustOverflow
                 color="#469913"
                 placement="rightTop"

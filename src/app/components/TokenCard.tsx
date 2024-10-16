@@ -54,6 +54,7 @@ const TokenCard = ({}) => {
   const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("DESC");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [noItemsFound, setNoItemsFound] = useState(false);
 
   const router = useRouter();
   const { setToken } = useToken();
@@ -88,10 +89,15 @@ const TokenCard = ({}) => {
 
         if (newTokens.length === 0) {
           setHasMore(false);
+          if (page === 1) {
+            setNoItemsFound(true);
+          }
         } else {
           setTokens((prevTokens) => {
             return page === 1 ? newTokens : [...prevTokens, ...newTokens];
           });
+          setHasMore(newTokens.length === 24); // Assuming 24 is the max number of tokens per page
+          setNoItemsFound(false);
         }
 
         setLoading(false);
@@ -495,7 +501,7 @@ const TokenCard = ({}) => {
       </div>
 
       <div className="flex justify-center mt-8">
-        {hasMore && (
+        {tokens.length > 0 && hasMore && (
           <button
             onClick={loadMoreTokens}
             className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
@@ -503,19 +509,27 @@ const TokenCard = ({}) => {
             {loading ? "Loading..." : "Load More"}
           </button>
         )}
-        {!hasMore && (
-          // <button
-          //   disabled
-          //   className="cursor-not-allowed flex items-center p-3 px-10 text-white font-medium bg-[#469913] opacity-50 border-2 rounded-lg"
-          // >
-          //   Load More
-          // </button>
-          <div className="flex justify-center items-center flex-col gap-3 mt-10">
-            <Image src={no_more_items} alt="no more image to load" />
+        {tokens.length > 0 && !hasMore && (
+          <button
+            disabled
+            className="cursor-not-allowed flex items-center p-3 px-10 text-white font-medium bg-[#469913] opacity-50 border-2 rounded-lg"
+          >
+            Load More
+          </button>
+        )}
+        {noItemsFound && (
+          <div className="flex justify-center items-center flex-col gap-3 mt-20">
+            <Image 
+              src={no_more_items} 
+              alt="no items found" 
+              // width={200}  
+              // height={200} 
+            />
             <span className="text-lg">No items in the list</span>
           </div>
         )}
       </div>
+
       <Toaster
         toastOptions={{
           style: {

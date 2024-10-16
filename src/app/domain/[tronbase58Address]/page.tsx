@@ -6,6 +6,9 @@ import abi from "../../PumpDomains.json";
 import { IoWarning } from "react-icons/io5";
 import { BiSolidMessageError } from "react-icons/bi";
 import { Tooltip } from "antd";
+import { useToken } from "@/app/context/TokenContext";
+import { Modal } from "antd";
+import defaultImage from "../../../../assets/default_image2.png";
 import "../../css/RegisterDomain.css";
 
 // type TronWeb = any;
@@ -16,8 +19,13 @@ function RegisterDomain() {
     msg: "",
   });
   const [nameRegistered] = useState(false);
+  const { token: contextToken } = useToken();
 
   const { tronbase58Address } = useParams();
+  const tronAddress = Array.isArray(tronbase58Address)
+    ? tronbase58Address.join(",") // Convert array to string (use a delimiter like `,`)
+    : tronbase58Address; // If it's already a string
+
   console.log(tronbase58Address);
   const searchParams = useSearchParams();
   const symbol = searchParams.get("symbol");
@@ -35,6 +43,7 @@ function RegisterDomain() {
   const [isConfirming, setIsConfirming] = useState(false);
   const [confirmationProgress, setConfirmationProgress] = useState(0);
   const [link, setLink] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   // console.log(error);
 
@@ -173,6 +182,7 @@ function RegisterDomain() {
 
       // If successful, you can add further logic, e.g., updating UI or storing the deployment info
       setIsDeploymentSuccessful(true);
+      setIsModalOpen(true); // Open the modal when deployment is successful
       handleComplete();
     } catch (error: unknown) {
       console.error("Error Registering Domain:", error);
@@ -193,16 +203,14 @@ function RegisterDomain() {
   const handleSetPrimaryDomain = async () => {
     try {
       const tronWeb = window.tronWeb;
-      const domainSunpumpContract = await tronWeb.contract(
-        abi,
-        DOMAIN_SUNPUMP_ADDRESS
-      );
+      const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
 
       const setPrimaryResult = await domainSunpumpContract
         .setPrimaryDomain(domainName)
         .send();
 
       console.log("Primary domain set successfully:", setPrimaryResult);
+      setIsModalOpen(false); // Close the modal after setting primary domain
     } catch (error) {
       console.error("Error setting primary domain:", error);
       setError("An error occurred while setting the primary domain.");
@@ -214,6 +222,11 @@ function RegisterDomain() {
       <h1 className="regtld-h1">Domain Registration</h1>
       <form className="regtld-form">
         <div className="input-group mb-40">
+          {/* <img
+            src={contextToken?.logoUrl === null ? defaultImage.src : contextToken?.logoUrl}
+            alt={contextToken?.name}
+            className="w-fit h-[240px] object-cover rounded-md mb-4"
+          /> */}
           <label className="ml-[10px]">Domain Name</label>
           <div className="regtld-input-parent">
             <input
@@ -233,7 +246,6 @@ function RegisterDomain() {
             </div>
           )}
         </div>
-
         <div className="input-group mb-40">
           <label className="ml-[10px]">TLD Name</label>
           <Tooltip
@@ -258,11 +270,9 @@ function RegisterDomain() {
             </div>
           </Tooltip>
         </div>
-
         <div className="regtld-config-heading">
           <span className="ml-[10px]">Configuration</span>
         </div>
-
         <div className="registartion_fields">
           <div className="registration_field_item">
             <div className="registration_field_title">
@@ -409,7 +419,6 @@ function RegisterDomain() {
             </Tooltip>
           </div>
         </div>
-
         <div className="flex items-center justify-center gap-3">
           <div className="domain-register">
             {transactionState.waiting ? (
@@ -441,39 +450,57 @@ function RegisterDomain() {
                   ? "cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              disabled={!isDeploymentSuccessful}
+              // disabled={!isDeploymentSuccessful}
               onClick={handleSetPrimaryDomain}
             >
               Set as a primary domain
             </button>
           </div>
         </div>
-
-        {/* {error && (
-          <div className="flex items-center justify-center error-message mt-4 text-red-500">
-            {error}
+        {/* Ant Design Modal for Primary Domain confirmation */}
+  
+        {/* <Modal
+          title="Set Primary Domain"
+          open={isModalOpen}
+          onOk={handleSetPrimaryDomain}
+          onCancel={() => setIsModalOpen(false)}
+          okText="Set as Primary"
+          cancelText="Cancel"
+          className="custom-modal-style" 
+        >
+          <div className="domain-label mb-4">
+            {" "}
+        
+            <p className="font-bold text-lg">Domain: example.tld</p>{" "}
+          
+            <p className="text-sm text-gray-500">
+              Full Name: exampledomain.tld
+            </p>{" "}
           </div>
-        )} */}
-
-        {isDeploymentSuccessful && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
-          <span>
-          To view the transaction details, simply click or paste the following hash into the Tron Nile Scan
-          </span>
-          <span
-            className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
-            title="View in Tronscan"
-            onClick={(event) => {
-              window.open(
-                `https://nile.tronscan.org/#/transaction/${link}`,
-                "_blank"
-              );
-              event.stopPropagation();
-            }}
-          >
-            {link}
-          </span>
-        </div>}
-
+          <p>Do you want to set this domain as your primary domain?</p>
+        </Modal> */}
+        
+        {isDeploymentSuccessful && (
+          <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+            <span>
+              To view the transaction details, simply click or paste the
+              following hash into the Tron Nile Scan
+            </span>
+            <span
+              className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
+              title="View in Tronscan"
+              onClick={(event) => {
+                window.open(
+                  `https://nile.tronscan.org/#/transaction/${link}`,
+                  "_blank"
+                );
+                event.stopPropagation();
+              }}
+            >
+              {link}
+            </span>
+          </div>
+        )}
         {!connected && (
           <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
             <IoWarning />
