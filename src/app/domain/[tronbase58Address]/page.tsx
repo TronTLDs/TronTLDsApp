@@ -158,7 +158,7 @@ function RegisterDomain() {
       console.log("Registering Domain...");
 
       const deployResult = await domainSunpumpContract
-        .registerDomain(domainName)
+        .registerDomain(domainName.toLowerCase())
         .send({
           feeLimit: 700_000_000,
           callValue: callVal * 1000000, // sending the required TRX as fee
@@ -206,8 +206,10 @@ function RegisterDomain() {
       const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
 
       const setPrimaryResult = await domainSunpumpContract
-        .setPrimaryDomain(domainName)
-        .send();
+        .setPrimaryDomain(domainName.toLowerCase())
+        .send({
+          shouldPollResponse: true,
+        });
 
       console.log("Primary domain set successfully:", setPrimaryResult);
       setIsModalOpen(false); // Close the modal after setting primary domain

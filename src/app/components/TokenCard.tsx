@@ -92,7 +92,8 @@ const TokenCard = ({}) => {
           if (page === 1) {
             setNoItemsFound(true);
           }
-        } else {
+        } 
+        else {
           setTokens((prevTokens) => {
             return page === 1 ? newTokens : [...prevTokens, ...newTokens];
           });
@@ -356,6 +357,14 @@ const TokenCard = ({}) => {
                   className="w-full h-[240px] object-cover rounded-md mb-4"
                 />
 
+                {/* <Image
+                  src={token.logoUrl}
+                  alt={token.name}
+                  width={100}
+                  height={100}
+                  className="w-full h-[240px] object-cover rounded-md mb-4"
+                /> */}
+
                 <div
                   className={`_price_tag_common ${
                     token.priceChange24Hr > 0
@@ -519,11 +528,11 @@ const TokenCard = ({}) => {
         )}
         {noItemsFound && (
           <div className="flex justify-center items-center flex-col gap-3 mt-20">
-            <Image 
-              src={no_more_items} 
-              alt="no items found" 
-              // width={200}  
-              // height={200} 
+            <Image
+              src={no_more_items}
+              alt="no items found"
+              // width={200}
+              // height={200}
             />
             <span className="text-lg">No items in the list</span>
           </div>

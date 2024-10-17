@@ -214,8 +214,8 @@ function RegisterTLD() {
         const deployResult = await tldFactoryContract
           .deployTLD(
             tldName,
-            tldSymbol,
-            tldSymbol // assuming you're passing the TLD name again as a parameter
+            tldSymbol?.toLowerCase(),
+            tldSymbol?.toLowerCase(), // assuming you're passing the TLD name again as a parameter
           )
           .send({
             feeLimit: 700_000_000,
@@ -241,12 +241,13 @@ function RegisterTLD() {
         // Set the tronbase58Address state
         // setTronbase58Address(tronbase58Address);
 
-        // If successful, you can add further logic, e.g., updating UI or storing the deployment info
-        setIsDeploymentSuccessful(true);
-
+        
         // Store data in MongoDB
         await storeDataInMongoDB(tronbase58Address);
-
+        
+        // If successful, you can add further logic, e.g., updating UI or storing the deployment info
+        setIsDeploymentSuccessful(true);
+        
         handleComplete();
       }
     } catch (error: unknown) {
@@ -334,7 +335,7 @@ function RegisterTLD() {
                 <div className="regtld-input-parent">
                   <input
                     type="text"
-                    value={"." + symbol}
+                    value={"." + symbol?.toLowerCase()}
                     disabled
                     className="regtld-input domain_name cursor-not-allowed"
                   />
@@ -572,7 +573,7 @@ function RegisterTLD() {
           type="submit"
           className={`submit-button ${
             connected
-              ? isDeploymentSuccessful
+              ? link
                 ? "cursor-pointer"
                 : "cursor-pointer mb-[40px]"
               : "cursor-not-allowed opacity-60"
@@ -587,8 +588,8 @@ function RegisterTLD() {
       {/* {isDeploymentSuccessful && <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
         Please connect your wallet to Deploy TLD.
       </div>} */}
-      {isDeploymentSuccessful && (
-        <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+    
+        {link && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
           <span>
             To view the transaction details, simply click or paste the following
             hash into the Tron Nile Scan
@@ -606,8 +607,7 @@ function RegisterTLD() {
           >
             {link}
           </span>
-        </div>
-      )}
+        </div>}
 
       <Modal
         title={null}
