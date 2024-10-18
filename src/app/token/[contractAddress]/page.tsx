@@ -10,7 +10,7 @@ import {
   Globe,
   Send,
   ShieldAlert,
-  Info
+  Info,
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
@@ -56,6 +56,7 @@ const TokenPage = () => {
   const [token, setToken] = useState<Token | null>(null);
   const { token: contextToken } = useToken();
   const [storedToken, setStoredToken] = useState<StoredToken | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // console.log("tokens data came", token);
 
@@ -64,19 +65,21 @@ const TokenPage = () => {
       if (contextToken) {
         setToken(contextToken);
         // Fetch stored token data
-        console.log(contractAddress)
+        console.log(contractAddress);
+        setIsLoading(true); // Start loading
         const storedRes = await fetch(`/api/get-token/${contractAddress}`);
         const storedResult = await storedRes.json();
         if (storedResult.token) {
-          // console.log(storedResult.token);
           setStoredToken(storedResult.token);
         }
+        setIsLoading(false); // End loading
       } else if (contractAddress) {
         try {
+          setIsLoading(true); // Start loading
           const res = await fetch(`/api/proxy/token/${contractAddress}`);
           const result = await res.json();
           setToken(result.data);
-
+  
           // Fetch stored token data
           const storedRes = await fetch(`/api/get-token/${contractAddress}`);
           const storedResult = await storedRes.json();
@@ -87,10 +90,12 @@ const TokenPage = () => {
         } catch (error) {
           console.error("Error fetching token data:", error);
           toast.error("Failed to load token data");
+        } finally {
+          setIsLoading(false); // End loading
         }
       }
     };
-
+  
     fetchTokenData();
   }, [contextToken, contractAddress]);
 
@@ -136,9 +141,16 @@ const TokenPage = () => {
   };
 
   const handleDomainAction = () => {
+    if (isLoading) {
+      // Don't do anything if still loading
+      return;
+    }
+
     if (storedToken) {
       // Logic for registering domain
-      router.push(`/domain/${storedToken.tronbase58Address}?symbol=${storedToken.token.symbol}&contractAddress=${contractAddress}`);
+      router.push(
+        `/domain/${storedToken.tronbase58Address}?symbol=${storedToken.token.symbol}&contractAddress=${contractAddress}`
+      );
     } else {
       // Logic for deploying TLD
       handlePurchaseDomain();
@@ -148,8 +160,8 @@ const TokenPage = () => {
   const handlePurchaseDomain = () => {
     if (token) {
       const formattedName = token.name.replace(/\s+/g, "").toLowerCase();
-      const formattedSymbol = token.symbol.replace("$", "").toUpperCase();
-      router.push(`/purchaseDomain/${formattedName}?symbol=${formattedSymbol}`);
+      const formattedSymbol = token.symbol.replace("$", "").toLowerCase();
+      router.push(`/purchaseDomain/${formattedName}?symbol=${formattedSymbol}&contractAddress=${contractAddress}`);
     }
   };
 
@@ -367,8 +379,18 @@ const TokenPage = () => {
       )}
 
       <div className="flex items-center justify-center gap-2 mt-[2rem]">
-        <button className="submit-button relative" onClick={handleDomainAction}>
-          {storedToken ? "Register Domain" : "Deploy TLD"}
+        <button
+          className="submit-button relative"
+          onClick={handleDomainAction}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex justify-center items-center w-24">
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-black"></div>
+            </div>
+          ) : (
+            <span>{storedToken ? "Register Domain" : "Deploy TLD"}</span>
+          )}
         </button>
       </div>
 

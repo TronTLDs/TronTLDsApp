@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Axis3DIcon, CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
@@ -20,29 +20,29 @@ const TLD_CREATION_FEE = 50000000; // 50 TRX in SUN (1 TRX = 1,000,000 SUN)
 function RegisterTLD() {
   const { name } = useParams();
   const searchParams = useSearchParams();
+  // State for managing the spinner/loading effect
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const symbol = searchParams.get("symbol");
+  const contractAddress = searchParams.get("contractAddress");
   console.log("Symbol", symbol);
+  console.log("Contract Address", contractAddress);
   // Decode the URL parameter explicitly to handle special characters
   const decodedName = Array.isArray(name)
-  ? name.map(decodeURIComponent).join("/")
-  : decodeURIComponent(name || "");
-  
+    ? name.map(decodeURIComponent).join("/")
+    : decodeURIComponent(name || "");
+
   console.log(decodedName); // This will log the decoded value of `name`
-  
+
   const { address, connected } = useWallet();
-  const { token } = useToken();
+  const [token, setToken] = useState(null);
+  const { token: contextToken } = useToken();
   // const [tronbase58Address, setTronbase58Address] = useState("");
-  console.log(address, token);
+  console.log(address, contextToken);
 
   const [error, setError] = useState<string | null>(null);
   const [isDeploymentSuccessful, setIsDeploymentSuccessful] = useState(false);
-
-  const letterConfigurations = [
-    { letter: "3 letters", price: "10 TRX" },
-    { letter: "4 letters", price: "5 TRX" },
-    { letter: "More than 5 letters", price: "3 TRX" },
-  ];
-
   const [minDomainLength, setMinDomainLength] = useState("");
   const [maxDomainLength, setMaxDomainLength] = useState("");
   const [minRegistrationDuration, setMinRegistrationDuration] = useState("");
@@ -55,27 +55,37 @@ function RegisterTLD() {
   const [link, setLink] = useState("");
   const [confirmationProgress, setConfirmationProgress] = useState(0);
 
+  const router = useRouter();
 
-  // console.log(tronWeb);
+  useEffect(() => {
+    const fetchTokenData = async () => {
+      if (contextToken) {
+        setIsLoading(true);
+        setToken(contextToken);
+        setIsLoading(false);
+      } else if (contractAddress) {
+        try {
+          setIsLoading(true);
+          const res = await fetch(`/api/proxy/token/${contractAddress}`);
+          const result = await res.json();
+          setToken(result.data);
+          console.log("data from api, instead of context api", result);
+        } catch (error) {
+          console.error("Error fetching token data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
 
-  // const router = useRouter();
+    fetchTokenData();
+  }, [contextToken, contractAddress]);
 
-  // useEffect(() => {
-  //   const initTronWeb = async () => {
-  //     // (window.tronWeb && window.tronWeb.ready)
-  //     const tronWeb = window.tronWeb;
-  //     setTronWeb(tronWeb);
-
-  //     const tronLinkListener = setInterval(() => {
-  //       if (window.tronWeb && window.tronWeb.ready) {
-  //         setTronWeb(tronWeb);
-  //         clearInterval(tronLinkListener);
-  //       }
-  //     }, 500);
-  //   };
-
-  //   initTronWeb();
-  // }, []);
+  const letterConfigurations = [
+    { letter: "3 letters", price: "10 TRX" },
+    { letter: "4 letters", price: "5 TRX" },
+    { letter: "More than 5 letters", price: "3 TRX" },
+  ];
 
   const steps = [
     {
@@ -176,6 +186,8 @@ function RegisterTLD() {
 
   const deployTLD = useCallback(async () => {
     try {
+      setIsDeploying(true); // Start the loading spinner
+
       if (window.tronWeb && window.tronWeb.ready) {
         const tronWeb = (window as any).tronWeb;
         console.log(tronWeb);
@@ -188,11 +200,6 @@ function RegisterTLD() {
 
         // Address of your deployed TLD Factory contract
         const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
-
-        // Check if tldFactoryContractAddress is defined
-        // if (!tldFactoryContractAddress) {
-        //   throw new Error("TLD Factory contract address is not defined.");
-        // }
 
         console.log(tldFactoryContractAddress);
 
@@ -215,7 +222,7 @@ function RegisterTLD() {
           .deployTLD(
             tldName,
             tldSymbol?.toLowerCase(),
-            tldSymbol?.toLowerCase(), // assuming you're passing the TLD name again as a parameter
+            tldSymbol?.toLowerCase() // assuming you're passing the TLD name again as a parameter
           )
           .send({
             feeLimit: 700_000_000,
@@ -238,16 +245,17 @@ function RegisterTLD() {
         // Output the converted TRON address
         console.log(tronbase58Address);
 
-        // Set the tronbase58Address state
-        // setTronbase58Address(tronbase58Address);
-
-        
         // Store data in MongoDB
         await storeDataInMongoDB(tronbase58Address);
-        
+
         // If successful, you can add further logic, e.g., updating UI or storing the deployment info
         setIsDeploymentSuccessful(true);
-        
+
+        // After successful deployment and storing, redirect the user
+        router.push(
+          `/domain/${tronbase58Address}?symbol=${symbol}&contractAddress=${contractAddress}`
+        );
+
         handleComplete();
       }
     } catch (error: unknown) {
@@ -261,37 +269,49 @@ function RegisterTLD() {
       }
 
       handleClose();
+    } finally {
+      setIsDeploying(false); // Stop the loading spinner
     }
   }, [decodedName, symbol, handleComplete]);
 
   const storeDataInMongoDB = async (tronbase58Address: string) => {
     try {
-      const response = await fetch('/api/store-token', {
-        method: 'POST',
+      const response = await fetch("/api/store-token", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userAddress: address,
           token: {
-            name: token?.name,
-            symbol: token?.symbol,
-            description: token?.description,
-            logoUrl: token?.logoUrl,
-            contractAddress: token?.contractAddress,
-            ownerAddress: token?.ownerAddress,
+            name: contextToken === null ? token.name : contextToken.name,
+            symbol: contextToken === null ? token.symbol : contextToken.symbol,
+            description:
+              contextToken === null
+                ? token.description
+                : contextToken.description,
+            logoUrl:
+              contextToken === null ? token.logoUrl : contextToken.logoUrl,
+            contractAddress:
+              contextToken === null
+                ? token.contractAddress
+                : contextToken.contractAddress,
+            ownerAddress:
+              contextToken === null
+                ? token.ownerAddress
+                : contextToken.ownerAddress,
           },
           tronbase58Address: tronbase58Address,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to store data in MongoDB');
+        throw new Error("Failed to store data in MongoDB");
       }
 
-      console.log('Data stored successfully in MongoDB');
+      console.log("Data stored successfully in MongoDB");
     } catch (error) {
-      console.error('Error storing data in MongoDB:', error);
+      console.error("Error storing data in MongoDB:", error);
     }
   };
 
@@ -568,7 +588,7 @@ function RegisterTLD() {
         </div>
       </div>
 
-      <div className="stake-register">
+      {/* <div className="stake-register">
         <button
           type="submit"
           className={`submit-button ${
@@ -583,13 +603,59 @@ function RegisterTLD() {
         >
           Deploy TLD
         </button>
+      </div> */}
+
+      <div className="stake-register">
+        <button
+          type="submit"
+          className={`submit-button ${
+            connected && !isDeploying
+              ? link
+                ? "cursor-pointer"
+                : "cursor-pointer mb-[40px]"
+              : connected
+              ? "cursor-pointer mb-[40px]"
+              : "cursor-not-allowed opacity-60"
+          }`}
+          onClick={showModal}
+          disabled={!connected || isDeploying || isLoading} // Disable when deploying or not connected
+        >
+          {isDeploying ? (
+            <span className="animate-spin">
+              {" "}
+              {/* Add spinner animation */}
+              <div className="flex justify-center items-center">
+                <svg
+                  className="w-10 h-10 text-green-700 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+              </div>
+              Deploying...
+            </span>
+          ) : (
+            "Deploy TLD"
+          )}
+        </button>
       </div>
 
-      {/* {isDeploymentSuccessful && <div className="flex items-center justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
-        Please connect your wallet to Deploy TLD.
-      </div>} */}
-    
-        {link && <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
+      {link && (
+        <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
           <span>
             To view the transaction details, simply click or paste the following
             hash into the Tron Nile Scan
@@ -607,7 +673,8 @@ function RegisterTLD() {
           >
             {link}
           </span>
-        </div>}
+        </div>
+      )}
 
       <Modal
         title={null}

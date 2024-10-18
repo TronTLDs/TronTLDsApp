@@ -207,9 +207,7 @@ function RegisterDomain() {
 
       const setPrimaryResult = await domainSunpumpContract
         .setPrimaryDomain(domainName.toLowerCase())
-        .send({
-          shouldPollResponse: true,
-        });
+        .send();
 
       console.log("Primary domain set successfully:", setPrimaryResult);
       setIsModalOpen(false); // Close the modal after setting primary domain
@@ -265,7 +263,7 @@ function RegisterDomain() {
             <div className="regtld-input-parent">
               <input
                 type="text"
-                value={`${domainName}.${tldName}`}
+                value={`${domainName}.${tldName.toLowerCase()}`}
                 className="regtld-input cursor-not-allowed"
                 readOnly
               />
@@ -448,11 +446,11 @@ function RegisterDomain() {
             <button
               type="button"
               className={`submit-button ${
-                isValidDomain
+                isValidDomain && isDeploymentSuccessful
                   ? "cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              // disabled={!isDeploymentSuccessful}
+              disabled={!isDeploymentSuccessful}
               onClick={handleSetPrimaryDomain}
             >
               Set as a primary domain
