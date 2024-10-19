@@ -7,6 +7,8 @@ import { IoWarning } from "react-icons/io5";
 import { BiSolidMessageError } from "react-icons/bi";
 import { Tooltip } from "antd";
 import { useToken } from "@/app/context/TokenContext";
+import { Timer, FileChartColumnIncreasing } from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 import { Modal } from "antd";
 import defaultImage from "../../../../assets/default_image2.png";
 import "../../css/RegisterDomain.css";
@@ -20,6 +22,8 @@ function RegisterDomain() {
   });
   const [nameRegistered] = useState(false);
   const { token: contextToken } = useToken();
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [isSettingPrimary, setIsSettingPrimary] = useState(false);
 
   const { tronbase58Address } = useParams();
   const tronAddress = Array.isArray(tronbase58Address)
@@ -134,12 +138,36 @@ function RegisterDomain() {
 
   const registerDomain = useCallback(async () => {
     try {
+      setIsDeploying(true); // Start the loading spinner
+
       const tronWeb = (window as any).tronWeb;
       console.log(tronWeb);
       console.log("inside try block");
       if (!tronWeb) {
         throw new Error(
           "TronWeb not found. Please make sure TronLink is installed and connected."
+        );
+      }
+
+      const currentNode = tronWeb.fullNode.host;
+
+      if (currentNode.includes("api.trongrid.io")) {
+        //this is mainnet node
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+      }
+
+      if (currentNode.includes("api.tronstack.io")) {
+        //this is mainnet node
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+      }
+
+      if (currentNode.includes("api.shasta.trongrid.io")) {
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
         );
       }
 
@@ -197,12 +225,38 @@ function RegisterDomain() {
       }
 
       handleClose();
+    } finally {
+      setIsDeploying(false);
     }
   }, [domainName, handleComplete]);
 
   const handleSetPrimaryDomain = async () => {
     try {
-      const tronWeb = window.tronWeb;
+      setIsSettingPrimary(true);
+      const tronWeb = (window as any).tronWeb;
+
+      const currentNode = tronWeb.fullNode.host;
+
+      if (currentNode.includes("api.trongrid.io")) {
+        //this is mainnet node
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+      }
+
+      if (currentNode.includes("api.tronstack.io")) {
+        //this is mainnet node
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+      }
+
+      if (currentNode.includes("api.shasta.trongrid.io")) {
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+      }
+
       const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
 
       const setPrimaryResult = await domainSunpumpContract
@@ -214,11 +268,26 @@ function RegisterDomain() {
     } catch (error) {
       console.error("Error setting primary domain:", error);
       setError("An error occurred while setting the primary domain.");
+    } finally {
+      setIsSettingPrimary(false);
     }
   };
 
   return (
     <div className="containerDomain">
+      <Toaster
+        toastOptions={{
+          style: {
+            border: "1px solid transparent",
+            borderImage:
+              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
+            borderImageSlice: 1,
+            background:
+              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
+            color: "white",
+          },
+        }}
+      />
       <h1 className="regtld-h1">Domain Registration</h1>
       <form className="regtld-form">
         <div className="input-group mb-40">
@@ -419,28 +488,72 @@ function RegisterDomain() {
             </Tooltip>
           </div>
         </div>
+
         <div className="flex items-center justify-center gap-3">
           <div className="domain-register">
-            {transactionState.waiting ? (
-              <div className="submit-button">
-                {transactionState.msg}
-                {!nameRegistered && <div className="sp sp-wave"></div>}
-              </div>
-            ) : (
-              <button
-                type="button"
-                className={`submit-button ${
-                  isValidDomain
+            <button
+              type="button"
+              className={`submit-button ${
+                isValidDomain
+                  ? link
                     ? "cursor-pointer"
-                    : "cursor-not-allowed opacity-60"
-                }`}
-                disabled={!isValidDomain}
-                onClick={registerDomain}
-              >
-                Register Domain
-              </button>
-            )}
+                    : "cursor-pointer"
+                  : "cursor-not-allowed opacity-60"
+              }`}
+              disabled={!isValidDomain}
+              onClick={registerDomain}
+            >
+              {isDeploying ? (
+                <span className="animate-spin">
+                  {" "}
+                  {/* Add spinner animation */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex justify-center items-center">
+                      <svg
+                        className="w-6 h-6 text-green-700 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <span>Registering...</span>
+                  </div>
+                </span>
+              ) : (
+                "Register Domain"
+              )}
+            </button>
           </div>
+
+          {/* <div className="stake-register">
+            <button
+              type="submit"
+              className={`submit-button ${
+                connected && !isDeploying
+                  ? link
+                    ? "cursor-pointer"
+                    : "cursor-pointer mb-[40px]"
+                  : connected
+                  ? "cursor-pointer mb-[40px]"
+                  : "cursor-not-allowed opacity-60"
+              }`}
+            >
+            </button>
+          </div> */}
 
           <div className="domain-register">
             <button
@@ -453,12 +566,43 @@ function RegisterDomain() {
               disabled={!isDeploymentSuccessful}
               onClick={handleSetPrimaryDomain}
             >
-              Set as a primary domain
+              {isSettingPrimary ? (
+                <span className="animate-spin">
+                  {" "}
+                  {/* Add spinner animation */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex justify-center items-center">
+                      <svg
+                        className="w-6 h-6 text-green-700 animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <span>Setting as Primary...</span>
+                  </div>
+                </span>
+              ) : (
+                "Set as a primary domain"
+              )}
             </button>
           </div>
         </div>
-        {/* Ant Design Modal for Primary Domain confirmation */}
-  
+
         {/* <Modal
           title="Set Primary Domain"
           open={isModalOpen}
@@ -479,28 +623,45 @@ function RegisterDomain() {
           </div>
           <p>Do you want to set this domain as your primary domain?</p>
         </Modal> */}
-        
-        {isDeploymentSuccessful && (
-          <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
-            <span>
-              To view the transaction details, simply click or paste the
-              following hash into the Tron Nile Scan
-            </span>
-            <span
-              className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
-              title="View in Tronscan"
-              onClick={(event) => {
-                window.open(
-                  `https://nile.tronscan.org/#/transaction/${link}`,
-                  "_blank"
-                );
-                event.stopPropagation();
-              }}
-            >
-              {link}
-            </span>
+
+        {link && (
+          <div className="flex items-center flex-col justify-center gap-1 mt-5 mb-[1rem] text-yellow-500">
+            <div className="flex items-center gap-2 mb-3">
+              <Timer />
+              {
+                <span className="max-w-[673px] text-white">
+                  Transaction in progress! This might take 2-3 minutes or longer
+                  to finalize. Feel free to relax – once it's complete, you'll
+                  be able to view your registered domain on the Profile page
+                </span>
+              }
+            </div>
+
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <FileChartColumnIncreasing size={20} />
+                <span>
+                  To view the transaction details, simply click or paste the
+                  following hash into the Tron Nile Scan
+                </span>
+              </div>
+              <span
+                className="text-[#75ec2b] text-center bg-gray-700 p-[6px] mt-2 rounded-lg underline font-normal cursor-pointer"
+                title="View in Tronscan"
+                onClick={(event) => {
+                  window.open(
+                    `https://nile.tronscan.org/#/transaction/${link}`,
+                    "_blank"
+                  );
+                  event.stopPropagation();
+                }}
+              >
+                {link}
+              </span>
+            </div>
           </div>
         )}
+
         {!connected && (
           <div className="flex items-center justify-center gap-1 mt-4 text-yellow-500">
             <IoWarning />

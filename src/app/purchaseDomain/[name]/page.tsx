@@ -5,7 +5,9 @@ import { Axis3DIcon, CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { useToken } from "@/app/context/TokenContext";
+import { toast, Toaster } from "react-hot-toast";
 import { Modal } from "antd";
+import { Timer, FileChartColumnIncreasing } from "lucide-react";
 import AutoProgressBar from "@/app/components/AutoProgressBar";
 import { IoWarning } from "react-icons/io5";
 import abi from "../../TLDFactory.json";
@@ -198,6 +200,21 @@ function RegisterTLD() {
           );
         }
 
+        const currentNode = tronWeb.fullNode.host;
+        if (currentNode.includes('api.trongrid.io')) {
+          //this is mainnet node
+          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+        }
+
+        if (currentNode.includes('api.tronstack.io')) {
+          //this is mainnet node
+          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+        }
+        
+        if (currentNode.includes('api.shasta.trongrid.io')) {
+          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+        }
+
         // Address of your deployed TLD Factory contract
         const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
 
@@ -222,7 +239,7 @@ function RegisterTLD() {
           .deployTLD(
             tldName,
             tldSymbol?.toLowerCase(),
-            tldSymbol?.toLowerCase() // assuming you're passing the TLD name again as a parameter
+            tldSymbol?.toLowerCase()
           )
           .send({
             feeLimit: 700_000_000,
@@ -317,6 +334,19 @@ function RegisterTLD() {
 
   return (
     <div className="container">
+      <Toaster
+        toastOptions={{
+          style: {
+            border: "1px solid transparent",
+            borderImage:
+              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
+            borderImageSlice: 1,
+            background:
+              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
+            color: "white",
+          },
+        }}
+      />
       <h1 className="regtld-h1">Create Your Own TLD</h1>
       <div className="regtld-form-container">
         <div className="regtld-form-left">
@@ -624,9 +654,10 @@ function RegisterTLD() {
             <span className="animate-spin">
               {" "}
               {/* Add spinner animation */}
+              <div className="flex items-center gap-3">
               <div className="flex justify-center items-center">
                 <svg
-                  className="w-10 h-10 text-green-700 animate-spin"
+                  className="w-6 h-6 text-green-700 animate-spin"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -646,7 +677,8 @@ function RegisterTLD() {
                   ></path>
                 </svg>
               </div>
-              Deploying...
+              <span>Deploying...</span>
+              </div>
             </span>
           ) : (
             "Deploy TLD"
@@ -654,14 +686,28 @@ function RegisterTLD() {
         </button>
       </div>
 
-      {link && (
-        <div className="flex items-center flex-col justify-center gap-1 mt-3 mb-[1rem] text-yellow-500">
-          <span>
-            To view the transaction details, simply click or paste the following
-            hash into the Tron Nile Scan
-          </span>
+      {link && <div className="flex items-center flex-col justify-center gap-1 mt-5 mb-[1rem] text-yellow-500">
+        <div className="flex items-center gap-[5px] mb-3">
+          <Timer />
+          {
+            <span className="max-w-[800px] text-white">
+              Transaction in progress! This could take 2-3 minutes or more to
+              finalize. Feel free to relax – once it's done, we’ll automatically
+              redirect you to the Register Domain page
+            </span>
+          }
+        </div>
+
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <FileChartColumnIncreasing size={20} />
+            <span>
+              To view the transaction details, simply click or paste the
+              following hash into the Tron Nile Scan
+            </span>
+          </div>
           <span
-            className="text-[#75ec2b] bg-gray-700 p-2 rounded-lg underline font-normal cursor-pointer"
+            className="text-[#75ec2b] text-center bg-gray-700 p-[6px] mt-2 rounded-lg underline font-normal cursor-pointer"
             title="View in Tronscan"
             onClick={(event) => {
               window.open(
@@ -674,7 +720,7 @@ function RegisterTLD() {
             {link}
           </span>
         </div>
-      )}
+      </div>}
 
       <Modal
         title={null}
