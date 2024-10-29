@@ -5,7 +5,9 @@ import { Axis3DIcon, CircleHelp } from "lucide-react";
 import { Tooltip } from "antd";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { useToken } from "@/app/context/TokenContext";
-import { toast, Toaster } from "react-hot-toast";
+// import { toast, Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "antd";
 import { Timer, FileChartColumnIncreasing } from "lucide-react";
 import AutoProgressBar from "@/app/components/AutoProgressBar";
@@ -201,18 +203,24 @@ function RegisterTLD() {
         }
 
         const currentNode = tronWeb.fullNode.host;
-        if (currentNode.includes('api.trongrid.io')) {
+        if (currentNode.includes("api.trongrid.io")) {
           //this is mainnet node
-          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+          toast.error(
+            "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+          );
         }
 
-        if (currentNode.includes('api.tronstack.io')) {
+        if (currentNode.includes("api.tronstack.io")) {
           //this is mainnet node
-          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+          toast.error(
+            "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+          );
         }
-        
-        if (currentNode.includes('api.shasta.trongrid.io')) {
-          toast.error("Oops! You're on the wrong network. Please switch to the Nile Testnet");
+
+        if (currentNode.includes("api.shasta.trongrid.io")) {
+          toast.error(
+            "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+          );
         }
 
         // Address of your deployed TLD Factory contract
@@ -246,6 +254,8 @@ function RegisterTLD() {
             callValue: TLD_CREATION_FEE, // sending the required TRX as fee
           });
 
+        toast.info("Transaction initiated! 🚀");
+
         console.log("TLD deployed successfully:", deployResult);
 
         setLink(deployResult);
@@ -261,6 +271,8 @@ function RegisterTLD() {
 
         // Output the converted TRON address
         console.log(tronbase58Address);
+
+        toast.success("Congratulations! Your TLD has been deployed successfully! 🎊🎉");
 
         // Store data in MongoDB
         await storeDataInMongoDB(tronbase58Address);
@@ -281,8 +293,10 @@ function RegisterTLD() {
       // Check if error is an instance of Error and has a message
       if (error instanceof Error) {
         setError(`An error occurred while deploying the TLD: ${error.message}`);
+        toast.error(`An error occurred while deploying the TLD`);
       } else {
         setError("An unknown error occurred while deploying the TLD.");
+        toast.error("An error occurred");
       }
 
       handleClose();
@@ -334,7 +348,7 @@ function RegisterTLD() {
 
   return (
     <div className="container">
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             border: "1px solid transparent",
@@ -345,6 +359,20 @@ function RegisterTLD() {
               "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
             color: "white",
           },
+        }}
+      /> */}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        theme="dark"
+        toastStyle={{
+          border: "1px solid transparent",
+          borderImage:
+            "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
+          borderImageSlice: 1,
+          background: "linear-gradient(90deg, #151527, #337709)",
+          color: "white",
         }}
       />
       <h1 className="regtld-h1">Create Your Own TLD</h1>
@@ -367,7 +395,11 @@ function RegisterTLD() {
                     padding: "8px",
                   }}
                 >
-                  <CircleHelp size={22} strokeWidth={1.5} />
+                  <CircleHelp
+                    size={22}
+                    strokeWidth={1.5}
+                    className="cursor-pointer"
+                  />
                 </Tooltip>
               </div>
               <Tooltip
@@ -408,7 +440,11 @@ function RegisterTLD() {
                   padding: "8px",
                 }}
               >
-                <CircleHelp size={22} strokeWidth={1.5} />
+                <CircleHelp
+                  size={22}
+                  strokeWidth={1.5}
+                  className="cursor-pointer"
+                />
               </Tooltip>
             </div>
             <div className="input-group-flex">
@@ -655,29 +691,29 @@ function RegisterTLD() {
               {" "}
               {/* Add spinner animation */}
               <div className="flex items-center gap-3">
-              <div className="flex justify-center items-center">
-                <svg
-                  className="w-6 h-6 text-green-700 animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Deploying...</span>
+                <div className="flex justify-center items-center">
+                  <svg
+                    className="w-6 h-6 text-green-700 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                </div>
+                <span>Deploying...</span>
               </div>
             </span>
           ) : (
@@ -686,41 +722,43 @@ function RegisterTLD() {
         </button>
       </div>
 
-      {link && <div className="flex items-center flex-col justify-center gap-1 mt-5 mb-[1rem] text-yellow-500">
-        <div className="flex items-center gap-[5px] mb-3">
-          <Timer />
-          {
-            <span className="max-w-[800px] text-white">
-              Transaction in progress! This could take 2-3 minutes or more to
-              finalize. Feel free to relax – once it's done, we’ll automatically
-              redirect you to the Register Domain page
-            </span>
-          }
-        </div>
+      {link && (
+        <div className="flex items-center flex-col justify-center gap-1 mt-5 mb-[1rem] text-yellow-500">
+          <div className="flex items-center gap-[5px] mb-3">
+            <Timer />
+            {
+              <span className="max-w-[800px] text-white">
+                Transaction in progress! This could take 2-3 minutes or more to
+                finalize. Feel free to relax – once it's done, we’ll
+                automatically redirect you to the Register Domain page
+              </span>
+            }
+          </div>
 
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <FileChartColumnIncreasing size={20} />
-            <span>
-              To view the transaction details, simply click or paste the
-              following hash into the Tron Nile Scan
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <FileChartColumnIncreasing size={20} />
+              <span>
+                To view the transaction details, simply click or paste the
+                following hash into the Tron Nile Scan
+              </span>
+            </div>
+            <span
+              className="text-[#75ec2b] text-center bg-gray-700 p-[6px] mt-2 rounded-lg underline font-normal cursor-pointer"
+              title="View in Tronscan"
+              onClick={(event) => {
+                window.open(
+                  `https://nile.tronscan.org/#/transaction/${link}`,
+                  "_blank"
+                );
+                event.stopPropagation();
+              }}
+            >
+              {link}
             </span>
           </div>
-          <span
-            className="text-[#75ec2b] text-center bg-gray-700 p-[6px] mt-2 rounded-lg underline font-normal cursor-pointer"
-            title="View in Tronscan"
-            onClick={(event) => {
-              window.open(
-                `https://nile.tronscan.org/#/transaction/${link}`,
-                "_blank"
-              );
-              event.stopPropagation();
-            }}
-          >
-            {link}
-          </span>
         </div>
-      </div>}
+      )}
 
       <Modal
         title={null}

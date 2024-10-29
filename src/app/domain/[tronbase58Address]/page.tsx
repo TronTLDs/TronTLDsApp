@@ -8,7 +8,9 @@ import { BiSolidMessageError } from "react-icons/bi";
 import { Tooltip } from "antd";
 import { useToken } from "@/app/context/TokenContext";
 import { Timer, FileChartColumnIncreasing } from "lucide-react";
-import { toast, Toaster } from "react-hot-toast";
+// import { toast, Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "antd";
 import defaultImage from "../../../../assets/default_image2.png";
 import "../../css/RegisterDomain.css";
@@ -48,6 +50,7 @@ function RegisterDomain() {
   const [confirmationProgress, setConfirmationProgress] = useState(0);
   const [link, setLink] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [canSetPrimary, setCanSetPrimary] = useState(false);
 
   // console.log(error);
 
@@ -91,7 +94,6 @@ function RegisterDomain() {
     setConfirmationProgress(0);
 
     const startTime = Date.now();
-
     const checkConfirmation = async (): Promise<any> => {
       try {
         const txInfo = await (window.tronWeb as any).trx.getTransactionInfo(
@@ -136,9 +138,85 @@ function RegisterDomain() {
     return checkConfirmation();
   };
 
+  // Keep the handleSetPrimaryDomain function but modify it with toasters
+  const handleSetPrimaryDomain = async () => {
+    try {
+      setIsSettingPrimary(true);
+      toast.info("Transaction initiated! 🚀", { autoClose: 5000 });
+
+      const tronWeb = (window as any).tronWeb;
+      const currentNode = tronWeb.fullNode.host;
+
+      if (currentNode.includes("api.trongrid.io")) {
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+        return;
+      }
+
+      if (currentNode.includes("api.tronstack.io")) {
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+        return;
+      }
+
+      if (currentNode.includes("api.shasta.trongrid.io")) {
+        toast.error(
+          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
+        );
+        return;
+      }
+
+      const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
+
+      const setPrimaryResult = await domainSunpumpContract
+        .setPrimaryDomain(domainName.toLowerCase())
+        .send();
+
+      toast.info(
+        `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check status: ${setPrimaryResult}`
+      );
+
+      const confirmedTxInfo = await waitForConfirmation(setPrimaryResult);
+      console.log("Confirmed Transaction Info:", confirmedTxInfo);
+
+      toast.success("Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar");
+      setIsModalOpen(false);
+      setCanSetPrimary(false); // Disable button after successful setting
+    } catch (error: unknown) {
+      console.error("Error setting primary domain:", error);
+
+      // Reset the setting primary state to allow retrying
+      setIsSettingPrimary(false);
+
+      // Show appropriate error message
+      if (error instanceof Error) {
+        if (error.message.includes("User rejected the transaction")) {
+          toast.error("Transaction was rejected. You can try again.");
+        } else {
+          setError(
+            `An error occurred while setting the primary domain: ${error.message}`
+          );
+          toast.error("Failed to set domain as primary");
+        }
+      } else {
+        setError(
+          "An unknown error occurred while setting the domain as primary."
+        );
+        toast.error("An error occurred");
+      }
+
+      handleClose();
+    } finally {
+      setIsSettingPrimary(false); // Always reset the setting state
+    }
+  };
+
+  // Modify the registerDomain function to add toasters and call handleSetPrimaryDomain
   const registerDomain = useCallback(async () => {
     try {
-      setIsDeploying(true); // Start the loading spinner
+      setIsDeploying(true);
 
       const tronWeb = (window as any).tronWeb;
       console.log(tronWeb);
@@ -152,14 +230,12 @@ function RegisterDomain() {
       const currentNode = tronWeb.fullNode.host;
 
       if (currentNode.includes("api.trongrid.io")) {
-        //this is mainnet node
         toast.error(
           "Oops! You're on the wrong network. Please switch to the Nile Testnet"
         );
       }
 
       if (currentNode.includes("api.tronstack.io")) {
-        //this is mainnet node
         toast.error(
           "Oops! You're on the wrong network. Please switch to the Nile Testnet"
         );
@@ -171,26 +247,25 @@ function RegisterDomain() {
         );
       }
 
-      // Address of deployed Register Domain contract
       const domainContractAddress = DOMAIN_SUNPUMP_ADDRESS;
       console.log("before instance, address:", domainContractAddress);
 
-      // Get the contract instance using the TronWeb object
       const domainSunpumpContract = await tronWeb.contract(
         abi,
         tronbase58Address
       );
 
       console.log("instance created", domainSunpumpContract);
-
       console.log("Registering Domain...");
 
       const deployResult = await domainSunpumpContract
         .registerDomain(domainName.toLowerCase())
         .send({
           feeLimit: 700_000_000,
-          callValue: callVal * 1000000, // sending the required TRX as fee
+          callValue: callVal * 1000000,
         });
+
+      toast.info("Transaction initiated! 🚀");
 
       console.log("Domain registered successfully:", deployResult);
 
@@ -208,74 +283,35 @@ function RegisterDomain() {
       // Output the converted TRON address
       console.log(tronAddress);
 
-      // If successful, you can add further logic, e.g., updating UI or storing the deployment info
       setIsDeploymentSuccessful(true);
-      setIsModalOpen(true); // Open the modal when deployment is successful
+
+      toast.success("Congratulations! Your domain has been registered successfully! 🎊🎉");
+      setCanSetPrimary(true);
+
+      // After successful registration, call handleSetPrimaryDomain
+      // await handleSetPrimaryDomain();
+
       handleComplete();
     } catch (error: unknown) {
-      console.error("Error Registering Domain:", error);
-
-      // Check if error is an instance of Error and has a message
+      console.error("An Error Occured While Registering Domain");
       if (error instanceof Error) {
         setError(
           `An error occurred while registering the Domain: ${error.message}`
         );
+        toast.error(`An error occurred while registering the Domain`);
       } else {
-        setError("An unknown error occurred while registering the Domain.");
+        setError("An error occurred while registering the Domain.");
+        toast.error("An error occurred");
       }
-
       handleClose();
     } finally {
       setIsDeploying(false);
     }
   }, [domainName, handleComplete]);
 
-  const handleSetPrimaryDomain = async () => {
-    try {
-      setIsSettingPrimary(true);
-      const tronWeb = (window as any).tronWeb;
-
-      const currentNode = tronWeb.fullNode.host;
-
-      if (currentNode.includes("api.trongrid.io")) {
-        //this is mainnet node
-        toast.error(
-          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
-        );
-      }
-
-      if (currentNode.includes("api.tronstack.io")) {
-        //this is mainnet node
-        toast.error(
-          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
-        );
-      }
-
-      if (currentNode.includes("api.shasta.trongrid.io")) {
-        toast.error(
-          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
-        );
-      }
-
-      const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
-
-      const setPrimaryResult = await domainSunpumpContract
-        .setPrimaryDomain(domainName.toLowerCase())
-        .send();
-
-      console.log("Primary domain set successfully:", setPrimaryResult);
-      setIsModalOpen(false); // Close the modal after setting primary domain
-    } catch (error) {
-      console.error("Error setting primary domain:", error);
-      setError("An error occurred while setting the primary domain.");
-    } finally {
-      setIsSettingPrimary(false);
-    }
-  };
-
   return (
     <div className="containerDomain">
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             border: "1px solid transparent",
@@ -287,7 +323,21 @@ function RegisterDomain() {
             color: "white",
           },
         }}
+      /> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        theme="dark"
+        toastStyle={{
+          border: "1px solid transparent",
+          borderImage:
+            "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
+          borderImageSlice: 1,
+          background: "linear-gradient(90deg, #151527, #337709)",
+          color: "white",
+        }}
       />
+
       <h1 className="regtld-h1">Domain Registration</h1>
       <form className="regtld-form">
         <div className="input-group mb-40">
@@ -494,13 +544,13 @@ function RegisterDomain() {
             <button
               type="button"
               className={`submit-button ${
-                isValidDomain
+                isValidDomain && !isDeploying
                   ? link
                     ? "cursor-pointer"
                     : "cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              disabled={!isValidDomain}
+              disabled={!isValidDomain || isDeploying}
               onClick={registerDomain}
             >
               {isDeploying ? (
@@ -539,37 +589,26 @@ function RegisterDomain() {
             </button>
           </div>
 
-          {/* <div className="stake-register">
-            <button
-              type="submit"
-              className={`submit-button ${
-                connected && !isDeploying
-                  ? link
-                    ? "cursor-pointer"
-                    : "cursor-pointer mb-[40px]"
-                  : connected
-                  ? "cursor-pointer mb-[40px]"
-                  : "cursor-not-allowed opacity-60"
-              }`}
-            >
-            </button>
-          </div> */}
-
           <div className="domain-register">
             <button
               type="button"
               className={`submit-button ${
-                isValidDomain && isDeploymentSuccessful
+                isValidDomain &&
+                (isDeploymentSuccessful || canSetPrimary) &&
+                !isSettingPrimary
                   ? "cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              disabled={!isDeploymentSuccessful}
+              disabled={
+                !isValidDomain ||
+                (!isDeploymentSuccessful && !canSetPrimary) ||
+                isSettingPrimary
+              }
               onClick={handleSetPrimaryDomain}
             >
               {isSettingPrimary ? (
                 <span className="animate-spin">
                   {" "}
-                  {/* Add spinner animation */}
                   <div className="flex items-center gap-3">
                     <div className="flex justify-center items-center">
                       <svg
@@ -631,8 +670,8 @@ function RegisterDomain() {
               {
                 <span className="max-w-[673px] text-white">
                   Transaction in progress! This might take 2-3 minutes or longer
-                  to finalize. Feel free to relax – once it's complete, you'll
-                  be able to view your registered domain on the Profile page
+                  to finalize. Once it's complete, you'll be able to view your
+                  registered domain on the Profile page
                 </span>
               }
             </div>
