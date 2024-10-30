@@ -11,14 +11,13 @@ I) Frontend Repository
 
 This repository contains the entire frontend codebase for the PumpDomains platform, including the user interface and interactions.
 
-    Link: https://github.com/TronTLDs/TronTLDsApp
+    https://github.com/TronTLDs/TronTLDsApp
 
 II) Smart Contracts Repository
 
 This repository includes the code for all the smart contracts used in the PumpDomains platform, handling domain registration, deploying TLD and domain management.
- 
 
-    Link: https://github.com/TronTLDs/PumpDomains-Contracts-monorepo
+    https://github.com/TronTLDs/PumpDomains-Contracts-monorepo
 
 ## Installation
 
@@ -49,21 +48,28 @@ This repository includes the code for all the smart contracts used in the PumpDo
 # 🔮 Demo of our platform
 Welcome to the demo section of PumpDomains Here, you can explore some of the key features of our platform through screenshots.
 
-1) **UI of Landing/Home page**
-![Screenshot 2024-10-08 104713](https://github.com/user-attachments/assets/275b4fe4-6813-412c-b5b3-a0571860acc9)
+**Project Screenshots**:
 
-2) **UI of Domain registration form page**
-![Screenshot 2024-10-08 105805](https://github.com/user-attachments/assets/79faa642-ce3e-4e2a-b388-6ca8121ed422)
+1) Landing/Home Page:
+![Screenshot 2024-10-30 142136](https://github.com/user-attachments/assets/d3b163d0-16f0-4921-a470-726d5fdf6a5d)
 
+2) Individual Token Details Page:
+![Screenshot 2024-10-30 143034](https://github.com/user-attachments/assets/9f1f49eb-5d0e-4a03-a0cf-5997c998d424)
 
-3) **UI of TLD deploying form page**
-![Screenshot 2024-10-08 105017](https://github.com/user-attachments/assets/024b91ed-a950-40b8-9f65-3e62a5d480db)
+3) TLD Deployment Page:
+![Screenshot 2024-10-30 144550](https://github.com/user-attachments/assets/f0cacc0e-6ef9-47ed-b72c-9bd246490861)
 
-4) **UI of Domain registration form page**
-![Screenshot 2024-10-08 105204](https://github.com/user-attachments/assets/3f331291-a2d6-4e69-8a8d-dfe655e870f5)
+4) Register Domain Page:
+![Screenshot 2024-10-30 144802](https://github.com/user-attachments/assets/daa3f5f1-cfb0-4d87-bfc5-5a7090fa14b2)
 
-5) **UI of Profile page**
-![Screenshot 2024-10-08 220838](https://github.com/user-attachments/assets/2acd3b19-4725-478e-a215-cf4e4b00fe0e)
+5) Set as a Primary Domain Page:
+![Screenshot 2024-10-30 144944](https://github.com/user-attachments/assets/b7784e62-4114-445b-bb40-33efed99c7d7)
+
+6) All TLDs Visual Page: 
+![Screenshot 2024-10-30 145137](https://github.com/user-attachments/assets/43b68646-0cd3-4f79-b71b-547b8e78f9f7)
+
+7) User's Profile Page:
+![Screenshot 2024-10-30 144018](https://github.com/user-attachments/assets/0187dcae-934e-4bbf-bbb5-1be88e8ef03c)
 
 
 # 👨🏻‍💻 Tech Stack

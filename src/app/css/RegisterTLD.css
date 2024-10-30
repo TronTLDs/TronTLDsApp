@@ -7,7 +7,7 @@
   width: 90%;
   max-width: 1200px;
   margin: 40px auto;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   border: 2px solid #74ff1f;
   background: linear-gradient(90deg, #151527, #337709);
   box-shadow: 0 7px 15px rgba(116, 255, 31, 0.6), 0 3px 5px rgba(95, 199, 30, 0.2);
