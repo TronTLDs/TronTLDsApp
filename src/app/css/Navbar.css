@@ -2,3 +2,10 @@
     background-color: #4ca613 !important;
     color: white !important;
 }
+
+._btnNavbar:hover {
+    background: #151527
+      linear-gradient(153.51deg #151527 133.08%);
+    cursor: pointer;
+    border-color: #74ff1f;
+  }

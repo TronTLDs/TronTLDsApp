@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { X } from "lucide-react";
 import abi from "../../PumpDomains.json";
 import { IoWarning } from "react-icons/io5";
 import { BiSolidMessageError } from "react-icons/bi";
@@ -51,8 +52,16 @@ function RegisterDomain() {
   const [link, setLink] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [canSetPrimary, setCanSetPrimary] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Set to true to open on page load
 
-  // console.log(error);
+  useEffect(() => {
+    // Automatically open the pop-up on page load
+    setIsOpen(true);
+  }, []);
+
+  const closePopup = () => {
+    setIsOpen(false);
+  };
 
   const handleDomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -181,7 +190,9 @@ function RegisterDomain() {
       const confirmedTxInfo = await waitForConfirmation(setPrimaryResult);
       console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
-      toast.success("Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar");
+      toast.success(
+        "Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar"
+      );
       setIsModalOpen(false);
       setCanSetPrimary(false); // Disable button after successful setting
     } catch (error: unknown) {
@@ -285,7 +296,9 @@ function RegisterDomain() {
 
       setIsDeploymentSuccessful(true);
 
-      toast.success("Congratulations! Your domain has been registered successfully! 🎊🎉");
+      toast.success(
+        "Congratulations! Your domain has been registered successfully! 🎊🎉"
+      );
       setCanSetPrimary(true);
 
       // After successful registration, call handleSetPrimaryDomain
@@ -337,6 +350,49 @@ function RegisterDomain() {
           color: "white",
         }}
       />
+
+      <div>
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div
+              className="relative p-6 rounded-lg max-w-md text-center"
+              style={{
+                background: "linear-gradient(90deg, #151527, #337709)",
+                boxShadow:
+                  "0px 0px 20px rgba(116, 255, 31, 0.6), 0px 0px 15px rgba(95, 199, 30, 0.2)",
+              }}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closePopup}
+                className="absolute top-2 right-3 text-white text-xl font-bold hover:text-gray-300 p-2 bg-gray-700 rounded-full"
+              >
+                <X
+                  size={20}
+                  className="hover:text-emerald-400 hover:scale-110"
+                />
+              </button>
+
+              <h2 className="text-2xl mb-4 text-[#fcff72] font-medium">
+                Primary Domain Guide
+              </h2>
+              <p className="text-white mb-2 text-[17px]">
+                Please make sure to register a domain before setting it as
+                primary. You can only set the primary domain on this page as of
+                now. After setting, refresh to see it appear on your Connect
+                Wallet button
+              </p>
+
+              <button
+                onClick={closePopup}
+                className="submit-button mt-4 text-white rounded hover:bg-green-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <h1 className="regtld-h1">Domain Registration</h1>
       <form className="regtld-form">

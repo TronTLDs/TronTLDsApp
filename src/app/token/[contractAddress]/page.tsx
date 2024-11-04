@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
 // import Image from "next/image";
@@ -16,6 +16,7 @@ import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import { useToken } from "@/app/context/TokenContext";
 import fallback_img from "../../../../assets/default_image2.png";
+import { X, ChevronRight, CircleArrowRight } from "lucide-react";
 import "../../css/IndToken.css";
 import "../../css/RegisterTLD.css";
 
@@ -57,8 +58,36 @@ const TokenPage = () => {
   const { token: contextToken } = useToken();
   const [storedToken, setStoredToken] = useState<StoredToken | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(true); // Set to true to open on page load
+  const popupRef = useRef<HTMLDivElement>(null);
 
-  // console.log("tokens data came", token);
+  useEffect(() => {
+    // Automatically open the pop-up on page load
+    setIsOpen(true);
+  }, []);
+
+  const closePopup = () => {
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        closePopup();
+      }
+    };
+    if (setIsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setIsOpen]);
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -79,7 +108,7 @@ const TokenPage = () => {
           const res = await fetch(`/api/proxy/token/${contractAddress}`);
           const result = await res.json();
           setToken(result.data);
-  
+
           // Fetch stored token data
           const storedRes = await fetch(`/api/get-token/${contractAddress}`);
           const storedResult = await storedRes.json();
@@ -95,7 +124,7 @@ const TokenPage = () => {
         }
       }
     };
-  
+
     fetchTokenData();
   }, [contextToken, contractAddress]);
 
@@ -161,7 +190,9 @@ const TokenPage = () => {
     if (token) {
       const formattedName = token.name.replace(/\s+/g, "").toLowerCase();
       const formattedSymbol = token.symbol.replace("$", "").toLowerCase();
-      router.push(`/purchaseDomain/${formattedName}?symbol=${formattedSymbol}&contractAddress=${contractAddress}`);
+      router.push(
+        `/purchaseDomain/${formattedName}?symbol=${formattedSymbol}&contractAddress=${contractAddress}`
+      );
     }
   };
 
@@ -392,6 +423,103 @@ const TokenPage = () => {
             <span>{storedToken ? "Register Domain" : "Deploy TLD"}</span>
           )}
         </button>
+      </div>
+
+      <div>
+        {isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div
+              className="relative p-6 rounded-lg max-w-xl text-center"
+              style={{
+                background: "linear-gradient(90deg, #151527, #337709)",
+                boxShadow:
+                  "0px 0px 20px rgba(116, 255, 31, 0.6), 0px 0px 15px rgba(95, 199, 30, 0.2)",
+              }}
+              ref={popupRef}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closePopup}
+                className="absolute top-2 right-3 text-white text-xl font-bold hover:text-gray-300 p-2 bg-gray-700 rounded-full"
+              >
+                <X
+                  size={20}
+                  className="hover:text-emerald-400 hover:scale-110"
+                />
+              </button>
+
+              <h2 className="text-2xl text-[#fcff72] font-medium mb-4">
+                Deploy TLD or Register Domain
+              </h2>
+
+              <h3 className="text-justify mb-1 text-lg">
+                You will see one of the two options below
+              </h3>
+
+              <div className="flex gap-2 items-center mb-1 mt-4">
+                <ChevronRight
+                  className="text-[#74ff1f]"
+                  size={16}
+                  style={{
+                    border: "1px solid #74ff1f",
+                    borderRadius: "10px",
+                  }}
+                />
+                <h1
+                  className="inline-block py-1 text-[#74ff1f] text-sm"
+                  style={{
+                    borderRadius: "8px",
+                    fontSize: "1.2rem",
+                    textAlign: "justify",
+                  }}
+                >
+                  Deploy TLD
+                </h1>
+              </div>
+
+              <div className="text-justify mb-2 text-md">
+                This option appears if no TLD has been deployed for the token.
+                Once you deploy a TLD, it will be listed under "All Deployed
+                TLDs" in the navbar
+              </div>
+
+              <div className="flex mt-4 gap-2 items-center mb-1">
+                <ChevronRight
+                  className="text-[#74ff1f]"
+                  size={16}
+                  style={{
+                    border: "1px solid #74ff1f",
+                    borderRadius: "10px",
+                  }}
+                />
+                <h1
+                  className="inline-block py-1 text-[#74ff1f] text-sm"
+                  style={{
+                    borderRadius: "8px",
+                    fontSize: "1.2rem",
+                    textAlign: "justify",
+                  }}
+                >
+                  Register Domain
+                </h1>
+              </div>
+
+              <div className="text-justify mb-2 text-md">
+                If a TLD has already been deployed, you can register a domain
+                based on that TLD. Your registered domains can be found in the
+                "Profile" section, allowing you to keep track of your domains
+                effectively
+              </div>
+
+              <button
+                onClick={closePopup}
+                className="submit-button mt-4 px-4 py-2 text-white rounded hover:bg-green-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Toaster

@@ -71,25 +71,30 @@ const Navbar = () => {
             <div className="w-[120px]">
               {connected ? (
                 <a href={href_link}>
-                  <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium hover:border-gray-300 hover:bg-slate-600 border-2 border-gray-500 rounded-lg cursor-pointer">
+                  <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium hover:border-gray-300 border-2 border-gray-500 rounded-lg cursor-pointer _btnNavbar">
                     <CircleUser strokeWidth={2} />
                     <span className="font-medium">Profile</span>
                   </div>
                 </a>
               ) : (
-                <div
-                  className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg opacity-100 cursor-not-allowed"
-                  onClick={(e) => e.preventDefault()} // Prevent any interaction if wallet not connected
-                >
-                  <CircleUser strokeWidth={2} />
-                  <span className="font-medium">Profile</span>
+                <div className="relative group">
+                  <div
+                    className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg opacity-75 cursor-not-allowed"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <CircleUser strokeWidth={2} />
+                    <span className="font-medium">Profile</span>
+                  </div>
+                  <div className="absolute invisible group-hover:visible bg-[#1f1f3b] text-white text-sm rounded-md py-2 px-4 -bottom-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    Please connect your wallet first
+                  </div>
                 </div>
               )}
             </div>
 
             <div>
               <button onClick={handleShowAllTlds}>
-                <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium hover:border-gray-300 hover:bg-slate-600 border-2 border-gray-500 rounded-lg cursor-pointer">
+                <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg cursor-pointer _btnNavbar">
                   <span className="font-medium">All Deployed TLDs</span>
                 </div>
               </button>
