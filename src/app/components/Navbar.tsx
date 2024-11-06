@@ -71,7 +71,7 @@ const Navbar = () => {
             <div className="w-[120px]">
               {connected ? (
                 <a href={href_link}>
-                  <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium hover:border-gray-300 border-2 border-gray-500 rounded-lg cursor-pointer _btnNavbar">
+                  <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-300 rounded-lg cursor-pointer _btnNavbar">
                     <CircleUser strokeWidth={2} />
                     <span className="font-medium">Profile</span>
                   </div>
@@ -79,7 +79,7 @@ const Navbar = () => {
               ) : (
                 <div className="relative group">
                   <div
-                    className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg opacity-75 cursor-not-allowed"
+                    className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg cursor-not-allowed"
                     onClick={(e) => e.preventDefault()}
                   >
                     <CircleUser strokeWidth={2} />
@@ -94,7 +94,7 @@ const Navbar = () => {
 
             <div>
               <button onClick={handleShowAllTlds}>
-                <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-500 rounded-lg cursor-pointer _btnNavbar">
+                <div className="flex items-center gap-[5px] p-3 px-6 text-white font-medium border-2 border-gray-300 rounded-lg cursor-pointer _btnNavbar">
                   <span className="font-medium">All Deployed TLDs</span>
                 </div>
               </button>

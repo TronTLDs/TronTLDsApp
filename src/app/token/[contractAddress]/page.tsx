@@ -466,7 +466,7 @@ const TokenPage = () => {
                   }}
                 />
                 <h1
-                  className="inline-block py-1 text-[#74ff1f] text-sm"
+                  className="inline-block py-1 text-[#74ff1f] font-medium text-sm"
                   style={{
                     borderRadius: "8px",
                     fontSize: "1.2rem",
@@ -480,7 +480,11 @@ const TokenPage = () => {
               <div className="text-justify mb-2 text-md">
                 This option appears if no TLD has been deployed for the token.
                 Once you deploy a TLD, it will be listed under "All Deployed
-                TLDs" in the navbar
+                TLDs" in the navbar.
+              </div>
+
+              <div className="bg-gray-950 p-3 rounded-xl text-center italic text-gray-300 mb-4">
+                for example - ".xyz", ".abc", ".pqr"
               </div>
 
               <div className="flex mt-4 gap-2 items-center mb-1">
@@ -493,7 +497,7 @@ const TokenPage = () => {
                   }}
                 />
                 <h1
-                  className="inline-block py-1 text-[#74ff1f] text-sm"
+                  className="inline-block py-1 text-[#74ff1f] font-medium text-sm"
                   style={{
                     borderRadius: "8px",
                     fontSize: "1.2rem",
@@ -508,7 +512,11 @@ const TokenPage = () => {
                 If a TLD has already been deployed, you can register a domain
                 based on that TLD. Your registered domains can be found in the
                 "Profile" section, allowing you to keep track of your domains
-                effectively
+                effectively.
+              </div>
+
+              <div className="bg-gray-950 p-3 rounded-xl text-center italic text-gray-300 mb-4">
+                for example - "testing.xyz", "testing.abc", "testing.pqr"
               </div>
 
               <button

@@ -28,8 +28,8 @@ const handleCopy = (addr: string) => {
 
 const DomainManager = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const fetchTokens = async () => {
@@ -72,7 +72,7 @@ const DomainManager = () => {
 
     return (
       <div
-        className="bg-gradient-to-br from-[#2a3b2a] to-[#1a2b1a] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        className="border-[1.67px] border-white bg-gradient-to-br from-[#2a3b2a] to-[#1a2b1a] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover: shadow-[#75ec2b]/65"
         onClick={handleRegisterDomain}
       >
         <div className="flex items-center space-x-4 mb-4">
@@ -114,25 +114,6 @@ const DomainManager = () => {
               />
             </div>
           </div>
-
-          {/* <div className="flex gap-1 items-center text-gray-300 text-sm">
-            <span className="font-medium text-[#A8F981]">Owner Address: </span>
-            <span className="text-white text-[12px]">
-              {token.ownerAddress.slice(0, 3) +
-                "...." +
-                token.ownerAddress.slice(-4)}
-            </span>
-            <div className="cursor-pointer" title="Copy">
-              <Copy
-                size={12}
-                className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleCopy(token.ownerAddress);
-                }}
-              />
-            </div>
-          </div> */}
 
           <div className="flex gap-1 items-center text-gray-300 text-sm">
             <span className="font-medium text-[#A8F981]">

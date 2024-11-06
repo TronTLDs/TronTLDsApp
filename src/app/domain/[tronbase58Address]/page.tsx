@@ -184,7 +184,7 @@ function RegisterDomain() {
         .send();
 
       toast.info(
-        `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check status: ${setPrimaryResult}`
+        `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check status: ${setPrimaryResult}`, { autoClose: 10000 }
       );
 
       const confirmedTxInfo = await waitForConfirmation(setPrimaryResult);
@@ -378,8 +378,7 @@ function RegisterDomain() {
               </h2>
               <p className="text-white mb-2 text-[17px]">
                 Please make sure to register a domain before setting it as
-                primary. You can only set the primary domain on this page as of
-                now. After setting, refresh to see it appear on your Connect
+                primary. After setting, refresh to see it appear on your Connect
                 Wallet button
               </p>
 
