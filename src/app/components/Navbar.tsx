@@ -51,7 +51,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="border-b-2 border-gray-700">
+    <div className="border-b-2 border-gray-700 hidden lg:block bg-gradient-to-b from-[#0a1f0a] to-[#1a2f1a]">
       <div className="mx-[8px] py-5 px-16">
         <div className="relative flex items-center justify-between">
           <a

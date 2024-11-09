@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { FaXTwitter } from "react-icons/fa6";
+import MobileResponsiveMessage from "@/app/components/MobileResponsiveMessage";
 // import Image from "next/image";
 import {
   ArrowLeft,
@@ -201,7 +202,8 @@ const TokenPage = () => {
   // };
 
   return (
-    <div className="text-white h-[100vh] p-[2rem] bg_ind_token">
+    <>
+    <div className="text-white h-[100vh] p-[2rem] bg_ind_token hidden lg:block">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => router.push("/")}
@@ -545,6 +547,9 @@ const TokenPage = () => {
         }}
       />
     </div>
+
+    <MobileResponsiveMessage />
+    </>
   );
 };
 

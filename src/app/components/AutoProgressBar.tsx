@@ -57,7 +57,7 @@ const AutoProgressBar: React.FC<AutoProgressBarProps> = ({
   };
 
   return (
-    <div className="bg-gray-900 text-white p-8 rounded-lg shadow-xl max-w-4xl mx-auto fredoka-font">
+    <div className="bg-gray-900 text-white p-8 rounded-lg shadow-xl max-w-4xl mx-auto fredoka-font hidden lg:block">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-semibold bg-clip-text text-white">
           Progress Steps

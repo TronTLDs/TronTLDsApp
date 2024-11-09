@@ -17,6 +17,8 @@ declare global {
 }
 
 interface TronWeb {
+  off(arg0: string, errorListener: (error: any) => void): unknown;
+  on(arg0: string, errorListener: (error: any) => void): unknown;
   contract(abi, address: string | undefined): Promise<Contract>;
   ready: boolean;
 }

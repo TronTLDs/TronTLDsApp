@@ -20,6 +20,7 @@ import abi from "../../DomainRecords.json";
 import abiOfPumpDomains from "../../PumpDomains.json";
 import { Copy } from "lucide-react";
 import copy from "copy-to-clipboard";
+import MobileResponsiveMessage from "@/app/components/MobileResponsiveMessage";
 import "../../css/RegisterTLD.css";
 
 interface Domain {
@@ -354,7 +355,8 @@ const DomainManager = () => {
         .send();
 
       toast.info(
-        `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check status: ${result}`, { autoClose: 10000 }
+        `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check the transaction status: ${result}`,
+        { autoClose: 10000 }
       );
 
       const confirmedTxInfo = await waitForConfirmation(result);
@@ -439,85 +441,91 @@ const DomainManager = () => {
   }, [connected, walletAddress, getDomainHashes, isCheckingConnection]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a1f0a] to-[#1a2f1a] p-8">
-      <ToastContainer
-        position="top-center"
-        autoClose={4000}
-        theme="dark"
-        toastStyle={{
-          background: "linear-gradient(90deg, #151527, #337709)",
-          color: "white",
-          border: "1px solid #74ff1f",
-        }}
-      />
+    <>
+      <div className="min-h-screen bg-gradient-to-b from-[#0a1f0a] to-[#1a2f1a] p-8 hidden lg:block">
+        <ToastContainer
+          position="top-center"
+          autoClose={4000}
+          theme="dark"
+          toastStyle={{
+            background: "linear-gradient(90deg, #151527, #337709)",
+            color: "white",
+            border: "1px solid #74ff1f",
+          }}
+        />
 
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-semibold text-[#A8F981] mb-4">
-            Domain Overview{" "}
-          </h1>
-          <p className="text-white max-w-2xl mx-auto text-lg">
-            Access comprehensive details of your registered domains, including
-            ownership information, expiration dates, registration dates, and
-            pricing
-          </p>
-        </div>
-
-        {isCheckingConnection || isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#A8F981]"></div>
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-medium text-[#A8F981] mb-4">
+              Domain Overview{" "}
+            </h1>
+            <p className="text-white max-w-2xl mx-auto text-lg">
+              Access comprehensive details of your registered domains, including
+              ownership information, expiration dates, registration dates, and
+              pricing
+            </p>
           </div>
-        ) : (
-          <>
-            {connected && hasInitiallyFetched && isDataReady ? (
-              <>
-                {domains.length === 0 ? (
-                  <div className="bg-[#2a3b2a] border border-transparent rounded-lg p-8 text-center">
-                    <h3 className="text-2xl font-bold text-[#A8F981] mb-4">
-                      No Domains Found
-                    </h3>
-                    <p className="text-gray-300">
-                      Start your web3 journey by registering your first domain
-                      on the PumpDomains platform.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {domains.map((domain, index) => {
-                      // Add tronbase58Address to domain object
-                      const domainWithAddress = {
-                        ...domain,
-                        tronbase58Address: matchTldWithToken(
-                          domain.nameWithTld,
-                          tokens
-                        ),
-                      };
 
-                      return (
-                        <DomainCard
-                          key={index}
-                          domain={domainWithAddress}
-                          onSetPrimary={handleSetPrimaryDomain}
-                          isSettingPrimary={isSettingPrimary}
-                          currentSettingDomain={currentSettingDomain}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            ) : null}
+          {isCheckingConnection || isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#A8F981]"></div>
+            </div>
+          ) : (
+            <>
+              {connected && hasInitiallyFetched && isDataReady ? (
+                <>
+                  {domains.length === 0 ? (
+                    <div className="bg-[#2a3b2a] border border-transparent rounded-lg p-8 text-center">
+                      <h3 className="text-2xl font-bold text-[#A8F981] mb-4">
+                        No Domains Found
+                      </h3>
+                      <p className="text-gray-300">
+                        Start your web3 journey by registering your first domain
+                        on the PumpDomains platform.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {domains.map((domain, index) => {
+                        // Add tronbase58Address to domain object
+                        const domainWithAddress = {
+                          ...domain,
+                          tronbase58Address: matchTldWithToken(
+                            domain.nameWithTld,
+                            tokens
+                          ),
+                        };
 
-            {!isCheckingConnection && !connected && (
-              <div className="flex items-center justify-center gap-2 p-4 bg-yellow-500/10 rounded-lg text-yellow-500">
-                <IoWarning className="w-6 h-6" />
-                <span>Please connect your wallet to view your registered domains</span>
-              </div>
-            )}
-          </>
-        )}
+                        return (
+                          <DomainCard
+                            key={index}
+                            domain={domainWithAddress}
+                            onSetPrimary={handleSetPrimaryDomain}
+                            isSettingPrimary={isSettingPrimary}
+                            currentSettingDomain={currentSettingDomain}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : null}
+
+              {!isCheckingConnection && !connected && (
+                <div className="flex items-center justify-center gap-2 p-4 bg-yellow-500/10 rounded-lg text-yellow-500">
+                  <IoWarning className="w-6 h-6" />
+                  <span>
+                    Please connect your wallet to view your registered domains
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+
+      <MobileResponsiveMessage />
+    </>
   );
 };
 

@@ -25,7 +25,7 @@ html {
   background: #1a1a1a; /* Fallback background color */
 }
 
-html, body {
+body {
   color: var(--foreground);
   font-style: normal;
   min-height: 100vh;
@@ -44,7 +44,7 @@ body::before {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw; /* Use viewport width for a perfect circle */
-  height: 100vw; /* Match height to width for a circle */
+  height: 100vw; 
   background: radial-gradient(
     circle,
     rgba(120, 228, 120, 0.5) 0%,

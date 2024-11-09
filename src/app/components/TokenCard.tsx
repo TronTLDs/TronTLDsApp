@@ -22,6 +22,7 @@ import { useToken } from "../context/TokenContext";
 import defaultImage from "../../../assets/default_image2.png";
 import Image from "next/image";
 import no_more_items from "../../../assets/no_more_items2.png";
+import MobileResponsiveMessage from "./MobileResponsiveMessage";
 import "../css/TokenCard.css";
 
 interface Token {
@@ -64,15 +65,6 @@ const TokenCard = ({}) => {
     router.push(`/token/${token.contractAddress}`);
   };
 
-  // useEffect(() => {
-  //   // Set a timer to hide the skeleton loader after 10 seconds
-  //   const timer = setTimeout(() => {
-  //     setLoading(false); // Hide the loader after 10 seconds
-  //   }, 1000000000); // 10 seconds = 10000 milliseconds
-
-  //   return () => clearTimeout(timer); // Clear the timer when the component unmounts
-  // }, []);
-
   const fetchTokens = useCallback(
     async (page: number, sort = sortOption, query = debouncedSearchQuery) => {
       try {
@@ -92,8 +84,7 @@ const TokenCard = ({}) => {
           if (page === 1) {
             setNoItemsFound(true);
           }
-        } 
-        else {
+        } else {
           setTokens((prevTokens) => {
             return page === 1 ? newTokens : [...prevTokens, ...newTokens];
           });
@@ -241,123 +232,128 @@ const TokenCard = ({}) => {
 
   return (
     <div className="p-6 min-h-screen">
-      <h2 className="text_container mb-6 text-3xl font-medium text-white">
-        Tokens Explorer
-      </h2>
-      <div className="search_container flex justify-between">
-        <div className="flex gap-3 items-center">
-          <div className="search-bar w-[30%] relative -ml-[7px]">
-            {/* <SearchCode className="ml-[20px]" /> */}
-            <input
-              type="text"
-              className="search-input p-2"
-              placeholder="Search for tokens"
-              value={searchQuery}
-              onChange={handleSearchChange} // Call handleSearchChange on input
-            ></input>
-            {searchQuery && (
+      {/* <MobileResponsiveMessage /> */}
+
+      <div className="">
+        <h2 className="text_container mb-6 text-3xl font-medium text-white">
+          Tokens Explorer
+        </h2>
+        <div className="search_container flex justify-between">
+          <div className="flex gap-3 items-center">
+            <div className="search-bar w-[30%] relative -ml-[7px]">
+              {/* <SearchCode className="ml-[20px]" /> */}
+              <input
+                type="text"
+                className="search-input p-2"
+                placeholder="Search for tokens"
+                value={searchQuery}
+                onChange={handleSearchChange} // Call handleSearchChange on input
+              ></input>
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
+                  title="Clear search"
+                >
+                  <X
+                    size={17}
+                    className="text-gray-200 font-bold hover:text-[#74ff1f] hover:scale-125"
+                  />
+                </button>
+              )}
+            </div>
+            <div className="p-[8px] cursor-pointer bg-[#A8F981] rounded-full">
+              <Search strokeWidth={1.5} color="black" />
+            </div>
+          </div>
+          <div className="flex gap-5 items-center">
+            <div className="relative inline-block text-center">
               <button
-                onClick={clearSearch}
-                className="absolute right-[13px] top-1/2 transform -translate-y-1/2"
-                title="Clear search"
+                onClick={() => setIsOpen(!isOpen)}
+                className="inline-flex justify-center items-center w-48 px-4 py-2 rounded-md shadow-sm *:focus:outline-none dropdown-container truncate"
               >
-                <X
-                  size={17}
-                  className="text-gray-200 font-bold hover:text-[#74ff1f] hover:scale-125"
-                />
+                {selectedOption || "Launched Time"}
+                <svg
+                  className={`w-5 h-5 ml-2 transform transition-transform duration-300 ${
+                    isOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.292 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </button>
-            )}
-          </div>
-          <div className="p-[8px] cursor-pointer bg-[#A8F981] rounded-full">
-            <Search strokeWidth={1.5} color="black" />
-          </div>
-        </div>
-        <div className="flex gap-5 items-center">
-          <div className="relative inline-block text-center">
+
+              {isOpen && (
+                <div className="absolute z-10 mt-2 w-48 border-2 rounded-md border-[#74ff1f]">
+                  <ul className="rounded-full">
+                    {options.map((option, index) => (
+                      <li key={index}>
+                        <button
+                          onClick={() => handleSelect(option)}
+                          title={`${option}`}
+                          className={`block w-full px-4 py-2 text-center dropdown-container2 ${
+                            option === selectedOption
+                              ? "text-[#74ff1f]"
+                              : "text-white"
+                          }`}
+                        >
+                          <span className="hover:scale-110">{option}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex justify-center items-center w-48 px-4 py-2 rounded-md shadow-sm *:focus:outline-none dropdown-container truncate"
+              onClick={toggleSortDirection}
+              className="direction_sort p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+              title={`Sort ${
+                sortDirection === "DESC" ? "Ascending" : "Descending"
+              }`}
             >
-              {selectedOption || "Launched Time"}
-              <svg
-                className={`w-5 h-5 ml-2 transform transition-transform duration-300 ${
-                  isOpen ? "rotate-180" : "rotate-0"
-                }`}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.292 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              {sortDirection === "DESC" ? (
+                <ArrowUpNarrowWide size={20} />
+              ) : (
+                <ArrowDownWideNarrow size={20} />
+              )}
             </button>
-
-            {isOpen && (
-              <div className="absolute z-10 mt-2 w-48 border-2 rounded-md border-[#74ff1f]">
-                <ul className="rounded-full">
-                  {options.map((option, index) => (
-                    <li key={index}>
-                      <button
-                        onClick={() => handleSelect(option)}
-                        title={`${option}`}
-                        className={`block w-full px-4 py-2 text-center dropdown-container2 ${
-                          option === selectedOption
-                            ? "text-[#74ff1f]"
-                            : "text-white"
-                        }`}
-                      >
-                        <span className="hover:scale-110">{option}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <button
+              onClick={handleRefresh}
+              className="refresh p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+              title="Refresh"
+            >
+              <RotateCw size={20} className="refreshIcon" />
+            </button>
           </div>
-          <button
-            onClick={toggleSortDirection}
-            className="direction_sort p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
-            title={`Sort ${
-              sortDirection === "DESC" ? "Ascending" : "Descending"
-            }`}
-          >
-            {sortDirection === "DESC" ? (
-              <ArrowUpNarrowWide size={20} />
-            ) : (
-              <ArrowDownWideNarrow size={20} />
-            )}
-          </button>
-          <button
-            onClick={handleRefresh}
-            className="refresh p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
-            title="Refresh"
-          >
-            <RotateCw size={20} className="refreshIcon" />
-          </button>
         </div>
-      </div>
 
-      <div className="grid_container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {loading
-          ? Array(24)
-              .fill(null)
-              .map((_, index) => <SkeletonLoader key={index} />)
-          : tokens.map((token) => (
-              <div
-                key={token.id}
-                onClick={() => handleCardClick(token)}
-                className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
-              >
-                <img
-                  src={token.logoUrl === null ? defaultImage.src : token.logoUrl}
-                  alt={token.name}
-                  className="w-full h-[240px] object-cover rounded-md mb-4"
-                />
+        <div className="grid_container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading
+            ? Array(24)
+                .fill(null)
+                .map((_, index) => <SkeletonLoader key={index} />)
+            : tokens.map((token) => (
+                <div
+                  key={token.id}
+                  onClick={() => handleCardClick(token)}
+                  className="_card token-card rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer relative h-[468px]"
+                >
+                  <img
+                    src={
+                      token.logoUrl === null ? defaultImage.src : token.logoUrl
+                    }
+                    alt={token.name}
+                    className="w-full h-[240px] object-cover rounded-md mb-4"
+                  />
 
-                {/* <Image
+                  {/* <Image
                   src={token.logoUrl}
                   alt={token.name}
                   width={100}
@@ -365,37 +361,113 @@ const TokenCard = ({}) => {
                   className="w-full h-[240px] object-cover rounded-md mb-4"
                 /> */}
 
-                <div
-                  className={`_price_tag_common ${
-                    token.priceChange24Hr > 0
-                      ? "_price_tag"
-                      : `${
-                          token.priceChange24Hr === 0
-                            ? "_price_tag2"
-                            : "_price_tag3"
-                        }`
-                  }`}
-                >
-                  {token.priceChange24Hr}%{" "}
-                  {token.priceChange24Hr > 0 ? (
-                    <MoveUp size={15} strokeWidth={3} />
-                  ) : token.priceChange24Hr < 0 ? (
-                    <MoveDown size={15} strokeWidth={3} />
-                  ) : (
-                    <MoveUp size={15} strokeWidth={3} />
-                  )}
-                </div>
+                  <div
+                    className={`_price_tag_common ${
+                      token.priceChange24Hr > 0
+                        ? "_price_tag"
+                        : `${
+                            token.priceChange24Hr === 0
+                              ? "_price_tag2"
+                              : "_price_tag3"
+                          }`
+                    }`}
+                  >
+                    {token.priceChange24Hr}%{" "}
+                    {token.priceChange24Hr > 0 ? (
+                      <MoveUp size={15} strokeWidth={3} />
+                    ) : token.priceChange24Hr < 0 ? (
+                      <MoveDown size={15} strokeWidth={3} />
+                    ) : (
+                      <MoveUp size={15} strokeWidth={3} />
+                    )}
+                  </div>
 
-                <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
-                  <div className="text-gray-400 flex justify-between items-center">
-                    <div className="flex gap-1 items-center">
-                      <span className="text-gray-100 text-[12px] line-clamp-1">
-                        Created by:{" "}
+                  <div className="pt-[4px] px-[16px] pb-[16px] flex flex-col gap-[8px]">
+                    <div className="text-gray-400 flex justify-between items-center">
+                      <div className="flex gap-1 items-center">
+                        <span className="text-gray-100 text-[12px] line-clamp-1">
+                          Created by:{" "}
+                        </span>
+                        <span className="text-[#75ec2b] text-[12px]">
+                          {token.ownerAddress.slice(0, 3) +
+                            "...." +
+                            token.ownerAddress.slice(-3)}
+                        </span>
+                        <div className="cursor-pointer" title="Copy">
+                          <Copy
+                            size={12}
+                            className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
+                            onClick={(event) => {
+                              event.stopPropagation(); // Prevent the outer onClick from firing
+                              handleCopy(token.ownerAddress);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {token.twitterUrl &&
+                          urlErrorChecker(token.twitterUrl) && (
+                            <button
+                              className="text-gray-200 hover:text-white"
+                              onClick={(event) => event.stopPropagation()} // Prevent parent click
+                            >
+                              <a
+                                href={formatUrl(token.twitterUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <FaXTwitter
+                                  size={14}
+                                  className="hover:scale-125"
+                                />
+                              </a>
+                            </button>
+                          )}
+                        {token.websiteUrl &&
+                          urlErrorChecker(token.websiteUrl) && (
+                            <button
+                              className="text-gray-200 hover:text-white"
+                              onClick={(event) => event.stopPropagation()} // Prevent parent click
+                            >
+                              <a
+                                href={formatUrl(token.websiteUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Globe size={14} className="hover:scale-125" />
+                              </a>
+                            </button>
+                          )}
+                        {token.telegramUrl &&
+                          urlErrorChecker(token.telegramUrl) && (
+                            <button
+                              className="text-gray-200 hover:text-white"
+                              onClick={(event) => event.stopPropagation()} // Prevent parent click
+                            >
+                              <a
+                                href={formatUrl(token.telegramUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <FaTelegramPlane
+                                  size={14}
+                                  className="hover:scale-125"
+                                />
+                              </a>
+                            </button>
+                          )}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-1 items-center mt-[-6px]">
+                      <span className="text-gray-100 text-[12px]">
+                        Contract Address:{" "}
                       </span>
                       <span className="text-[#75ec2b] text-[12px]">
-                        {token.ownerAddress.slice(0, 3) +
+                        {token.contractAddress.slice(0, 3) +
                           "...." +
-                          token.ownerAddress.slice(-3)}
+                          token.contractAddress.slice(-4)}
                       </span>
                       <div className="cursor-pointer" title="Copy">
                         <Copy
@@ -403,140 +475,65 @@ const TokenCard = ({}) => {
                           className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
                           onClick={(event) => {
                             event.stopPropagation(); // Prevent the outer onClick from firing
-                            handleCopy(token.ownerAddress);
+                            handleCopy(token.contractAddress);
                           }}
                         />
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      {token.twitterUrl &&
-                        urlErrorChecker(token.twitterUrl) && (
-                          <button
-                            className="text-gray-200 hover:text-white"
-                            onClick={(event) => event.stopPropagation()} // Prevent parent click
-                          >
-                            <a
-                              href={formatUrl(token.twitterUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <FaXTwitter
-                                size={14}
-                                className="hover:scale-125"
-                              />
-                            </a>
-                          </button>
-                        )}
-                      {token.websiteUrl &&
-                        urlErrorChecker(token.websiteUrl) && (
-                          <button
-                            className="text-gray-200 hover:text-white"
-                            onClick={(event) => event.stopPropagation()} // Prevent parent click
-                          >
-                            <a
-                              href={formatUrl(token.websiteUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Globe size={14} className="hover:scale-125" />
-                            </a>
-                          </button>
-                        )}
-                      {token.telegramUrl &&
-                        urlErrorChecker(token.telegramUrl) && (
-                          <button
-                            className="text-gray-200 hover:text-white"
-                            onClick={(event) => event.stopPropagation()} // Prevent parent click
-                          >
-                            <a
-                              href={formatUrl(token.telegramUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <FaTelegramPlane
-                                size={14}
-                                className="hover:scale-125"
-                              />
-                            </a>
-                          </button>
-                        )}
+                    <h3 className="text-md font-semibold text-white line-clamp-1">
+                      {token.name}{" "}
+                      <span className="text-gray-100 font-semibold">
+                        (${token.symbol})
+                      </span>
+                    </h3>
+
+                    <div className="h-16 overflow-hidden">
+                      <p className="text-sm text-gray-400 line-clamp-3 mt-2">
+                        {token.description}
+                      </p>
                     </div>
-                  </div>
 
-                  <div className="flex gap-1 items-center mt-[-6px]">
-                    <span className="text-gray-100 text-[12px]">
-                      Contract Address:{" "}
-                    </span>
-                    <span className="text-[#75ec2b] text-[12px]">
-                      {token.contractAddress.slice(0, 3) +
-                        "...." +
-                        token.contractAddress.slice(-4)}
-                    </span>
-                    <div className="cursor-pointer" title="Copy">
-                      <Copy
-                        size={12}
-                        className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
-                        onClick={(event) => {
-                          event.stopPropagation(); // Prevent the outer onClick from firing
-                          handleCopy(token.contractAddress);
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <h3 className="text-md font-semibold text-white line-clamp-1">
-                    {token.name}{" "}
-                    <span className="text-gray-100 font-semibold">
-                      (${token.symbol})
-                    </span>
-                  </h3>
-
-                  <div className="h-16 overflow-hidden">
-                    <p className="text-sm text-gray-400 line-clamp-3 mt-2">
-                      {token.description}
+                    <p className="text-sm font-semibold text-gray-300 mt-[13px]">
+                      Market Cap:{" "}
+                      <span className="text-[#FCFF72] font-medium">
+                        ${formatNumber(token.marketCap)}
+                      </span>
                     </p>
                   </div>
-
-                  <p className="text-sm font-semibold text-gray-300 mt-[13px]">
-                    Market Cap:{" "}
-                    <span className="text-[#FCFF72] font-medium">
-                      ${formatNumber(token.marketCap)}
-                    </span>
-                  </p>
                 </div>
-              </div>
-            ))}
-      </div>
+              ))}
+        </div>
 
-      <div className="flex justify-center mt-8">
-        {tokens.length > 0 && hasMore && (
-          <button
-            onClick={loadMoreTokens}
-            className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
-          >
-            {loading ? "Loading..." : "Load More"}
-          </button>
-        )}
-        {tokens.length > 0 && !hasMore && (
-          <button
-            disabled
-            className="cursor-not-allowed flex items-center p-3 px-10 text-white font-medium bg-[#469913] opacity-50 border-2 rounded-lg"
-          >
-            Load More
-          </button>
-        )}
-        {noItemsFound && (
-          <div className="flex justify-center items-center flex-col gap-3 mt-20">
-            <Image
-              src={no_more_items}
-              alt="no items found"
-              // width={200}
-              // height={200}
-            />
-            <span className="text-lg">No items in the list</span>
-          </div>
-        )}
+        <div className="flex justify-center mt-8">
+          {tokens.length > 0 && hasMore && (
+            <button
+              onClick={loadMoreTokens}
+              className="flex items-center p-3 px-10 text-white font-medium bg-[#5fc71e] hover:border-white border-2 hover:bg-[#4ca613] rounded-lg cursor-pointer"
+            >
+              {loading ? "Loading..." : "Load More"}
+            </button>
+          )}
+          {tokens.length > 0 && !hasMore && (
+            <button
+              disabled
+              className="cursor-not-allowed flex items-center p-3 px-10 text-white font-medium bg-[#469913] opacity-50 border-2 rounded-lg"
+            >
+              Load More
+            </button>
+          )}
+          {noItemsFound && (
+            <div className="flex justify-center items-center flex-col gap-3 mt-20">
+              <Image
+                src={no_more_items}
+                alt="no items found"
+                // width={200}
+                // height={200}
+              />
+              <span className="text-lg">No items in the list</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <Toaster

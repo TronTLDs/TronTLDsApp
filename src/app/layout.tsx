@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${fredoka.className} antialiased w-full flex flex-col justify-between`}
+        className={`${fredoka.className} antialiased w-full h-full flex flex-col justify-between`}
       >
         <TokenProvider>
           <TronLinkProvider>

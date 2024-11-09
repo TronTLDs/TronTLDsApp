@@ -5,6 +5,7 @@ import { Copy } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import copy from "copy-to-clipboard";
 import { useRouter } from "next/navigation";
+import MobileResponsiveMessage from "../components/MobileResponsiveMessage";
 
 interface TokenData {
   name: string;
@@ -156,50 +157,54 @@ const DomainManager = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-[#1a1a1a]">
-      <Toaster
-        toastOptions={{
-          style: {
-            border: "1px solid transparent",
-            borderImage:
-              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
-            borderImageSlice: 1,
-            background:
-              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
-            color: "white",
-          },
-        }}
-      />
-      <div className="max-w-6xl mx-auto space-y-12">
-        <section>
-          <h2 className="text-[#A8F981] text-3xl font-semibold mb-8 text-center">
-            TLDs Deployed On Our Platform
-          </h2>
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-28 w-28 border-t-2 border-b-2 border-[#A8F981]"></div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 cursor-pointer">
-              {tokens.map((tokenData, index) => (
-                <TokenCard key={index} tokenData={tokenData} />
-              ))}
-            </div>
-          )}
-        </section>
+    <>
+      <div className="min-h-screen p-8 bg-[#1a1a1a] hidden lg:block">
+        <Toaster
+          toastOptions={{
+            style: {
+              border: "1px solid transparent",
+              borderImage:
+                "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
+              borderImageSlice: 1,
+              background:
+                "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
+              color: "white",
+            },
+          }}
+        />
+        <div className="max-w-6xl mx-auto space-y-12">
+          <section>
+            <h2 className="text-[#A8F981] text-3xl font-medium mb-8 text-center">
+              TLDs Deployed On Our Platform
+            </h2>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-28 w-28 border-t-2 border-b-2 border-[#A8F981]"></div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 cursor-pointer">
+                {tokens.map((tokenData, index) => (
+                  <TokenCard key={index} tokenData={tokenData} />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+        <div className="flex items-center justify-center mt-12">
+          <button
+            onClick={fetchTokens}
+            disabled={isLoading}
+            className={`flex items-center p-4 px-8 text-white font-medium bg-gradient-to-r from-[#5fc71e] to-[#4ca613] hover:from-[#4ca613] hover:to-[#3b8a0f] rounded-lg transition-all duration-300 ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
+            }`}
+          >
+            {isLoading ? "Loading..." : "Refresh Tokens"}
+          </button>
+        </div>
       </div>
-      <div className="flex items-center justify-center mt-12">
-        <button
-          onClick={fetchTokens}
-          disabled={isLoading}
-          className={`flex items-center p-4 px-8 text-white font-medium bg-gradient-to-r from-[#5fc71e] to-[#4ca613] hover:from-[#4ca613] hover:to-[#3b8a0f] rounded-lg transition-all duration-300 ${
-            isLoading ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
-          }`}
-        >
-          {isLoading ? "Loading..." : "Refresh Tokens"}
-        </button>
-      </div>
-    </div>
+
+      <MobileResponsiveMessage />
+    </>
   );
 };
 
