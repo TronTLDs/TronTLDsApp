@@ -213,6 +213,10 @@ function RegisterTLD() {
           return;
         }
 
+        toast.info("Please confirm the transaction in your wallet 🔐", {
+          autoClose: 3000,
+        });
+
         // Address of your deployed TLD Factory contract
         const tldFactoryContractAddress = TLD_FACTORY_ADDRESS;
 
@@ -276,6 +280,19 @@ function RegisterTLD() {
         router.push(
           `/domain/${tronbase58Address}?symbol=${symbol}&contractAddress=${contractAddress}`
         );
+
+        if (
+          confirmedTxInfo.receipt &&
+          confirmedTxInfo.receipt.result === "REVERT"
+        ) {
+          // Handle revert case
+          let errorMessage = "Transaction reverted";
+
+          toast.error(errorMessage);
+        } else {
+          // Handle other failure cases
+          toast.error("Transaction Failed");
+        }
 
         handleComplete();
       }
@@ -646,23 +663,6 @@ function RegisterTLD() {
             </div>
           </div>
         </div>
-
-        {/* <div className="stake-register">
-        <button
-          type="submit"
-          className={`submit-button ${
-            connected
-              ? link
-                ? "cursor-pointer"
-                : "cursor-pointer mb-[40px]"
-              : "cursor-not-allowed opacity-60"
-          }`}
-          onClick={showModal}
-          disabled={!connected}
-        >
-          Deploy TLD
-        </button>
-      </div> */}
 
         <div className="stake-register">
           <button

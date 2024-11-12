@@ -150,7 +150,6 @@ function RegisterDomain() {
   const handleSetPrimaryDomain = async () => {
     try {
       setIsSettingPrimary(true);
-      toast.info("Transaction initiated! 🚀", { autoClose: 5000 });
 
       const tronWeb = (window as any).tronWeb;
 
@@ -166,43 +165,65 @@ function RegisterDomain() {
         return;
       }
 
+      toast.info("Please confirm the transaction in your wallet 🔐", {
+        autoClose: 3000,
+      });
+
       const domainSunpumpContract = await tronWeb.contract(abi, tronAddress);
 
       const setPrimaryResult = await domainSunpumpContract
         .setPrimaryDomain(domainName.toLowerCase())
         .send();
 
-      toast.info(
+      toast.info("Transaction initiated! 🚀", { autoClose: 3000 });
+
+      toast.loading(
         `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check the transaction status: ${setPrimaryResult}`,
-        { autoClose: 10000 }
+        {
+          toastId: "loading-toast", // Ensure the toast has a unique ID
+        }
       );
+
+      setTimeout(() => {
+        toast.dismiss("loading-toast"); // Dismiss using the exact toast ID
+      }, 62000);
 
       const confirmedTxInfo = await waitForConfirmation(setPrimaryResult);
       console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
-      toast.success(
-        "Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar"
-      );
-      setIsModalOpen(false);
-      setCanSetPrimary(false); // Disable button after successful setting
-    } catch (error: unknown) {
+      // Check if transaction was successful by examining receipt status
+      if (
+        confirmedTxInfo.receipt &&
+        confirmedTxInfo.receipt.result === "SUCCESS"
+      ) {
+        toast.success(
+          "Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar"
+        );
+      } else if (
+        confirmedTxInfo.receipt &&
+        confirmedTxInfo.receipt.result === "REVERT"
+      ) {
+        // Handle revert case
+        let errorMessage = "Transaction reverted";
+        toast.error(errorMessage);
+      } else {
+        // Handle other failure cases
+        toast.error("Transaction Failed");
+      }
+    } catch (error: any) {
       console.error("Error setting primary domain:", error);
 
-      // Reset the setting primary state to allow retrying
-      setIsSettingPrimary(false);
-
-      // Show appropriate error message
-      if (error instanceof Error) {
-        if (error.message.includes("User rejected the transaction")) {
-          toast.error("Transaction was rejected. You can try again.");
-        } else {
-          toast.error("Failed to set domain as primary");
-        }
+      // Handle specific error types
+      if (error.message?.includes("Invalid parameters")) {
+        toast.error("Invalid parameters: Please check your domain name");
+      } else if (error.message?.includes("User rejected")) {
+        toast.error("Transaction rejected by user");
+      } else if (error.message?.includes("bandwidth")) {
+        toast.error("Insufficient TRON energy or bandwidth");
       } else {
-        toast.error("An error occurred");
+        // Generic error message as fallback
+        toast.error(error.message || "Failed to set primary domain");
       }
-
-      handleClose();
     } finally {
       setIsSettingPrimary(false); // Always reset the setting state
     }
@@ -234,6 +255,10 @@ function RegisterDomain() {
         return;
       }
 
+      toast.info("Please confirm the transaction in your wallet 🔐", {
+        autoClose: 3000,
+      });
+
       const domainContractAddress = DOMAIN_SUNPUMP_ADDRESS;
       console.log("before instance, address:", domainContractAddress);
 
@@ -260,6 +285,16 @@ function RegisterDomain() {
 
       const confirmedTxInfo = await waitForConfirmation(deployResult);
       console.log("Confirmed Transaction Info:", confirmedTxInfo);
+
+      if (
+        confirmedTxInfo.receipt &&
+        confirmedTxInfo.receipt.result === "REVERT"
+      ) {
+        // Handle revert case
+        let errorMessage = "Transaction reverted";
+
+        toast.error(errorMessage);
+      }
 
       // Fetch the second log's address field in hex format
       const hexAddress = "0x" + confirmedTxInfo.log[1].address;
@@ -301,19 +336,6 @@ function RegisterDomain() {
   return (
     <>
       <div className="containerDomain hidden lg:flex">
-        {/* <Toaster
-        toastOptions={{
-          style: {
-            border: "1px solid transparent",
-            borderImage:
-              "linear-gradient(13.51deg,#74ff1f 70.81%,#74ff1f 53.08%)",
-            borderImageSlice: 1,
-            background:
-              "linear-gradient(153.51deg,#010f02 70.81%,#469913 95.08%)",
-            color: "white",
-          },
-        }}
-      /> */}
         <ToastContainer
           position="top-center"
           autoClose={4000}

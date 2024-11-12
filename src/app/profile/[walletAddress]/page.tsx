@@ -78,7 +78,7 @@ const DomainCard: React.FC<DomainCardProps> = ({
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-2xl font-medium text-[#A8F981]">
-            {domain.nameWithTld}
+            {(domain.nameWithTld).toLowerCase()}
           </h3>
           <Crown className="w-8 h-8 text-yellow-500" />
         </div>
@@ -115,25 +115,68 @@ const DomainCard: React.FC<DomainCardProps> = ({
             <DollarSign className="w-5 h-5 text-[#75ec2b]" />
             <p className="text-[15px]">Price: {domain.registrationPrice}</p>
           </div>
-          {domain.tronbase58Address && (
-            <div className="flex items-center gap-2">
+
+          {domain.tronbase58Address !== undefined ? (
+            <div className="flex items-center gap-2 min-h-[24px]">
+              {" "}
+              {/* Added min-height */}
               <Hash className="w-5 h-5 text-[#75ec2b]" />
               <div className="flex gap-1 items-center text-gray-300 text-sm">
                 <span className="text-[15px] truncate">TLD Address: </span>
-                <span>
-                  {domain.tronbase58Address.slice(0, 5) +
-                    "..." +
-                    domain.tronbase58Address.slice(-5)}
-                </span>
-                <div className="cursor-pointer" title="Copy">
-                  <Copy
-                    size={12}
-                    className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleCopy(domain.tronbase58Address || "");
-                    }}
-                  />
+                {domain.tronbase58Address ? (
+                  <>
+                    <span>
+                      {domain.tronbase58Address.slice(0, 5) +
+                        "..." +
+                        domain.tronbase58Address.slice(-5)}
+                    </span>
+                    <div className="cursor-pointer" title="Copy">
+                      <Copy
+                        size={12}
+                        className="cursor-pointer hover:text-[#FCFF72] text-white hover:scale-125"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleCopy(domain.tronbase58Address || "");
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <span className="text-gray-400 ml-1">
+                    Address not defined
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 min-h-[24px]">
+              {" "}
+              {/* Loading state with same height */}
+              <Hash className="w-5 h-5 text-[#75ec2b]" />
+              <div className="flex gap-1 items-center text-gray-300 text-sm">
+                <span className="text-[15px] truncate">TLD Address: </span>
+                <div className="flex items-center ml-[5px]">
+                  <svg
+                    className="w-4 h-4 text-[#75ec2b] animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  <span className="ml-1">Loading TLD address...</span>
                 </div>
               </div>
             </div>
@@ -148,36 +191,32 @@ const DomainCard: React.FC<DomainCardProps> = ({
             disabled={isSettingPrimary}
             className="submit-button w-full"
           >
-            {isThisCardSetting ? (
-              <span className="animate-spin">
-                <div className="flex items-center gap-3">
-                  <div className="flex justify-center items-center">
-                    <svg
-                      className="w-6 h-6 text-green-700 animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v8H4z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <span>Setting as Primary...</span>
-                </div>
-              </span>
+            {isSettingPrimary && currentSettingDomain === domain.nameWithTld ? (
+              <div className="flex items-center justify-center gap-3">
+                <svg
+                  className="w-6 h-6 text-green-700 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                <span>Setting as Primary...</span>
+              </div>
             ) : (
-              "Set as a primary domain"
+              "Set as primary domain"
             )}
           </button>
         </div>
@@ -198,6 +237,7 @@ const DomainManager = () => {
   const [isSettingPrimary, setIsSettingPrimary] = useState(false);
   const [currentSettingDomain, setCurrentSettingDomain] = useState("");
   const [isDataReady, setIsDataReady] = useState(false);
+  const [isLoadingTldAddresses, setIsLoadingTldAddresses] = useState(true);
 
   console.log(tokens);
 
@@ -219,24 +259,15 @@ const DomainManager = () => {
 
       const currentNode = tronWeb.fullNode.host;
 
-      if (currentNode.includes("api.trongrid.io")) {
-        //this is mainnet node
+      if (
+        currentNode.includes("api.trongrid.io") ||
+        currentNode.includes("api.tronstack.io") ||
+        currentNode.includes("api.shasta.trongrid.io")
+      ) {
         toast.error(
           "Oops! You're on the wrong network. Please switch to the Nile Testnet"
         );
-      }
-
-      if (currentNode.includes("api.tronstack.io")) {
-        //this is mainnet node
-        toast.error(
-          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
-        );
-      }
-
-      if (currentNode.includes("api.shasta.trongrid.io")) {
-        toast.error(
-          "Oops! You're on the wrong network. Please switch to the Nile Testnet"
-        );
+        return;
       }
 
       const domainRecordsContract = await tronWeb.contract(
@@ -290,53 +321,21 @@ const DomainManager = () => {
     return matchingToken ? matchingToken.tronbase58Address : null;
   };
 
-  const waitForConfirmation = async (
-    txId: string,
-    requiredConfirmations = 19,
-    maxWaitTime = 10 * 60 * 1000
-  ) => {
-    const startTime = Date.now();
-    const checkConfirmation = async (): Promise<any> => {
-      try {
-        const txInfo = await (window.tronWeb as any).trx.getTransactionInfo(
-          txId
-        );
-        if (txInfo && txInfo.blockNumber) {
-          const currentBlock = await (
-            window.tronWeb as any
-          ).trx.getCurrentBlock();
-          const confirmations =
-            currentBlock.block_header.raw_data.number - txInfo.blockNumber;
-          if (confirmations >= requiredConfirmations) {
-            return txInfo;
-          }
-        }
-        if (Date.now() - startTime > maxWaitTime) {
-          throw new Error("Max wait time reached");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        return checkConfirmation();
-      } catch (error) {
-        console.error("Error checking confirmation:", error);
-        throw error;
-      }
-    };
-    return checkConfirmation();
-  };
-
   const handleSetPrimaryDomain = async (
     domainName: string,
     tronbase58Address: string
   ) => {
     try {
-      console.log("tronaddressssssssss", tronbase58Address, domainName);
       setIsSettingPrimary(true);
       setCurrentSettingDomain(domainName);
-      toast.info("Transaction initiated! 🚀", { autoClose: 3000 });
+      toast.info("Please confirm the transaction in your wallet 🔐", {
+        autoClose: 3000,
+      });
 
       const tronWeb = (window as any).tronWeb;
       const currentNode = tronWeb.fullNode.host;
 
+      // Network check
       if (
         currentNode.includes("api.trongrid.io") ||
         currentNode.includes("api.tronstack.io") ||
@@ -350,33 +349,111 @@ const DomainManager = () => {
         abiOfPumpDomains,
         tronbase58Address
       );
+
+      // Send transaction and get transaction ID
       const result = await contract
         .setPrimaryDomain(domainName.toLowerCase())
         .send();
 
-      toast.info(
+      toast.info("Transaction initiated! 🚀", { autoClose: 3000 });
+
+      toast.loading(
         `Setting as primary domain...⚡ Copy this ID and paste on Nile Scan to check the transaction status: ${result}`,
-        { autoClose: 10000 }
+        {
+          toastId: "loading-toast", // Ensure the toast has a unique ID
+        }
       );
 
+      setTimeout(() => {
+        toast.dismiss("loading-toast"); // Dismiss using the exact toast ID
+      }, 62000);
+
+      // Wait for confirmation and check transaction status
       const confirmedTxInfo = await waitForConfirmation(result);
       console.log("Confirmed Transaction Info:", confirmedTxInfo);
 
-      toast.success(
-        "Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar"
-      );
-    } catch (error) {
+      // Check if transaction was successful by examining receipt status
+      if (
+        confirmedTxInfo.receipt &&
+        confirmedTxInfo.receipt.result === "SUCCESS"
+      ) {
+        toast.success(
+          "Primary domain successfully set! 🌟 Please refresh the page to view it in the connect wallet section at Navbar"
+        );
+      } else if (
+        confirmedTxInfo.receipt &&
+        confirmedTxInfo.receipt.result === "REVERT"
+      ) {
+        // Handle revert case
+        let errorMessage = "Transaction reverted";
+
+        toast.error(errorMessage);
+      } else {
+        // Handle other failure cases
+        toast.error("Transaction Failed");
+      }
+    } catch (error: any) {
       console.error("Error setting primary domain:", error);
-      toast.error("Failed to set primary domain");
+
+      // Handle specific error types
+      if (error.message?.includes("Invalid parameters")) {
+        toast.error("Invalid parameters: Please check your domain name");
+      } else if (error.message?.includes("User rejected")) {
+        toast.error("Transaction rejected by user");
+      } else if (error.message?.includes("bandwidth")) {
+        toast.error("Insufficient TRON energy or bandwidth");
+      } else {
+        // Generic error message as fallback
+        toast.error(error.message || "Failed to set primary domain");
+      }
     } finally {
       setIsSettingPrimary(false);
       setCurrentSettingDomain("");
     }
   };
 
+  const waitForConfirmation = async (
+    txId: string,
+    requiredConfirmations = 19,
+    maxWaitTime = 10 * 60 * 1000
+  ) => {
+    const startTime = Date.now();
+
+    const checkConfirmation = async (): Promise<any> => {
+      try {
+        const txInfo = await (window as any).tronWeb.trx.getTransactionInfo(
+          txId
+        );
+
+        if (txInfo && txInfo.blockNumber) {
+          const currentBlock = await (
+            window as any
+          ).tronWeb.trx.getCurrentBlock();
+          const confirmations =
+            currentBlock.block_header.raw_data.number - txInfo.blockNumber;
+
+          if (confirmations >= requiredConfirmations) {
+            return txInfo;
+          }
+        }
+
+        if (Date.now() - startTime > maxWaitTime) {
+          throw new Error("Max wait time reached");
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        return checkConfirmation();
+      } catch (error) {
+        console.error("Error checking confirmation:", error);
+        throw error;
+      }
+    };
+
+    return checkConfirmation();
+  };
+
   const fetchTokens = async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoadingTldAddresses(true);
     try {
       const response = await fetch("/api/get-all-tlds");
       if (!response.ok) {
@@ -395,7 +472,7 @@ const DomainManager = () => {
       setError("Failed to load tokens. Please try again later.");
       console.error(err);
     } finally {
-      setIsLoading(false);
+      setIsLoadingTldAddresses(false);
     }
   };
 
@@ -476,7 +553,7 @@ const DomainManager = () => {
                 <>
                   {domains.length === 0 ? (
                     <div className="bg-[#2a3b2a] border border-transparent rounded-lg p-8 text-center">
-                      <h3 className="text-2xl font-bold text-[#A8F981] mb-4">
+                      <h3 className="text-2xl font-semibold text-[#A8F981] mb-4">
                         No Domains Found
                       </h3>
                       <p className="text-gray-300">
@@ -485,15 +562,23 @@ const DomainManager = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${
+                        isLoadingTldAddresses ? "opacity-70" : ""
+                      }`}
+                    >
+                      {isLoadingTldAddresses && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+                          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#A8F981]"></div>
+                        </div>
+                      )}
                       {domains.map((domain, index) => {
-                        // Add tronbase58Address to domain object
                         const domainWithAddress = {
                           ...domain,
-                          tronbase58Address: matchTldWithToken(
-                            domain.nameWithTld,
-                            tokens
-                          ),
+                          tronbase58Address: isLoadingTldAddresses
+                            ? undefined
+                            : matchTldWithToken(domain.nameWithTld, tokens) ||
+                              null, // Changed to null when not found
                         };
 
                         return (

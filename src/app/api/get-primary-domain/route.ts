@@ -38,6 +38,7 @@ async function getDomainsByOwner(ownerAddress: string) {
 
     // Call the 'getDomainsByOwner' function with the owner's address
     const result = await contract.getDomainsByOwner(ownerAddress).call();
+    console.log("resssssssss", result);
 
     // Check if the result is empty
     if (result.length === 0) {

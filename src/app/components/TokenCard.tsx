@@ -124,7 +124,7 @@ const TokenCard = ({}) => {
     setPage(1);
     setTokens([]);
     fetchTokens(1, sortOption, debouncedSearchQuery);
-  }, [debouncedSearchQuery, sortOption, fetchTokens]);
+  }, [debouncedSearchQuery, sortOption]);
 
   const options = [
     "Launched Time",
@@ -177,12 +177,10 @@ const TokenCard = ({}) => {
     toast("✅ Copied 🎊🎉");
   };
 
-  const loadMoreTokens = () => {
-    setPage((prevPage) => {
-      const nextPage = prevPage + 1;
-      fetchTokens(nextPage, sortOption, debouncedSearchQuery); // Fetch the next set of tokens
-      return nextPage;
-    });
+  const loadMoreTokens = async () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await fetchTokens(nextPage, sortOption, debouncedSearchQuery);
   };
 
   // Ensure the URL has the protocol
